@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "username": "KCW-Dev",
+  "default_agent": "build",
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "description": "Build and fix Kilimo Credit Web codebase — 76 tests, FastAPI, NASA POWER, Masumi x402, Neo4j",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "write": "allow",
+        "websearch": "allow",
+        "webfetch": "allow"
+      }
+    }
+  },
+  "instructions": ["AGENTS.md"],
+  "experimental": {
+    "primary_tools": ["read", "edit", "write", "bash", "glob", "grep", "websearch", "webfetch"]
+  },
+  "mcp": {
+    "nasa-power": {
+      "type": "remote",
+      "url": "https://power.larc.nasa.gov/api",
+      "enabled": true
+    }
+  }
+}

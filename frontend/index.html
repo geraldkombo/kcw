@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kilimo Credit Web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            kcw: { green: '#2E7D32', gold: '#FFB300', earth: '#5D4037' },
+            surface: { DEFAULT: '#ffffff', dark: '#0f172a' },
+            sidebar: { DEFAULT: '#f8fafc', dark: '#1e293b' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .sidebar { transition: transform 0.2s ease; }
+    .nav-link, .bottom-nav-link { transition: all 0.15s ease; }
+    .nav-link.active, .bottom-nav-link.active { color: #2E7D32; font-weight: 600; }
+    .dark .nav-link.active, .dark .bottom-nav-link.active { color: #4ADE80; }
+    @keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slide-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    .animate-slide-in { animation: slide-in 0.3s ease; }
+    .animate-slide-out { animation: slide-out 0.3s ease; }
+    input, select, button { min-height: 44px; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; line-height: 1.4; }
+    .badge-green { background: #E8F5E9; color: #2E7D32; }
+    .badge-red { background: #FFEBEE; color: #C62828; }
+    .badge-blue { background: #E3F2FD; color: #1565C0; }
+    .badge-gold { background: #FFF8E1; color: #F57F17; }
+    .dark .badge-green { background: #1B5E20; color: #A5D6A7; }
+    .dark .badge-red { background: #B71C1C; color: #EF9A9A; }
+    .dark .badge-blue { background: #0D47A1; color: #90CAF9; }
+    .dark .badge-gold { background: #E65100; color: #FFE082; }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; inset: 0; z-index: 50; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-backdrop { display: none; }
+      .sidebar.open + .sidebar-backdrop { display: block; }
+    }
+    @media (min-width: 769px) {
+      .bottom-nav { display: none; }
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 antialiased transition-colors duration-200">
+  <!-- Skip -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:p-3 focus:bg-white dark:focus:bg-slate-800 focus:z-50 focus:outline-none focus:ring-2 focus:ring-kcw-green">Skip to main content</a>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)] pointer-events-none">
+    <div class="pointer-events-auto"></div>
+  </div>
+
+  <!-- ====== LAYOUT ====== -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 bg-sidebar dark:bg-sidebar-dark border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0 overflow-y-auto md:relative md:translate-x-0" id="sidebar" role="navigation" aria-label="Main navigation">
+      <!-- Logo -->
+      <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
+        <span class="text-2xl">🌾</span>
+        <div>
+          <p class="font-bold text-kcw-green dark:text-green-400 text-base leading-tight" data-i18n="app_name">Kilimo Credit Web</p>
+          <p class="text-xs text-gray-400">Agricultural Securitisation</p>
+        </div>
+      </div>
+
+      <!-- Nav links -->
+      <nav class="flex-1 p-3 space-y-1">
+        <a href="#" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="dashboard" data-i18n="nav_dashboard" role="tab" aria-selected="true">
+          <span>📊</span> <span data-i18n="nav_dashboard">Dashboard</span>
+        </a>
+        <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="farmers" data-i18n="nav_farmers" role="tab">
+          <span>👥</span> <span data-i18n="nav_farmers">Farmers</span>
+        </a>
+        <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="assess" data-i18n="nav_loans" role="tab">
+          <span>📋</span> <span data-i18n="nav_loans">Loans</span>
+        </a>
+        <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="pools" data-i18n="nav_pools" role="tab">
+          <span>📦</span> <span data-i18n="nav_pools">Pools</span>
+        </a>
+        <a href="#" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="payments" data-i18n="nav_payments" role="tab">
+          <span>💳</span> <span data-i18n="nav_payments">x402 Payments</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar footer -->
+      <div class="p-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+        <button id="theme-toggle" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" aria-label="Toggle theme">
+          <span id="theme-icon">🌙</span> <span data-i18n="theme_dark">Dark</span>
+        </button>
+        <button id="lang-toggle" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" aria-label="Toggle language">
+          <span>🌐</span> <span>Kiswahili</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Backdrop for mobile sidebar -->
+    <div class="sidebar-backdrop fixed inset-0 bg-black/30 z-40 hidden md:hidden" onclick="document.getElementById('sidebar').classList.remove('open')"></div>
+
+    <!-- Main area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top bar -->
+      <header class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-4 flex-shrink-0">
+        <button id="menu-btn" class="md:hidden text-xl p-1 -ml-1" aria-label="Toggle sidebar" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <div class="flex-1 relative max-w-md">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+          <input id="farmer-search" type="search" data-i18n-placeholder="search_placeholder" placeholder="Search farmers, loans..." class="w-full pl-9 pr-3 py-2 bg-gray-100 dark:bg-slate-700 border-0 rounded-lg text-sm focus:ring-2 focus:ring-kcw-green outline-none" />
+        </div>
+        <div class="flex items-center gap-2 ml-auto">
+          <span class="hidden sm:inline text-xs text-gray-400" id="lang-label">EN</span>
+          <span class="w-8 h-8 rounded-full bg-kcw-green text-white flex items-center justify-center text-sm font-bold flex-shrink-0">KC</span>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main id="main-content" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+
+        <!-- ===== PAGE: Dashboard ===== -->
+        <section data-page="dashboard" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold" data-i18n="nav_dashboard">Dashboard</h1>
+            <span class="text-xs text-gray-400" id="mock-badge"></span>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" aria-label="Platform statistics">
+            <div class="card"><p class="text-2xl md:text-3xl font-bold text-kcw-green" id="stat-farmers" aria-live="polite">—</p><p class="text-xs text-gray-500 mt-1" data-i18n="stat_farmers">Farmers Onboarded</p></div>
+            <div class="card"><p class="text-2xl md:text-3xl font-bold text-kcw-gold" id="stat-loans" aria-live="polite">—</p><p class="text-xs text-gray-500 mt-1" data-i18n="stat_loans">Active Loans</p></div>
+            <div class="card"><p class="text-2xl md:text-3xl font-bold text-kcw-earth" id="stat-volume" aria-live="polite">KES —</p><p class="text-xs text-gray-500 mt-1" data-i18n="stat_volume">Portfolio Volume</p></div>
+            <div class="card"><p class="text-2xl md:text-3xl font-bold text-blue-700 dark:text-blue-400" id="stat-pools" aria-live="polite">—</p><p class="text-xs text-gray-500 mt-1" data-i18n="stat_pools">Pools Created</p></div>
+          </div>
+
+          <!-- Map + Chart grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card">
+              <h2 class="text-sm font-bold mb-3">Farmer Distribution by County</h2>
+              <svg id="kenya-map-svg" viewBox="0 0 100 100" class="w-full max-w-sm mx-auto text-gray-700 dark:text-gray-300"></svg>
+              <p class="text-xs text-gray-400 mt-2 text-center">Circle size = farmer density</p>
+            </div>
+            <div class="card">
+              <h2 class="text-sm font-bold mb-3">Loan Portfolio by Purpose</h2>
+              <div class="h-48"><canvas id="portfolio-chart"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE: Farmers ===== -->
+        <section data-page="farmers" class="hidden space-y-4">
+          <h1 class="text-xl font-bold" data-i18n="farmers_title">Farmer Registry</h1>
+          <div class="card !p-0 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm" role="table" aria-label="Registered farmers">
+                <thead>
+                  <tr class="text-left text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-slate-800">
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider" scope="col" data-i18n="farmers_id">ID</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider" scope="col" data-i18n="farmers_name">Name</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider" scope="col" data-i18n="farmers_county">County</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider hidden md:table-cell" scope="col" data-i18n="farmers_crop">Crop</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider" scope="col" data-i18n="farmers_score">Score</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider hidden sm:table-cell" scope="col" data-i18n="farmers_pd">PD</th>
+                    <th class="py-3 px-4 font-medium text-xs uppercase tracking-wider" scope="col" data-i18n="farmers_status">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="farmer-table-body"></tbody>
+              </table>
+            </div>
+            <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-400" id="farmer-count"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE: Assess ===== -->
+        <section data-page="assess" class="hidden space-y-4">
+          <h1 class="text-xl font-bold" data-i18n="assess_title">Credit Assessment</h1>
+          <div class="card max-w-2xl">
+            <form id="assessment-form" class="grid grid-cols-1 md:grid-cols-2 gap-4" novalidate>
+              <div>
+                <label for="field-first-name" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_first_name">First Name</span> <span aria-hidden="true">*</span></label>
+                <input id="field-first-name" name="first_name" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green focus:border-kcw-green outline-none" />
+              </div>
+              <div>
+                <label for="field-last-name" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_last_name">Last Name</span> <span aria-hidden="true">*</span></label>
+                <input id="field-last-name" name="last_name" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none" />
+              </div>
+              <div>
+                <label for="field-phone" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1" data-i18n="assess_phone">Phone</label>
+                <input id="field-phone" name="phone" type="tel" value="+2547" pattern="^\+?\d{9,15}$" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none" />
+              </div>
+              <div>
+                <label for="field-gender" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_gender">Gender</span> <span aria-hidden="true">*</span></label>
+                <select id="field-gender" name="gender" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none">
+                  <option value="M" data-i18n="assess_gender_male">Male</option>
+                  <option value="F" data-i18n="assess_gender_female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label for="field-county" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_county">County</span> <span aria-hidden="true">*</span></label>
+                <select id="field-county" name="county" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none">
+                  <option value="" data-i18n="assess_county_placeholder">Select county...</option>
+                  <option>Kiambu</option><option>Nakuru</option><option>Kisumu</option><option>Meru</option><option>Machakos</option><option>Uasin Gishu</option><option>Bungoma</option><option>Nyeri</option><option>Kilifi</option><option>Homa Bay</option>
+                </select>
+              </div>
+              <div>
+                <label for="field-crop" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_crop">Primary Crop</span> <span aria-hidden="true">*</span></label>
+                <select id="field-crop" name="primary_crop" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none">
+                  <option>maize</option><option>beans</option><option>coffee</option><option>tea</option><option>kale</option><option>avocado</option><option>tomato</option><option>sugarcane</option>
+                </select>
+              </div>
+              <div>
+                <label for="field-size" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"><span data-i18n="assess_farm_size">Farm Size (ha)</span> <span aria-hidden="true">*</span></label>
+                <input id="field-size" name="farm_size_ha" type="number" step="0.1" min="0.1" max="50" value="2.0" required aria-required="true" class="w-full border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-kcw-green outline-none" />
+              </div>
+              <div class="flex items-center gap-6">
+                <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="chama_member" class="w-4 h-4 accent-kcw-green" /> <span data-i18n="assess_chama">Chama Member</span></label>
+                <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="sacco_member" class="w-4 h-4 accent-kcw-green" /> <span data-i18n="assess_sacco">SACCO Member</span></label>
+              </div>
+              <div class="md:col-span-2 flex gap-3">
+                <button type="submit" class="flex-1 md:flex-none bg-kcw-green text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-green-700 disabled:opacity-50 transition-colors" id="assess-submit" data-i18n="assess_submit">Submit Assessment</button>
+                <button type="reset" class="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors" data-i18n="assess_reset">Reset</button>
+              </div>
+            </form>
+            <div id="assessment-result" class="mt-4 hidden" role="alert" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE: Pools ===== -->
+        <section data-page="pools" class="hidden space-y-4">
+          <h1 class="text-xl font-bold" data-i18n="pool_title">Securitisation Pools</h1>
+          <div class="card">
+            <button id="build-pool-btn" class="bg-kcw-green text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-green-700 disabled:opacity-50 transition-colors mb-4" data-i18n="pool_build">Build Pool from Approved Farmers</button>
+            <div id="pool-result" class="hidden" role="alert" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE: Payments ===== -->
+        <section data-page="payments" class="hidden space-y-4">
+          <h1 class="text-xl font-bold" data-i18n="nav_payments">x402 Payments</h1>
+          <div class="card max-w-lg">
+            <div id="escrow-list" class="space-y-2"></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Bottom nav (mobile) -->
+  <nav class="bottom-nav fixed bottom-0 inset-x-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-gray-700 z-30 flex md:hidden" role="navigation" aria-label="Bottom navigation">
+    <a href="#" class="bottom-nav-link active flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="dashboard"><span class="text-lg">📊</span><span data-i18n="nav_dashboard">Dashboard</span></a>
+    <a href="#" class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="farmers"><span class="text-lg">👥</span><span data-i18n="nav_farmers">Farmers</span></a>
+    <a href="#" class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="assess"><span class="text-lg">📋</span><span data-i18n="nav_loans">Loans</span></a>
+    <a href="#" class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="pools"><span class="text-lg">📦</span><span data-i18n="nav_pools">Pools</span></a>
+    <a href="#" class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="payments"><span class="text-lg">💳</span><span data-i18n="nav_payments">x402</span></a>
+  </nav>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
