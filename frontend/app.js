@@ -13,7 +13,7 @@ const API_BASE = "/api/v1";
 // Set your real key here to enable the interactive farmer map.
 // Leave empty ("") to use the SVG fallback map (works without any key).
 // In production, restrict the key to your domain in Google Cloud Console.
-const GOOGLE_MAPS_API_KEY = "";
+const GOOGLE_MAPS_API_KEY = "AIzaSyBftqrqfogiRPUu_j6KTYsM3UjJ9ySMaZY";
 
 let USE_MOCK = false;
 const THEME_KEY = "kcw-theme";
