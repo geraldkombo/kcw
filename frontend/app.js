@@ -9,10 +9,11 @@ import { t, setLanguage, currentLang, LANGUAGES } from "./i18n.js";
 // For local dev behind nginx, keep as "/api/v1":
 const API_BASE = "/api/v1";
 
-// Google Maps API key — get free at https://goo.gle/maps-demo-key
-// No credit card required. Leave empty to use SVG fallback map.
-// In production, restrict this key to your domain.
-const GOOGLE_MAPS_API_KEY = "GOOGLE_MAPS_DEMO_KEY";
+// Google Maps API key — get free at https://goo.gle/maps-demo-key (no credit card)
+// Set your real key here to enable the interactive farmer map.
+// Leave empty ("") to use the SVG fallback map (works without any key).
+// In production, restrict the key to your domain in Google Cloud Console.
+const GOOGLE_MAPS_API_KEY = "";
 
 let USE_MOCK = false;
 const THEME_KEY = "kcw-theme";
@@ -158,7 +159,7 @@ let _mapsLoaded = false;
 function loadGoogleMaps() {
   return new Promise((resolve, reject) => {
     if (window.google?.maps) { resolve(window.google.maps); return; }
-    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "GOOGLE_MAPS_DEMO_KEY") { reject(new Error("No API key")); return; }
+    if (!GOOGLE_MAPS_API_KEY) { reject(new Error("No API key")); return; }
     window.__gmaps_cb = () => { _mapsLoaded = true; resolve(window.google.maps); };
     const s = document.createElement("script");
     s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=__gmaps_cb&loading=async&libraries=marker`;
@@ -287,7 +288,7 @@ function renderMap() {
   if (!document.getElementById("kenya-map")) return;
   if (_mapsLoaded && window.google?.maps) {
     renderGoogleMap();
-  } else if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== "GOOGLE_MAPS_DEMO_KEY" && !_mapsLoaded) {
+  } else if (GOOGLE_MAPS_API_KEY && !_mapsLoaded) {
     loadGoogleMaps().then(renderGoogleMap).catch(renderSvgMap);
   } else {
     renderSvgMap();
