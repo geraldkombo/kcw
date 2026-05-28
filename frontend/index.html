@@ -148,8 +148,9 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="card">
               <h2 class="text-sm font-bold mb-3">Farmer Distribution by County</h2>
-              <svg id="kenya-map-svg" viewBox="0 0 100 100" class="w-full max-w-sm mx-auto text-gray-700 dark:text-gray-300"></svg>
-              <p class="text-xs text-gray-400 mt-2 text-center">Circle size = farmer density</p>
+              <div id="kenya-map" class="w-full h-64 rounded-lg overflow-hidden"></div>
+              <svg id="kenya-map-svg" viewBox="0 0 100 100" class="w-full max-w-sm mx-auto text-gray-700 dark:text-gray-300 hidden"></svg>
+              <p class="text-xs text-gray-400 mt-2 text-center" id="map-caption">Interactive map — click markers for farmer details</p>
             </div>
             <div class="card">
               <h2 class="text-sm font-bold mb-3">Loan Portfolio by Purpose</h2>

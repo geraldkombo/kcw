@@ -173,6 +173,16 @@ PrecisionFarmingResult: { gdd, et0, pest_risks: [{pest, risk_score, risk_level, 
 {"Kiambu": {"x":38,"y":52}, "Nakuru": {"x":33,"y":38}, "Kisumu": {"x":18,"y":45}, "Meru": {"x":60,"y":25}, "Machakos": {"x":52,"y":55}, "Uasin Gishu": {"x":30,"y":28}, "Homa Bay": {"x":20,"y":52}, "Bungoma": {"x":22,"y":22}, "Nyeri": {"x":40,"y":40}, "Kilifi": {"x":70,"y":68}}
 ```
 
+## Google Maps Integration
+
+The dashboard uses Google Maps JavaScript API for an interactive farmer location map with:
+- Color-coded markers (green ≥70, gold ≥50, red <50 credit score)
+- Info windows with farmer details on click
+- Dark mode map styling that follows the theme
+- Automatic SVG fallback when no API key is set
+
+To enable: get a free Maps Demo Key at https://goo.gle/maps-demo-key (no credit card), then set `GOOGLE_MAPS_API_KEY` in `frontend/app.js`.
+
 ## Deployment Note
 
-Lovable hosts the frontend. The backend API runs on Render (free tier). Set `API_BASE` in `app.js` to your Render URL before deploying. The existing `frontend/` directory contains a working dashboard — Lovable should rewrite it entirely with the production dashboard described above.
+Lovable hosts the frontend. The backend API runs on Render (free tier). Set `API_BASE` in `app.js` to your Render URL before deploying. Set `GOOGLE_MAPS_API_KEY` for the interactive map. The existing `frontend/` directory contains a working dashboard — Lovable should rewrite it entirely with the production dashboard described above.

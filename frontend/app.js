@@ -8,6 +8,12 @@ import { t, setLanguage, currentLang, LANGUAGES } from "./i18n.js";
 //   const API_BASE = "https://kcw-api.onrender.com";
 // For local dev behind nginx, keep as "/api/v1":
 const API_BASE = "/api/v1";
+
+// Google Maps API key — get free at https://goo.gle/maps-demo-key
+// No credit card required. Leave empty to use SVG fallback map.
+// In production, restrict this key to your domain.
+const GOOGLE_MAPS_API_KEY = "GOOGLE_MAPS_DEMO_KEY";
+
 let USE_MOCK = false;
 const THEME_KEY = "kcw-theme";
 const LANG_KEY = "kcw-lang";
@@ -63,6 +69,11 @@ function applyTheme(theme) {
   localStorage.setItem(THEME_KEY, theme);
   const btn = $("#theme-toggle");
   if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+  // Recreate map with correct theme styling
+  if (window._kcwMap) {
+    window._kcwMap = null;
+    if (_mapsLoaded && window.google?.maps) renderGoogleMap();
+  }
 }
 
 // ==============================
@@ -140,11 +151,117 @@ function renderDashboard() {
 }
 
 // ==============================
-// Kenya Map
+// Google Maps
 // ==============================
-function renderMap() {
+let _mapsLoaded = false;
+
+function loadGoogleMaps() {
+  return new Promise((resolve, reject) => {
+    if (window.google?.maps) { resolve(window.google.maps); return; }
+    if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "GOOGLE_MAPS_DEMO_KEY") { reject(new Error("No API key")); return; }
+    window.__gmaps_cb = () => { _mapsLoaded = true; resolve(window.google.maps); };
+    const s = document.createElement("script");
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=__gmaps_cb&loading=async&libraries=marker`;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function renderGoogleMap() {
+  const container = document.getElementById("kenya-map");
+  const svg = document.getElementById("kenya-map-svg");
+  if (!container) return;
+  if (window._kcwMap) return;
+
+  const farmers = state.farmers.filter(f => f.lat && f.lng);
+  if (!farmers.length) return renderSvgMap();
+
+  const center = farmers.length > 1
+    ? farmers.reduce((a, f) => ({ lat: a.lat + f.lat / farmers.length, lng: a.lng + f.lng / farmers.length }), { lat: 0, lng: 0 })
+    : { lat: farmers[0].lat, lng: farmers[0].lng };
+
+  const isDark = state.theme === "dark";
+  container.classList.remove("hidden");
+  if (svg) svg.classList.add("hidden");
+
+  window._kcwMap = new google.maps.Map(container, {
+    center,
+    zoom: 7,
+    mapId: isDark ? "kcw-map-dark" : "kcw-map-light",
+    disableDefaultUI: false,
+    zoomControl: true,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    styles: isDark ? [
+      { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+      { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+      { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+      { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+      { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+    ] : [
+      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#E8F5E9" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#E3F2FD" }] },
+    ],
+  });
+
+  // Markers with info windows
+  const bounds = new google.maps.LatLngBounds();
+  const hasAdvanced = !!google.maps.marker?.AdvancedMarkerElement;
+  farmers.forEach(f => {
+    const pos = { lat: f.lat, lng: f.lng };
+    bounds.extend(pos);
+    const scoreColor = f.credit_score >= 70 ? "#2E7D32" : f.credit_score >= 50 ? "#FFB300" : "#C62828";
+
+    const marker = hasAdvanced
+      ? new google.maps.marker.AdvancedMarkerElement({
+          position: pos, map: window._kcwMap, title: `${f.first_name} ${f.last_name}`,
+          content: buildPinSvg(scoreColor),
+        })
+      : new google.maps.Marker({
+          position: pos, map: window._kcwMap, title: `${f.first_name} ${f.last_name}`,
+          icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: scoreColor, fillOpacity: 1, strokeColor: "#fff", strokeWeight: 2 },
+        });
+
+    const info = new google.maps.InfoWindow({
+      content: `<div class="p-2 text-sm min-w-[200px] ${isDark ? 'bg-slate-800 text-gray-100' : ''}">
+        <p class="font-bold text-base mb-1">👩‍🌾 ${f.first_name} ${f.last_name}</p>
+        <p>📍 ${f.county} · ${f.primary_crop} · ${f.farm_size_ha}ha</p>
+        <p>⭐ Score: <strong>${f.credit_score}</strong> · PD: <strong>${(f.probability_default * 100).toFixed(1)}%</strong></p>
+        <p>${f.status === "active" ? "✅" : f.status === "delinquent" ? "⚠️" : "✅"} ${f.status} · ${f.gender === "F" ? "👩‍🌾" : "👨‍🌾"}</p>
+        <p class="text-xs text-gray-400 mt-1">${f.phone} · ${f.id}</p>
+      </div>`,
+    });
+    marker.addListener("click", () => info.open(window._kcwMap, marker));
+  });
+
+  if (farmers.length > 1) window._kcwMap.fitBounds(bounds, 50);
+}
+
+function buildPinSvg(color) {
+  const el = document.createElement("div");
+  el.innerHTML = `<svg width="28" height="40" viewBox="0 0 28 40"><path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.268 21.732 0 14 0z" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="14" cy="14" r="5" fill="#fff"/></svg>`;
+  return el.firstElementChild;
+}
+
+// ==============================
+// SVG Fallback Map
+// ==============================
+function renderSvgMap() {
+  const container = document.getElementById("kenya-map");
   const svg = document.getElementById("kenya-map-svg");
   if (!svg) return;
+  if (container) container.classList.add("hidden");
+  svg.classList.remove("hidden");
+  document.getElementById("map-caption").textContent = "Circle size = farmer density";
+
   const farmers = state.farmers;
   const countyCounts = {};
   farmers.forEach(f => { countyCounts[f.county] = (countyCounts[f.county] || 0) + 1; });
@@ -161,6 +278,20 @@ function renderMap() {
         <text x="${pos.x}" y="${pos.y + 14}" text-anchor="middle" font-size="3" fill="currentColor" class="text-gray-500 dark:text-gray-400">${name}</text>`;
     }).join("")}
   `;
+}
+
+// ==============================
+// Render Map (auto-detect Google Maps vs SVG)
+// ==============================
+function renderMap() {
+  if (!document.getElementById("kenya-map")) return;
+  if (_mapsLoaded && window.google?.maps) {
+    renderGoogleMap();
+  } else if (GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== "GOOGLE_MAPS_DEMO_KEY" && !_mapsLoaded) {
+    loadGoogleMaps().then(renderGoogleMap).catch(renderSvgMap);
+  } else {
+    renderSvgMap();
+  }
 }
 
 // ==============================
