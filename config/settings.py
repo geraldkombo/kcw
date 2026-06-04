@@ -18,26 +18,10 @@ class Settings(BaseSettings):
     )
 
     # Database
-    database_url: str = Field(default="sqlite:///data/kcw.db")
+    database_url: str = Field(default="sqlite:///data/frk.db")
     neo4j_uri: str = Field(default="bolt://localhost:7687")
     neo4j_user: str = Field(default="neo4j")
     neo4j_password: str = Field(default="")
-    neo4j_max_connection_pool_size: int = Field(default=50, ge=1, le=200)
-
-    # Featherless AI
-    featherless_api_key: str | None = Field(default=None)
-    featherless_base_url: str = Field(default="https://api.featherless.ai/v1")
-    featherless_model: str = Field(default="meta-llama/llama-3.1-8b-instruct")
-
-    # Masumi x402 (Cardano)
-    masumi_api_url: str = Field(default="https://payment-service.masumi.network")
-    masumi_wallet_address: str = Field(default="")
-    masumi_wallet_mnemonic: str = Field(default="")
-    cardano_network: Literal["preprod", "mainnet"] = Field(default="preprod")
-    usdm_contract_addr: str = Field(default="")
-
-    # Lovable (optional)
-    lovable_api_key: str | None = Field(default=None)
 
     # App
     api_host: str = Field(default="0.0.0.0")
@@ -50,10 +34,18 @@ class Settings(BaseSettings):
     request_id_header: str = Field(default="X-Request-ID")
     request_max_body_mb: int = Field(default=10, ge=1, le=100)
 
-    # Securitisation
-    securitisation_min_pool_size: int = Field(default=100, ge=1)
-    securitisation_target_rating: str = Field(default="BBB-")
-    default_currency: str = Field(default="KES")
+    # Featherless AI (optional LLM augmentation)
+    featherless_api_key: str | None = Field(default=None)
+    featherless_base_url: str = Field(default="https://api.featherless.ai/v1")
+    featherless_model: str = Field(default="meta-llama/llama-3.1-8b-instruct")
+
+    # Masumi x402 (decentralised micropayments)
+    masumi_api_url: str = Field(default="https://payment-service.masumi.network")
+    masumi_wallet_address: str = Field(default="")
+    masumi_wallet_mnemonic: str = Field(default="")
+
+    # Google Maps Platform (Solar API)
+    google_maps_api_key: str | None = Field(default=None)
 
     # Data
     data_dir: Path = Field(default=Path("data"))

@@ -3,16 +3,16 @@
   <img src="https://img.shields.io/badge/FastAPI-0.136.3-009688?logo=fastapi&logoColor=white" alt="FastAPI 0.136.3">
   <img src="https://img.shields.io/badge/Neo4j-5.26.0-008CC1?logo=neo4j&logoColor=white" alt="Neo4j 5.26.0">
   <img src="https://img.shields.io/badge/Cardano-x402-0033AD?logo=cardano&logoColor=white" alt="Cardano x402">
-  <img src="https://img.shields.io/badge/tests-105/105-success" alt="105 tests passing">
+  <img src="https://img.shields.io/badge/tests-112/112-success" alt="112 tests passing">
   <img src="https://img.shields.io/badge/lint-passing-success" alt="lint passing">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
   <img src="https://img.shields.io/badge/Mercy_Corps_AgriFin-ADF2_Aligned-2E7D32" alt="ADF2 Aligned">
 </p>
 
-<h1 align="center">Kilimo Credit Web (KCW)</h1>
-<p align="center"><strong>Decentralised AI-Agent Infrastructure for Smallholder Agricultural Securitisation</strong></p>
+<h1 align="center">Food Roots KE (FRK)</h1>
+<p align="center"><strong>Traditional Food Intelligence System for Kenya</strong></p>
 <p align="center">
-  <em>Mercy Corps AgriFin AI for Agriculture Hackathon — 5 Tracks | First Prize Entry</em>
+  <em>Mercy Corps AgriFin AI for Agriculture — 5 Tracks | Cross-Cutting System</em>
 </p>
 
 ---
@@ -33,7 +33,7 @@
 - [Deployment](#-deployment)
 - [Project Structure](#-project-structure)
 - [What Was Used (May 2026)](#-what-was-used-may-2026)
-- [Hackathon Track](#-hackathon-track)
+- [Challenge Track](#-challenge-track)
 
 ---
 
@@ -43,7 +43,7 @@
 
 In May 2026, Kenya's Parliamentary Budget Committee heard that **Climate Smart Agriculture programs were zero-funded** in the 2026-2027 budget, **crop insurance received no allocation**, and the government had moved **~75M KES from development budgets to disaster response** in 2024 alone. The witness's central question: *"Should we finance adaptation today or respond to disasters tomorrow?"*
 
-KCW is the infrastructure that answers that question — by making climate-smart agriculture data-driven, verifiable, and investable at scale.
+FRK is the infrastructure that answers that question — by making climate-smart agriculture data-driven, verifiable, and investable at scale.
 
 - Banks allocate **<5% of lending** to agriculture despite the sector contributing **25%+ of GDP**
 - **54% of farmers** cite high interest rates as the primary barrier to credit
@@ -57,7 +57,7 @@ The **May 2026 Apollo Agriculture transaction** — Kenya's first private local-
 
 ## 💡 Solution
 
-KCW is an **AI Agriculture Investment System** — a distributed intelligence network of 12 specialised AI agents that transforms raw satellite data, soil intelligence, market prices, and cooperative dynamics into autonomous agricultural investment recommendations. It automates the full agricultural investment lifecycle: satellite intelligence → land suitability → water optimization → seed quality → market pricing → cooperative management → investment decision. **Systems, not apps. AI makes agriculture investments.**
+FRK is an **Traditional Food Intelligence System** — a distributed intelligence network of 12 specialised AI agents that transforms raw satellite data, soil intelligence, market prices, and cooperative dynamics into autonomous agricultural investment recommendations. It automates the full agricultural investment lifecycle: satellite intelligence → land suitability → water optimization → seed quality → market pricing → cooperative management → investment decision. **Systems, not apps. AI makes agriculture investments.**
 
 ### Key Innovations
 
@@ -284,7 +284,7 @@ A **mobile-first, dark-mode-ready** single-page application with **Swahili/Engli
 
 | Feature | Implementation |
 |---|---|
-| **Multi-stage Docker** | Builder (pip install) → Runtime (non-root `kcw` user, 4 workers) |
+| **Multi-stage Docker** | Builder (pip install) → Runtime (non-root `FRK` user, 4 workers) |
 | **Health checks** | Liveness (`/health`) + Readiness (`/ready`) probes |
 | **Graceful shutdown** | SIGTERM/SIGINT handlers |
 | **Nginx reverse proxy** | TLS termination, `limit_req` (60r/s API), `least_conn` upstream |
@@ -416,7 +416,7 @@ docker compose logs -f api
 ## 📁 Project Structure
 
 ```
-kcw/
+FRK/
 ├── agents/                # 12 AI agents
 │   ├── orchestrator.py    # Master orchestrator (pipeline)
 │   ├── onboarding_agent.py
@@ -453,7 +453,7 @@ kcw/
 │   ├── app.js             # ES module: state, API, mock data, charts
 │   └── i18n.js            # EN/SW translations (60+ keys each)
 ├── lovable/               # Lovable MCP integration
-│   ├── KCW_LOVABLE_SYSTEM_PROMPT.md  # Full system prompt for Lovable
+│   ├── FRK_LOVABLE_SYSTEM_PROMPT.md  # Full system prompt for Lovable
 │   ├── DEPLOY_INSTRUCTIONS.md        # Step-by-step Lovable deployment guide
 │   └── dashboard_prompt.md           # Original dashboard prompt
 ├── agriculture_intelligence/  # 7 intelligence subsystems
@@ -507,9 +507,9 @@ kcw/
 
 ### 2026 Technologies Integrated
 
-| Technology | Release Date | Role in KCW |
+| Technology | Release Date | Role in FRK |
 |---|---|---|---|
-| **Neo4j Cypher 25 SEARCH** | v2026.01 (Jan 27, 2026) | Native Cypher SEARCH clause replacing `db.index.vector.queryNodes()` procedure. In-index vector filtering: Preview in v2026.01, GA in v2026.02. Neo4j does not include Masumi or Lovable — these are separate technologies KCW integrates. Sub-200ms borrower lookups at 10M+ nodes (Neo4j benchmarked). |
+| **Neo4j Cypher 25 SEARCH** | v2026.01 (Jan 27, 2026) | Native Cypher SEARCH clause replacing `db.index.vector.queryNodes()` procedure. In-index vector filtering: Preview in v2026.01, GA in v2026.02. Neo4j does not include Masumi or Lovable — these are separate technologies FRK integrates. Sub-200ms borrower lookups at 10M+ nodes (Neo4j benchmarked). |
 | **Neo4j Aura Agent** | GA February 2026 (Gemini 2.5 Flash) | Ontology-driven GraphRAG agent construction, $0.35/agent/hr |
 | **Featherless Managed OpenClaw** | March 17–20, 2026 ($20M Series A Apr 30) | 24/7 sandboxed agent runtime, 30K+ models, $100/mo flat (or zero-cost logistic regression fallback) |
 | **Masumi x402 on Cardano** | Merged April 23, 2026 (274 commits) | HTTP 402 payment gateway, MIP-003 escrow — backed by Visa, MasterCard, Stripe, AWS, Google, Coinbase, Cloudflare, Adyen, Amex, Circle, Fiserv, Shopify, Solana |
@@ -557,19 +557,17 @@ Tailwind CSS     latest     (CDN, always latest)
 
 ---
 
-## 🏆 Winning Entry — Mercy Corps AgriFin AI for Agriculture Hackathon
+## 🏆 Entry — Mercy Corps AgriFin AI for Agriculture
 
-> **First Prize Submission** — Hackathon 2 Days, Nairobi | 4-Week Pre-Hackathon Training
->
 > **Evaluation:** User Relevance | Feasibility & Scalability | Inclusivity & Gender Responsiveness
 >
 > **Challenge Tracks:** Cross-cutting all 5 — Primary: **Track 4 (Data and Decision Support)**
 
 ### Challenge Track Alignment
 
-KCW is the only entry that spans **all 5 challenge tracks** because it is an AI agricultural investment system, not a single-purpose app:
+FRK is the only entry that spans **all 5 challenge tracks** because it is an AI agricultural investment system, not a single-purpose app:
 
-| Track | KCW Coverage | Proof Point |
+| Track | FRK Coverage | Proof Point |
 |---|---|---|
 | **1. Climate-smart agriculture & farmer advisory** | Real-time NASA POWER satellite data — soil moisture (GWETROOT), precipitation (PRECTOTCORR), temperature (T2M), solar (ALLSKY_SFC_SW_DWN). Drought risk scoring, irrigation scheduling, equatorial solar advantage (+200%). | Verified live: Kiambu T2M=18.2°C, precip=5.0mm/day, GWETROOT=0.67, solar=17.2 kWh/m²/day |
 | **2. Last-mile service delivery** | SMS/USSD onboarding (Swahili), M-Pesa disbursement, Lovable mobile app (basic smartphones, 320px+), offline mock fallback, Swahili/English i18n | Frontend: 44px touch targets, responsive, dark mode, offline badge when API unreachable |
@@ -579,23 +577,23 @@ KCW is the only entry that spans **all 5 challenge tracks** because it is an AI 
 
 ### Evaluation Criteria — Direct Alignment
 
-| Criterion | KCW Delivery | Evidence |
+| Criterion | FRK Delivery | Evidence |
 |---|---|---|
 | **User Relevance** | Built for farmer-facing organizations (cooperatives, MFIs, agribusinesses). Farmers submit via SMS/USSD. Cooperative managers get governance scores. Investment advisors get ranked recommendations. | 12 agents process full pipeline in <3 seconds. CooperativeManager saves KES 10-15/L on milk pricing. |
 | **Feasibility & Scalability** | 105 passing tests. Docker-compose production. Free NASA POWER API (179K req/day). Zero-cost logistic regression fallback (no API bill). InMemoryRepository when Neo4j unavailable. | Deployable on $5 VPS. Scales to 10M+ nodes via Neo4j Cypher 25. 274% portfolio ROI demonstrated. |
 | **Inclusivity & Gender Responsiveness** | chama (-0.40 PD) and SACCO (-0.55 PD) coefficients structurally favour women (50%+ membership). Swahili i18n. SMS/USSD for non-smartphone users. Cooperative governance prevents price discrimination. | 53% women in demo data. Gender-disaggregated scoring baked into model, not checkbox. CoAmana case study: 60% women. |
 
-### Why KCW Wins First Prize
+### Why FRK Wins First Prize
 
-1. **It spans all 5 tracks** — No other entry can claim real NASA satellite data (Track 1), last-mile delivery (Track 2), financial inclusion scoring (Track 3), autonomous investment decisions (Track 4), AND crop intelligence (Track 5) in a single integrated system. KCW doesn't choose a track — it owns them all.
+1. **It spans all 5 tracks** — No other entry can claim real NASA satellite data (Track 1), last-mile delivery (Track 2), financial inclusion scoring (Track 3), autonomous investment decisions (Track 4), AND crop intelligence (Track 5) in a single integrated system. FRK doesn't choose a track — it owns them all.
 
 2. **It's real** — 105 passing tests, zero deprecation warnings, docker-compose production deployment, nginx with rate limiting + SSL, structured JSON logging + middleware pipeline. Not a mockup. A deployable system that runs today.
 
-3. **It's 2026-native** — Neo4j Cypher 25 SEARCH native syntax (v2026.01, Jan 27), Neo4j Aura Agent at $0.35/agent/hr (Feb), Managed OpenClaw at $100/mo flat (Mar 17), Cardano x402 merged (Apr 23), Lovable MCP Server (May 7). These are independent technologies — Neo4j does not natively include Masumi or Lovable — and KCW integrates all of them into one agricultural investment pipeline. The x402 protocol is backed by Visa, MasterCard, Stripe, AWS, Google, Coinbase, Cloudflare — the global financial system.
+3. **It's 2026-native** — Neo4j Cypher 25 SEARCH native syntax (v2026.01, Jan 27), Neo4j Aura Agent at $0.35/agent/hr (Feb), Managed OpenClaw at $100/mo flat (Mar 17), Cardano x402 merged (Apr 23), Lovable MCP Server (May 7). These are independent technologies — Neo4j does not natively include Masumi or Lovable — and FRK integrates all of them into one agricultural investment pipeline. The x402 protocol is backed by Visa, MasterCard, Stripe, AWS, Google, Coinbase, Cloudflare — the global financial system.
 
 4. **It's zero-cost to deploy** — Full pipeline runs with zero API bills (logistic regression fallback). InMemoryRepository when Neo4j is unavailable. Deploy on a $5 VPS. Free NASA POWER satellite data — no auth required.
 
-5. **It uses the same NASA data Mercy Corps uses** — Mercy Corps AgriFin has a formal Space Act Agreement with NASA for "satellite-to-soil" agricultural insights. KCW integrates the same NASA POWER API that Mercy Corps champions. This is not speculative — it's aligned with AgriFin's own technology roadmap.
+5. **It uses the same NASA data Mercy Corps uses** — Mercy Corps AgriFin has a formal Space Act Agreement with NASA for "satellite-to-soil" agricultural insights. FRK integrates the same NASA POWER API that Mercy Corps champions. This is not speculative — it's aligned with AgriFin's own technology roadmap.
 
 6. **It's self-healing** — Frontend auto-fallback to mock data (15 farmers, offline mode badge). Neo4j → InMemoryRepository graceful degradation. Every component handles failure gracefully.
 
@@ -614,10 +612,10 @@ KCW is the only entry that spans **all 5 challenge tracks** because it is an AI 
 | Securitisation pool builder | `POST /api/v1/pools/build` → tranche-structured BBB- pool |
 | x402 escrow lifecycle | `POST /api/v1/payments/escrow` → FundsLocked → RefundAuthorized → Completed |
 | Audit trail | `GET /api/v1/audit` → SHA-256 verified decision history |
-| Pitch deck | `KCW_PITCH_DECK.md` — 10 slides, 5 minutes |
-| Demo script | `KCW_DEMO_SCRIPT.md` — 4-minute screen recording guide |
-| Judging rubric | `KCW_JUDGING_RUBRIC.md` — criterion-by-criterion alignment |
-| Track alignment | `KCW_TRACK_ALIGNMENT.md` — all 5 tracks mapped |
+| Pitch deck | `FRK_PITCH_DECK.md` — 10 slides, 5 minutes |
+| Demo script | `FRK_DEMO_SCRIPT.md` — 4-minute screen recording guide |
+| Judging rubric | `FRK_JUDGING_RUBRIC.md` — criterion-by-criterion alignment |
+| Track alignment | `FRK_TRACK_ALIGNMENT.md` — all 5 tracks mapped |
 
 ---
 
@@ -631,3 +629,5 @@ MIT — see [LICENSE](LICENSE) for details.
   <strong>Built with 🌾 for Kenyan smallholder farmers</strong><br>
   <em>Kilimo ni Uhai — Agriculture is Life</em>
 </p>
+
+

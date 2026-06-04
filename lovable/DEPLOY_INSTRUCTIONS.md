@@ -1,4 +1,4 @@
-# KCW Deployment Guide — Lovable Frontend + Render Backend
+# FRK Deployment Guide — Lovable Frontend + Render Backend
 
 ## Architecture
 
@@ -16,7 +16,7 @@ The frontend communicates with the backend via the `API_BASE` variable in `app.j
 1. Push this repo to GitHub
 2. Go to https://render.com → New Web Service → Connect your GitHub repo
 3. Settings:
-   - **Name**: `kcw-api`
+   - **Name**: `FRK-api`
    - **Region**: Ohio (US East) — closest to Kenya
    - **Branch**: `main`
    - **Runtime**: Python 3
@@ -25,11 +25,11 @@ The frontend communicates with the backend via the `API_BASE` variable in `app.j
    - **Health Check Path**: `/health`
    - **Plan**: Free
 4. In Environment Variables, add:
-   - `DATABASE_URL` = `sqlite:///data/kcw.db` (SQLite is file-based; Render ephemeral storage resets on restart — ok for demo)
+   - `DATABASE_URL` = `sqlite:///data/FRK.db` (SQLite is file-based; Render ephemeral storage resets on restart — ok for demo)
    - `LOG_LEVEL` = `INFO`
    - `CORS_ORIGINS` = `*` (allows Lovable frontend to call API)
 5. Deploy → wait 2-3 minutes
-6. Your API is live at `https://kcw-api.onrender.com`
+6. Your API is live at `https://FRK-api.onrender.com`
 
 > **Note**: Render's free tier spins down after 15 min idle. First request after idle takes ~30s to wake. Fine for demo/pitch.
 
@@ -37,8 +37,8 @@ The frontend communicates with the backend via the `API_BASE` variable in `app.j
 
 1. Go to https://lovable.dev/projects
 2. Click "Create Project" → "Import from ZIP"
-3. Upload `kcw.zip` (includes backend + frontend code)
-4. Paste the contents of `KCW_LOVABLE_SYSTEM_PROMPT.md` as the project prompt
+3. Upload `FRK.zip` (includes backend + frontend code)
+4. Paste the contents of `FRK_LOVABLE_SYSTEM_PROMPT.md` as the project prompt
 5. Click "Create"
 6. Lovable generates the production dashboard
 
@@ -46,7 +46,7 @@ The frontend communicates with the backend via the `API_BASE` variable in `app.j
 
 1. In the Lovable project, open `app.js`
 2. Find `const API_BASE =` at the top
-3. Change it to `const API_BASE = 'https://kcw-api.onrender.com'`
+3. Change it to `const API_BASE = 'https://FRK-api.onrender.com'`
 4. Deploy the Lovable project
 
 ## Step 4: Verify
@@ -69,7 +69,7 @@ uvicorn api.main:app --reload --port 8000
 ## File Structure for Lovable
 
 ```
-kcw/
+FRK/
 ├── frontend/        # Your target — Lovable rewrites this
 ├── lovable/         # Prompts and instructions (read-only reference)
 ├── api/             # FastAPI backend (do not modify via Lovable)
@@ -79,3 +79,5 @@ kcw/
 ├── docker-compose.yml
 └── requirements.txt
 ```
+
+

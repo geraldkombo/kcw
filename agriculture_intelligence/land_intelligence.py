@@ -58,6 +58,204 @@ class LandIntelligence:
             "soil_moisture_min": 0.1, "soil_moisture_opt": 0.3,
             "growing_days": 90, "water_need_mm_total": 200,
         },
+        # Indigenous / traditional food plants (Maundu et al., 1999)
+        "amaranth": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 24,
+            "precip_min": 2.0, "precip_max": 6.0, "precip_opt": 3.5,
+            "solar_min": 3.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 45, "water_need_mm_total": 200,
+        },
+        "black_nightshade": {
+            "temp_min": 16, "temp_max": 28, "temp_opt": 22,
+            "precip_min": 3.0, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 6.0,
+            "soil_moisture_min": 0.3, "soil_moisture_opt": 0.5,
+            "growing_days": 35, "water_need_mm_total": 160,
+        },
+        "spider_plant": {
+            "temp_min": 18, "temp_max": 30, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.25, "soil_moisture_opt": 0.45,
+            "growing_days": 40, "water_need_mm_total": 180,
+        },
+        "cowpea_leaves": {
+            "temp_min": 18, "temp_max": 35, "temp_opt": 26,
+            "precip_min": 1.5, "precip_max": 5.0, "precip_opt": 3.0,
+            "solar_min": 4.0, "solar_max": 9.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 60, "water_need_mm_total": 250,
+        },
+        "jute_mallow": {
+            "temp_min": 20, "temp_max": 35, "temp_opt": 28,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.25, "soil_moisture_opt": 0.5,
+            "growing_days": 40, "water_need_mm_total": 200,
+        },
+        "pumpkin_leaves": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 25,
+            "precip_min": 2.0, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 60, "water_need_mm_total": 250,
+        },
+        "sorghum": {
+            "temp_min": 20, "temp_max": 38, "temp_opt": 28,
+            "precip_min": 1.5, "precip_max": 5.0, "precip_opt": 3.0,
+            "solar_min": 5.0, "solar_max": 10.0,
+            "soil_moisture_min": 0.1, "soil_moisture_opt": 0.3,
+            "growing_days": 120, "water_need_mm_total": 350,
+        },
+        "finger_millet": {
+            "temp_min": 18, "temp_max": 30, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 120, "water_need_mm_total": 350,
+        },
+        "pigeon_pea": {
+            "temp_min": 18, "temp_max": 35, "temp_opt": 26,
+            "precip_min": 1.5, "precip_max": 5.0, "precip_opt": 3.0,
+            "solar_min": 5.0, "solar_max": 9.0,
+            "soil_moisture_min": 0.1, "soil_moisture_opt": 0.3,
+            "growing_days": 150, "water_need_mm_total": 400,
+        },
+        "bambara_nut": {
+            "temp_min": 20, "temp_max": 35, "temp_opt": 28,
+            "precip_min": 2.0, "precip_max": 5.0, "precip_opt": 3.0,
+            "solar_min": 5.0, "solar_max": 9.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.3,
+            "growing_days": 130, "water_need_mm_total": 350,
+        },
+        "sweet_potato": {
+            "temp_min": 15, "temp_max": 30, "temp_opt": 22,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 120, "water_need_mm_total": 350,
+        },
+        "cassava": {
+            "temp_min": 18, "temp_max": 35, "temp_opt": 26,
+            "precip_min": 2.0, "precip_max": 7.0, "precip_opt": 4.5,
+            "solar_min": 4.0, "solar_max": 9.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 300, "water_need_mm_total": 800,
+        },
+        "yam": {
+            "temp_min": 20, "temp_max": 34, "temp_opt": 27,
+            "precip_min": 3.0, "precip_max": 7.0, "precip_opt": 5.0,
+            "solar_min": 3.0, "solar_max": 6.0,
+            "soil_moisture_min": 0.3, "soil_moisture_opt": 0.5,
+            "growing_days": 240, "water_need_mm_total": 700,
+        },
+        "baobab": {
+            "temp_min": 20, "temp_max": 40, "temp_opt": 30,
+            "precip_min": 1.0, "precip_max": 4.0, "precip_opt": 2.0,
+            "solar_min": 6.0, "solar_max": 11.0,
+            "soil_moisture_min": 0.05, "soil_moisture_opt": 0.15,
+            "growing_days": 365, "water_need_mm_total": 500,
+        },
+        "tamarind": {
+            "temp_min": 22, "temp_max": 40, "temp_opt": 30,
+            "precip_min": 1.0, "precip_max": 4.0, "precip_opt": 2.0,
+            "solar_min": 6.0, "solar_max": 11.0,
+            "soil_moisture_min": 0.05, "soil_moisture_opt": 0.15,
+            "growing_days": 365, "water_need_mm_total": 400,
+        },
+        # Ojwang (2020) — Homa Bay traditional vegetables
+        "dek": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 35, "water_need_mm_total": 180,
+        },
+        "mito": {
+            "temp_min": 18, "temp_max": 30, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.25, "soil_moisture_opt": 0.45,
+            "growing_days": 40, "water_need_mm_total": 200,
+        },
+        "boo": {
+            "temp_min": 16, "temp_max": 30, "temp_opt": 23,
+            "precip_min": 2.0, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 45, "water_need_mm_total": 220,
+        },
+        "atipa": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 25,
+            "precip_min": 3.0, "precip_max": 6.0, "precip_opt": 4.5,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.25, "soil_moisture_opt": 0.5,
+            "growing_days": 30, "water_need_mm_total": 160,
+        },
+        "odielo": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 35, "water_need_mm_total": 180,
+        },
+        "ndemra": {
+            "temp_min": 16, "temp_max": 34, "temp_opt": 25,
+            "precip_min": 2.0, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 40, "water_need_mm_total": 200,
+        },
+        "alikra": {
+            "temp_min": 18, "temp_max": 32, "temp_opt": 24,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 35, "water_need_mm_total": 180,
+        },
+        "ng_or": {
+            "temp_min": 18, "temp_max": 34, "temp_opt": 26,
+            "precip_min": 2.0, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 110, "water_need_mm_total": 350,
+        },
+        "mapera": {
+            "temp_min": 18, "temp_max": 35, "temp_opt": 26,
+            "precip_min": 2.0, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 4.0, "solar_max": 9.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 240, "water_need_mm_total": 600,
+        },
+        "slenderleaf": {
+            "temp_min": 16, "temp_max": 30, "temp_opt": 23,
+            "precip_min": 2.5, "precip_max": 6.0, "precip_opt": 4.0,
+            "solar_min": 3.0, "solar_max": 7.0,
+            "soil_moisture_min": 0.2, "soil_moisture_opt": 0.4,
+            "growing_days": 60, "water_need_mm_total": 250,
+        },
+        "desert_date": {
+            "temp_min": 24, "temp_max": 42, "temp_opt": 32,
+            "precip_min": 0.5, "precip_max": 3.0, "precip_opt": 1.5,
+            "solar_min": 7.0, "solar_max": 12.0,
+            "soil_moisture_min": 0.05, "soil_moisture_opt": 0.15,
+            "growing_days": 365, "water_need_mm_total": 300,
+        },
+        "bird_plum": {
+            "temp_min": 22, "temp_max": 40, "temp_opt": 30,
+            "precip_min": 0.5, "precip_max": 3.0, "precip_opt": 1.5,
+            "solar_min": 6.0, "solar_max": 11.0,
+            "soil_moisture_min": 0.05, "soil_moisture_opt": 0.15,
+            "growing_days": 365, "water_need_mm_total": 300,
+        },
+        "vitex_black_plum": {
+            "temp_min": 20, "temp_max": 34, "temp_opt": 26,
+            "precip_min": 2.0, "precip_max": 5.5, "precip_opt": 3.5,
+            "solar_min": 4.0, "solar_max": 8.0,
+            "soil_moisture_min": 0.15, "soil_moisture_opt": 0.35,
+            "growing_days": 240, "water_need_mm_total": 600,
+        },
     }
 
     SOIL_HEALTH_INDICATORS = {
@@ -142,6 +340,17 @@ class LandIntelligence:
         base_yields_tonnes_ha = {
             "Maize": 2.5, "Beans": 1.2, "Tea": 3.0, "Coffee": 1.5,
             "Wheat": 2.0, "Sunflower": 1.8, "Drought Resistant Seed": 1.0,
+            # Indigenous / traditional food plants (Maundu, 1999)
+            "Amaranth": 3.0, "Black Nightshade": 2.5, "Spider Plant": 2.5,
+            "Cowpea Leaves": 2.0, "Jute Mallow": 2.5, "Pumpkin Leaves": 3.0,
+            "Finger Millet": 1.8, "Pigeon Pea": 1.5, "Bambara Nut": 1.2,
+            "Sweet Potato": 4.0, "Cassava": 5.0, "Yam": 3.0,
+            "Baobab": 0.5, "Tamarind": 0.8,
+            # Ojwang (2020) — Homa Bay traditional crops
+            "Dek": 2.5, "Mito": 2.5, "Boo": 3.0, "Atipa": 2.0, "Odielo": 2.5,
+            "Ndemra": 2.5, "Alikra": 2.5, "Ng'Or": 1.5,
+            "Mapera": 2.0, "Ochuoga": 1.0, "Akuno": 0.8, "Sangla": 0.8, "Nyatonglo": 0.8,
+            "Slenderleaf": 2.5, "Desert Date": 0.8, "Bird Plum": 0.6, "Vitex Black Plum": 2.0,
         }
         base = base_yields_tonnes_ha.get(crop_data["crop"], 1.5)
         suitability_factor = 0.5 + 0.5 * crop_data["suitability_score"]
@@ -151,6 +360,17 @@ class LandIntelligence:
         market_prices_kes_tonne = {
             "Maize": 45000, "Beans": 85000, "Tea": 200000, "Coffee": 350000,
             "Wheat": 40000, "Sunflower": 60000, "Drought Resistant Seed": 80000,
+            # Indigenous / traditional food plants (Maundu, 1999)
+            "Amaranth": 60000, "Black Nightshade": 70000, "Spider Plant": 65000,
+            "Cowpea Leaves": 55000, "Jute Mallow": 58000, "Pumpkin Leaves": 50000,
+            "Finger Millet": 65000, "Pigeon Pea": 70000, "Bambara Nut": 80000,
+            "Sweet Potato": 35000, "Cassava": 25000, "Yam": 45000,
+            "Baobab": 150000, "Tamarind": 80000,
+            # Ojwang (2020) — Homa Bay traditional crops
+            "Dek": 55000, "Mito": 52000, "Boo": 50000, "Atipa": 48000, "Odielo": 53000,
+            "Ndemra": 51000, "Alikra": 54000, "Ng'Or": 60000,
+            "Mapera": 40000, "Ochuoga": 35000, "Akuno": 30000, "Sangla": 28000, "Nyatonglo": 32000,
+            "Slenderleaf": 50000, "Desert Date": 120000, "Bird Plum": 90000, "Vitex Black Plum": 50000,
         }
         price_per_tonne = market_prices_kes_tonne.get(crop_data["crop"], 50000)
 

@@ -1,5 +1,4 @@
-from masumi.x402_client import MasumiX402Client, EscrowState
-from masumi.escrow_lifecycle import EscrowLifecycle
+from masumi.escrow_lifecycle import EscrowLifecycle, EscrowState
 from masumi.mip003_api import InputSchema, generate_mip003_endpoints
 
-__all__ = ["MasumiX402Client", "EscrowState", "EscrowLifecycle", "InputSchema", "generate_mip003_endpoints"]
+__all__ = ["EscrowLifecycle", "EscrowState", "InputSchema", "generate_mip003_endpoints"]

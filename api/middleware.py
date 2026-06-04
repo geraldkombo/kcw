@@ -13,7 +13,7 @@ from starlette.types import ASGIApp
 from config.log import get_request_id, set_request_id
 from config.settings import settings
 
-logger = logging.getLogger("kcw.http")
+logger = logging.getLogger("frk.http")
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):

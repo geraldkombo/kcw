@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 import httpx
 
-logger = logging.getLogger("kcw.satellite")
+logger = logging.getLogger("frk.satellite")
 
 POWER_BASE_URL = "https://power.larc.nasa.gov/api/temporal/daily/point"
 

@@ -10,8 +10,9 @@ from typing import Any, Optional
 
 from neo4j import AsyncGraphDatabase, exceptions as neo4j_exc
 from config.settings import settings
+from database.migrations import run_pending
 
-logger = logging.getLogger("kcw.db")
+logger = logging.getLogger("frk.db")
 
 
 class Repository:
@@ -43,7 +44,7 @@ class SQLiteRepository(Repository):
     """File-backed SQLite repository for production use without Neo4j."""
 
     def __init__(self, db_path: str | Path | None = None) -> None:
-        self._path = Path(db_path or settings.data_dir / "kcw.db")
+        self._path = Path(db_path or settings.data_dir / "frk.db")
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self._conn: Optional[sqlite3.Connection] = None
         self._connected = False
@@ -65,35 +66,11 @@ class SQLiteRepository(Repository):
 
     def _create_tables(self) -> None:
         assert self._conn is not None
-        self._conn.executescript("""
-            CREATE TABLE IF NOT EXISTS farmers (
-                farmer_id TEXT PRIMARY KEY,
-                data TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS loans (
-                loan_id TEXT PRIMARY KEY,
-                farmer_id TEXT NOT NULL,
-                data TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS pools (
-                pool_id TEXT PRIMARY KEY,
-                data TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS audit_entries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                farmer_id TEXT,
-                data TEXT NOT NULL,
-                timestamp TEXT NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_loans_farmer ON loans(farmer_id);
-            CREATE INDEX IF NOT EXISTS idx_audit_farmer ON audit_entries(farmer_id);
-        """)
-        self._conn.commit()
+        applied = run_pending(self._conn)
+        if applied:
+            logger.info("applied %d pending migration(s): %s", len(applied), ", ".join(applied))
+        else:
+            logger.debug("schema is up to date")
 
     async def disconnect(self) -> None:
         if self._conn is not None:

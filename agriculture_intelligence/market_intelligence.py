@@ -10,6 +10,32 @@ from satellite.power_client import PowerClient
 class MarketIntelligence:
     """Finds best prices, matches contract farming opportunities, and optimises input sourcing."""
 
+        # Retail markup data from mid-2026 spot market surveys
+    RETAIL_MARKUPS = {
+        "black_nightshade": {"markup_pct": 127, "highest_retail_kes_kg": 600, "highest_market": "Bondo",
+            "wholesale_kes_kg": 33.47, "retail_kes_kg": 76.25},
+        "amaranth": {"markup_pct": 130, "highest_retail_kes_kg": 150, "highest_market": "Kibuye (Kisumu)",
+            "wholesale_kes_kg": 22.41, "retail_kes_kg": 51.51},
+        "cowpea_leaves": {"markup_pct": 143, "highest_retail_kes_kg": 170, "highest_market": "Kimilili",
+            "wholesale_kes_kg": 22.76, "retail_kes_kg": 55.42},
+        "spider_plant": {"markup_pct": 57, "highest_retail_kes_kg": None, "highest_market": None,
+            "wholesale_kes_kg": 38.00, "retail_kes_kg": 60.00},
+        "pumpkin_leaves": {"markup_pct": 40, "highest_retail_kes_kg": None, "highest_market": None,
+            "wholesale_kes_kg": 50.00, "retail_kes_kg": 70.00},
+    }
+
+    VALUE_ADDED_PRICING = {
+        "precooked_aiv_pack_400g": {"retail_kes": 400, "equivalent_fresh_kes_kg": 55,
+            "crop_types": ["black_nightshade", "spider_plant", "cowpea_leaves", "amaranth"],
+            "note": "Cleaned, blanched, fermented, vacuum-packed. Targets urban middle class convenience demand."},
+    }
+
+    # Women constitute ~77% of traders in the Kenyan AIV sector
+    WOMEN_TRADERS_SHARE_PCT = 77
+
+    # ~50% of Nairobi households receive food remittances from rural relatives
+    FOOD_REMITTANCE_NBO_HH_PCT = 50
+
     # Reference market prices (KES/tonne) — in production, these come from live APIs
     MARKET_PRICES = {
         "maize": {"current": 45000, "high_30d": 52000, "low_30d": 38000, "trend": "stable"},
@@ -20,6 +46,39 @@ class MarketIntelligence:
         "sunflower": {"current": 60000, "high_30d": 70000, "low_30d": 50000, "trend": "up"},
         "milk_per_litre": {"current": 52, "high_30d": 58, "low_30d": 45, "trend": "stable"},
         "drought_resistant_seed": {"current": 80000, "high_30d": 90000, "low_30d": 65000, "trend": "up"},
+        # Indigenous / traditional food plants (Maundu, 1999)
+        "amaranth": {"current": 60000, "high_30d": 75000, "low_30d": 45000, "trend": "up"},
+        "black_nightshade": {"current": 70000, "high_30d": 85000, "low_30d": 55000, "trend": "up"},
+        "spider_plant": {"current": 65000, "high_30d": 80000, "low_30d": 50000, "trend": "up"},
+        "cowpea_leaves": {"current": 55000, "high_30d": 65000, "low_30d": 40000, "trend": "stable"},
+        "jute_mallow": {"current": 58000, "high_30d": 70000, "low_30d": 45000, "trend": "up"},
+        "pumpkin_leaves": {"current": 50000, "high_30d": 60000, "low_30d": 35000, "trend": "stable"},
+        "finger_millet": {"current": 65000, "high_30d": 80000, "low_30d": 50000, "trend": "up"},
+        "pigeon_pea": {"current": 70000, "high_30d": 85000, "low_30d": 55000, "trend": "stable"},
+        "bambara_nut": {"current": 80000, "high_30d": 95000, "low_30d": 60000, "trend": "up"},
+        "sweet_potato": {"current": 35000, "high_30d": 45000, "low_30d": 25000, "trend": "stable"},
+        "cassava": {"current": 25000, "high_30d": 35000, "low_30d": 18000, "trend": "stable"},
+        "yam": {"current": 45000, "high_30d": 55000, "low_30d": 35000, "trend": "stable"},
+        "baobab": {"current": 150000, "high_30d": 200000, "low_30d": 100000, "trend": "up"},
+        "tamarind": {"current": 80000, "high_30d": 100000, "low_30d": 60000, "trend": "up"},
+        # Ojwang (2020) — Homa Bay traditional crops
+        "dek": {"current": 55000, "high_30d": 65000, "low_30d": 40000, "trend": "stable"},
+        "mito": {"current": 52000, "high_30d": 62000, "low_30d": 38000, "trend": "stable"},
+        "boo": {"current": 50000, "high_30d": 60000, "low_30d": 35000, "trend": "stable"},
+        "atipa": {"current": 48000, "high_30d": 58000, "low_30d": 35000, "trend": "down"},
+        "odielo": {"current": 53000, "high_30d": 64000, "low_30d": 40000, "trend": "stable"},
+        "ndemra": {"current": 51000, "high_30d": 62000, "low_30d": 38000, "trend": "stable"},
+        "alikra": {"current": 54000, "high_30d": 65000, "low_30d": 40000, "trend": "stable"},
+        "ng_or": {"current": 60000, "high_30d": 75000, "low_30d": 45000, "trend": "stable"},
+        "mapera": {"current": 40000, "high_30d": 50000, "low_30d": 30000, "trend": "stable"},
+        "ochuoga": {"current": 35000, "high_30d": 45000, "low_30d": 25000, "trend": "down"},
+        "akuno": {"current": 30000, "high_30d": 40000, "low_30d": 20000, "trend": "down"},
+        "sangla": {"current": 28000, "high_30d": 36000, "low_30d": 18000, "trend": "down"},
+        "nyatonglo": {"current": 32000, "high_30d": 42000, "low_30d": 22000, "trend": "stable"},
+        "slenderleaf": {"current": 50000, "high_30d": 65000, "low_30d": 38000, "trend": "up"},
+        "desert_date": {"current": 120000, "high_30d": 150000, "low_30d": 80000, "trend": "up"},
+        "bird_plum": {"current": 90000, "high_30d": 110000, "low_30d": 60000, "trend": "stable"},
+        "vitex_black_plum": {"current": 50000, "high_30d": 65000, "low_30d": 35000, "trend": "stable"},
     }
 
     # Contract farming offers (marketplace)

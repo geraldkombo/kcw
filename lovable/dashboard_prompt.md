@@ -1,12 +1,12 @@
 # Lovable MCP Dashboard Prompt
 Use this prompt with Lovable MCP Server (Research Preview, May 7, 2026)
-to generate the KCW farmer dashboard.
+to generate the FRK farmer dashboard.
 
 Tools: create_project, deploy_project, send_message, get_project
 
 ## Prompt:
 
-"Create a single-page web dashboard for Kilimo Credit Web (KCW), an
+"Create a single-page web dashboard for Food Roots KE (FRK), an
 agricultural lending platform for Kenyan smallholder farmers. Use:
 - Tailwind CSS CDN for styling
 - Chart.js CDN for visualisations
@@ -67,3 +67,4 @@ Default `API_BASE = 'http://localhost:8000'` — change to your Render URL.
 - English + Swahili i18n toggle
 - Toast notifications for errors and successes
 - Under 500KB total bundle"
+

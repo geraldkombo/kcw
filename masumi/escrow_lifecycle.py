@@ -1,71 +1,44 @@
-"""Escrow lifecycle state machine for KCW loan disbursement.
-Mirrors Masumi Payment Service states with TxPipe-audited contracts.
-"""
+from __future__ import annotations
 
-from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Optional
 
 
 class EscrowState(str, Enum):
-    FUNDS_LOCKING_REQUESTED = "FundsLockingRequested"
-    FUNDS_LOCKED = "FundsLocked"
-    RESULT_SUBMITTED = "ResultSubmitted"
-    COMPLETED = "Completed"
-    REFUND_REQUESTED = "RefundRequested"
-    REFUND_AUTHORIZED = "RefundAuthorized"
-    REFUNDED = "Refunded"
-    DISPUTED = "Disputed"
-
-
-# Valid transitions
-ESCROW_TRANSITIONS = {
-    EscrowState.FUNDS_LOCKING_REQUESTED: [EscrowState.FUNDS_LOCKED],
-    EscrowState.FUNDS_LOCKED: [
-        EscrowState.RESULT_SUBMITTED,
-        EscrowState.REFUND_REQUESTED,
-    ],
-    EscrowState.RESULT_SUBMITTED: [
-        EscrowState.COMPLETED,
-        EscrowState.REFUND_AUTHORIZED,
-        EscrowState.DISPUTED,
-    ],
-    EscrowState.COMPLETED: [],
-    EscrowState.REFUND_REQUESTED: [EscrowState.REFUNDED, EscrowState.DISPUTED],
-    EscrowState.REFUND_AUTHORIZED: [EscrowState.REFUNDED],
-    EscrowState.REFUNDED: [],
-    EscrowState.DISPUTED: [EscrowState.REFUNDED, EscrowState.COMPLETED],
-}
+    INITIATED = "initiated"
+    LOCKED = "locked"
+    SUBMITTED = "submitted"
+    COMPLETED = "completed"
+    REFUND_AUTHORIZED = "refund_authorized"
 
 
 class EscrowLifecycle:
-    """Tracks and validates escrow state transitions."""
+    """Escrow state machine for x402 micropayments."""
 
-    def __init__(self, escrow_id: str, initial_state: EscrowState = EscrowState.FUNDS_LOCKING_REQUESTED):
+    VALID_TRANSITIONS: dict[EscrowState, list[EscrowState]] = {
+        EscrowState.INITIATED: [EscrowState.LOCKED],
+        EscrowState.LOCKED: [EscrowState.SUBMITTED, EscrowState.REFUND_AUTHORIZED],
+        EscrowState.SUBMITTED: [EscrowState.COMPLETED, EscrowState.REFUND_AUTHORIZED],
+        EscrowState.COMPLETED: [],
+        EscrowState.REFUND_AUTHORIZED: [EscrowState.COMPLETED],
+    }
+
+    def __init__(self, escrow_id: str, amount_lovelace: int) -> None:
         self.escrow_id = escrow_id
-        self._state = initial_state
-        self.history = [{"state": initial_state.value, "timestamp": datetime.now(timezone.utc).isoformat()}]
+        self.amount_lovelace = amount_lovelace
+        self.state = EscrowState.INITIATED
+        self.data_hash: Optional[str] = None
 
-    @property
-    def state(self) -> EscrowState:
-        return self._state
+    def transition(self, target: EscrowState) -> None:
+        allowed = self.VALID_TRANSITIONS.get(self.state, [])
+        if target not in allowed:
+            raise ValueError(f"Invalid transition: {self.state.value} -> {target.value}")
+        self.state = target
 
-    @state.setter
-    def state(self, new_state: EscrowState):
-        allowed = ESCROW_TRANSITIONS.get(self._state, [])
-        if new_state not in allowed:
-            raise ValueError(
-                f"Invalid transition: {self._state.value} -> {new_state.value}. "
-                f"Allowed: {[s.value for s in allowed]}"
-            )
-        self._state = new_state
-        self.history.append({
-            "state": new_state.value,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
-
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "escrow_id": self.escrow_id,
-            "current_state": self._state.value,
-            "history": self.history,
+            "amount_lovelace": self.amount_lovelace,
+            "state": self.state.value,
+            "data_hash": self.data_hash,
         }

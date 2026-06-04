@@ -11,7 +11,7 @@ services:
       - NEO4J_USER=${NEO4J_USER:-neo4j}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
     volumes:
-      - kcw_data:/app/data
+      - frk_data:/app/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend:/usr/share/nginx/html:ro
-      - kcw_ssl:/etc/nginx/ssl:ro
+      - frk_ssl:/etc/nginx/ssl:ro
     depends_on:
       api:
         condition: service_healthy
@@ -85,5 +85,5 @@ services:
 volumes:
   neo4j_data:
   neo4j_logs:
-  kcw_data:
-  kcw_ssl:
+  frk_data:
+  frk_ssl:

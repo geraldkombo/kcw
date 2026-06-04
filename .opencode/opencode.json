@@ -1,11 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "username": "KCW-Dev",
+  "username": "FRK-Dev",
   "default_agent": "build",
   "agent": {
     "build": {
       "mode": "primary",
-      "description": "Build and fix Kilimo Credit Web codebase — 76 tests, FastAPI, NASA POWER, Masumi x402, Neo4j",
+      "description": "Build and fix Food Roots KE codebase — 117 tests, FastAPI, traditional foods, NASA POWER, GraphRAG",
       "permission": {
         "edit": "allow",
         "bash": "allow",
@@ -19,6 +19,12 @@
     }
   },
   "instructions": ["AGENTS.md"],
+  "skills": [
+    ".opencode/skills/test-and-verify.skill.md",
+    ".opencode/skills/expand-traditional-foods.skill.md",
+    ".opencode/skills/develop-neo4j-graph.skill.md",
+    ".opencode/skills/deploy-stack.skill.md"
+  ],
   "experimental": {
     "primary_tools": ["read", "edit", "write", "bash", "glob", "grep", "websearch", "webfetch"]
   },
@@ -26,6 +32,18 @@
     "nasa-power": {
       "type": "remote",
       "url": "https://power.larc.nasa.gov/api",
+      "enabled": true
+    },
+    "neo4j-cypher": {
+      "type": "stdio",
+      "command": "python",
+      "args": [".opencode/mcp/neo4j_cypher_server.py"],
+      "enabled": true
+    },
+    "x402": {
+      "type": "stdio",
+      "command": "python",
+      "args": [".opencode/mcp/x402_server.py"],
       "enabled": true
     }
   }

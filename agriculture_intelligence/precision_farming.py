@@ -29,9 +29,43 @@ PEST_THRESHOLDS = {
     "fusarium_wilt": {"temp_min": 18, "temp_opt": 28, "temp_max": 35, "moisture_min": 0.5, "crops": ["banana", "tomato", "rose"]},
     "botrytis": {"temp_min": 12, "temp_opt": 20, "temp_max": 28, "moisture_min": 0.7, "crops": ["strawberry", "grape", "rose"]},
     "false_codling_moth": {"temp_min": 18, "temp_opt": 28, "temp_max": 38, "moisture_min": 0.2, "crops": ["citrus", "avocado", "rose"]},
-    "fall_armyworm": {"temp_min": 15, "temp_opt": 28, "temp_max": 38, "moisture_min": 0.2, "crops": ["maize", "sorghum", "millet"]},
+    "fall_armyworm": {"temp_min": 15, "temp_opt": 28, "temp_max": 38, "moisture_min": 0.2, "crops": ["maize", "sorghum", "millet", "finger_millet", "cowpea"]},
     "coffee_berry_borer": {"temp_min": 18, "temp_opt": 25, "temp_max": 32, "moisture_min": 0.4, "crops": ["coffee"]},
     "tsv": {"temp_min": 20, "temp_opt": 30, "temp_max": 40, "moisture_min": 0.3, "crops": ["tomato", "pepper"]},
+}
+
+# Indigenous crop agronomic traits — physiological adaptations for climate resilience
+# Sources: document synthesis (2026), Ojwang (2020), Maundu et al. (1999)
+INDIGENOUS_AGRONOMIC_TRAITS = {
+    "amaranth": {
+        "photosynthetic_pathway": "C4 — spatially separates carbon fixation from Calvin cycle, drastically reducing photorespiration in high-heat environments",
+        "drought_adaptation": "drought_escape — matures in 21-28 days within erratic rainy season windows",
+        "water_efficiency_pct_vs_maize": 60,
+    },
+    "cowpea": {
+        "root_morphology": "deep taproot system bypassing dehydrated upper soil horizons",
+        "drought_adaptation": "early stomatal closure prioritises cellular water retention; enters dormancy until precipitation resumes",
+        "water_efficiency_pct_vs_maize": 55,
+    },
+    "sorghum": {
+        "water_efficiency_pct_vs_maize": 40,
+        "intercrop_yield_boost_with_cowpea_pct": 41.8,
+        "note": "Empirical trials show sorghum yield increases 41.8% when intercropped with cowpea vs pure stand",
+    },
+    "finger_millet": {
+        "water_efficiency_pct_vs_maize": 40,
+    },
+    "pigeon_pea": {
+        "root_morphology": "deep taproot enables hydraulic lift — draws water upward at night, releasing into upper soil profile for shallow-rooted companion crops",
+        "row_ratio_recommended": "1:2 (one row pigeonpea : two rows cereal)",
+    },
+    "cassava": {
+        "drought_adaptation": "tubers remain harvestable in-ground up to 24 months without spoilage — farmers bypass volatile market conditions and surface climate disasters",
+        "water_efficiency_pct_vs_maize": 50,
+    },
+    "sweet_potato": {
+        "water_efficiency_pct_vs_maize": 50,
+    },
 }
 
 # Crop base temperatures for GDD computation (FAO-66 standard)
@@ -41,6 +75,16 @@ CROP_BASE_TEMPS = {
     "maize": 10, "beans": 10, "wheat": 5, "rice": 10, "sunflower": 8,
     "coffee": 12, "tea": 10, "rose": 7, "tomato": 10, "banana": 15, "sugarcane": 15,
     "sorghum": 10, "millet": 10, "cassava": 15, "yam": 18, "cocoa": 15,
+    # Indigenous / traditional food plants (Maundu, 1999)
+    "amaranth": 15, "black_nightshade": 14, "spider_plant": 15, "cowpea_leaves": 12,
+    "jute_mallow": 16, "pumpkin_leaves": 15, "finger_millet": 10, "pigeon_pea": 12,
+    "bambara_nut": 14, "sweet_potato": 12, "baobab": 20, "tamarind": 20,
+    "cowpea": 12,
+    # Ojwang (2020) — Homa Bay traditional vegetables
+    "dek": 15, "mito": 15, "boo": 14, "atipa": 16, "odielo": 15,
+    "ndemra": 14, "alikra": 15, "ng_or": 12,
+    "mapera": 15, "ochuoga": 18, "akuno": 18, "sangla": 18, "nyatonglo": 16,
+    "slenderleaf": 15, "desert_date": 20, "bird_plum": 20, "vitex_black_plum": 18,
 }
 
 # GDD thresholds for harvest readiness — equatorial crop varieties
@@ -49,6 +93,17 @@ HARVEST_GDD_THRESHOLDS = {
     "maize": 1600, "beans": 800, "wheat": 1500, "rice": 2000,
     "sunflower": 1400, "coffee": 2200, "rose": 2500, "tomato": 1000,
     "sorghum": 1400, "millet": 1200, "cassava": 2400, "yam": 2000,
+    # Indigenous / traditional food plants (Maundu, 1999)
+    "amaranth": 600, "black_nightshade": 500, "spider_plant": 550,
+    "cowpea_leaves": 700, "jute_mallow": 550, "pumpkin_leaves": 800,
+    "finger_millet": 1400, "pigeon_pea": 1800, "bambara_nut": 1500,
+    "sweet_potato": 1200, "baobab": 3650, "tamarind": 3650,
+    "cowpea": 700,
+    # Ojwang (2020) — Homa Bay traditional vegetables
+    "dek": 500, "mito": 550, "boo": 600, "atipa": 450, "odielo": 500,
+    "ndemra": 550, "alikra": 500, "ng_or": 1300,
+    "mapera": 2000, "ochuoga": 1800, "akuno": 2000, "sangla": 1600, "nyatonglo": 1500,
+    "slenderleaf": 650, "desert_date": 3650, "bird_plum": 3650, "vitex_black_plum": 2000,
 }
 
 # Micro-climate zone classification — based on equatorial elevation-temperature gradients
@@ -301,11 +356,11 @@ class PrecisionFarming:
             "solar_kwh_m2_day": round(solar, 2),
             "benchmark_farms": zone_info.get("key_farms", ["N/A"]),
             "recommended_crops": {
-                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "high-value horticulture", "rose"],
-                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "maize (altitude-adapted)"],
-                "midland": ["maize", "beans", "vegetables", "banana", "dairy", "tomato"],
-                "lowland_dry": ["sorghum", "millet", "cowpea", "cassava", "droughtguard maize", "irrigated veggies"],
-                "lowland_humid": ["rice", "sugarcane", "banana", "mango", "oil palm", "cocoa"],
+                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "high-value horticulture", "rose", "black_nightshade", "amaranth"],
+                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "maize (altitude-adapted)", "black_nightshade", "amaranth", "sweet_potato", "pumpkin_leaves"],
+                "midland": ["maize", "beans", "vegetables", "banana", "dairy", "tomato", "black_nightshade", "amaranth", "spider_plant", "cowpea_leaves", "sweet_potato", "cassava", "pumpkin_leaves"],
+                "lowland_dry": ["sorghum", "millet", "cowpea_leaves", "cassava", "droughtguard maize", "irrigated veggies", "pigeon_pea", "bambara_nut", "cowpea", "baobab", "tamarind", "amaranth"],
+                "lowland_humid": ["rice", "sugarcane", "banana", "mango", "oil palm", "cocoa", "cassava", "sweet_potato", "jute_mallow", "spider_plant", "pumpkin_leaves"],
             }.get(zone, ["maize", "beans"]),
             "recommendation": (
                 f"Zone: {zone}. {zone_info['description']}. "
@@ -582,11 +637,11 @@ class PrecisionFarming:
             "current_solar_kwh_m2_day": round(solar, 2),
             "estimated_elevation_m": round(elevation_estimate),
             "recommended_crop_categories": {
-                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "temperate vegetables"],
-                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "flowers"],
-                "midland": ["maize", "beans", "banana", "dairy", "mixed farming"],
-                "lowland_dry": ["sorghum", "millet", "cowpea", "cassava", "irrigated horticulture"],
-                "lowland_humid": ["rice", "sugarcane", "oil palm", "cocoa", "banana", "mango"],
+                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "temperate vegetables", "black_nightshade", "amaranth"],
+                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "flowers", "black_nightshade", "sweet_potato", "amaranth"],
+                "midland": ["maize", "beans", "banana", "dairy", "mixed farming", "black_nightshade", "amaranth", "cowpea_leaves", "sweet_potato", "cassava"],
+                "lowland_dry": ["sorghum", "millet", "cowpea", "cowpea_leaves", "cassava", "irrigated horticulture", "pigeon_pea", "bambara_nut", "baobab"],
+                "lowland_humid": ["rice", "sugarcane", "oil palm", "cocoa", "banana", "mango", "cassava", "sweet_potato", "jute_mallow"],
             }.get(climate["zone"], ["mixed cropping"]),
             "benchmark_systems": [
                 {"region": "East Africa highlands", "elevation_m": "1500-2800", "crops": "Coffee, tea, horticulture, maize-bean intercropping", "characteristic": "High solar + moderate temps, bimodal rainfall"},
