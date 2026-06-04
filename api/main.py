@@ -4,8 +4,11 @@ import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, Depends
+from pathlib import Path
+
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 
 from api.middleware import register_middleware
@@ -78,6 +81,21 @@ app.include_router(traditional_foods_router)
 app.include_router(marketplace_router)
 app.include_router(climate_finance_router)
 
+# Serve frontend SPA
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+FRONTEND_FILES = {"index.html", "app.js", "i18n.js", "netlify.toml"}
+
+@app.get("/{rest:path}")
+async def serve_frontend(rest: str = ""):
+    if rest.startswith("api/") or rest.startswith("docs") or rest.startswith("redoc") or rest.startswith("openapi") or rest.startswith("health") or rest.startswith("ready") or rest.startswith("_"):
+        raise HTTPException(status_code=404)
+    if not rest or rest == "index.html":
+        return HTMLResponse((FRONTEND_DIR / "index.html").read_text(encoding="utf-8"))
+    if "/" not in rest and rest in FRONTEND_FILES:
+        fp = FRONTEND_DIR / rest
+        if fp.is_file():
+            return FileResponse(str(fp))
+    return HTMLResponse((FRONTEND_DIR / "index.html").read_text(encoding="utf-8"))
 
 @app.get("/health")
 async def health(repo: Repository = Depends(get_repository)):

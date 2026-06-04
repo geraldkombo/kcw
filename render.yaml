@@ -16,6 +16,6 @@ services:
       - key: API_KEY
         sync: false
       - key: CORS_ORIGINS
-        value: https://*.netlify.app
+        value: https://kienyeji.netlify.app
     healthCheckPath: /health
     autoDeploy: true

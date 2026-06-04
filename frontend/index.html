@@ -1,221 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Food Roots KE — Traditional Food Intelligence</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Roots KE</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-tailwind.config={darkMode:'class',theme:{extend:{colors:{frk:{green:'#2E7D32',gold:'#FFB300',earth:'#5D4037',teal:'#00796B'}}}}}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/container-queries@1"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box}
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;background:#f8fafc}
-.dark body{background:#0f172a}
-.sidebar{transition:transform .2s ease}
-.nav-link,.bottom-nav-link{transition:all .15s ease;cursor:pointer}
-.nav-link.active,.bottom-nav-link.active{color:#2E7D32;font-weight:600;background:#E8F5E9}
-.dark .nav-link.active,.dark .bottom-nav-link.active{color:#4ADE80;background:#1B5E20}
-@keyframes si{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-@keyframes so{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
-.ani-in{animation:si .3s ease}
-.ani-out{animation:so .3s ease}
-input,select,button{min-height:44px;font-size:16px}
-.card{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid #e2e8f0}
-.dark .card{background:#1e293b;border-color:#334155}
-.badge{display:inline-block;padding:.15rem .5rem;border-radius:9999px;font-size:.65rem;font-weight:600;line-height:1.5}
-.badge-green{background:#E8F5E9;color:#2E7D32}
-.badge-red{background:#FFEBEE;color:#C62828}
-.badge-blue{background:#E3F2FD;color:#1565C0}
-.badge-gold{background:#FFF8E1;color:#F57F17}
-.dark .badge-green{background:#1B5E20;color:#A5D6A7}
-.dark .badge-red{background:#B71C1C;color:#EF9A9A}
-.dark .badge-blue{background:#0D47A1;color:#90CAF9}
-.dark .badge-gold{background:#E65100;color:#FFE082}
-@media(max-width:768px){.sidebar{position:fixed;inset:0;z-index:50;transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}}
-@media(min-width:769px){.bottom-nav{display:none}}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
-.dark ::-webkit-scrollbar-thumb{background:#475569}
-#map{height:400px;border-radius:12px;z-index:1}
-.stat-value{font-size:1.75rem;font-weight:800;line-height:1.1}
-.stat-label{font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.chart-container{position:relative;width:100%;max-height:250px}
-@media(max-width:640px){.stat-value{font-size:1.35rem}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap');
+:root{--green:#1B5E20;--gold:#C7952B;--teal:#00695C;--cream:#FDFBF7;--earth:#5D4037;--font-sans:'Inter',system-ui,sans-serif;--font-display:'Playfair Display',Georgia,serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--cream);color:#1a1a2e;transition:.3s}
+body.dark{background:#0f0f1a;color:#e0e0e0}
+.dark .card{background:rgba(30,30,50,.7);border-color:rgba(255,255,255,.08)}
+.dark .glass{background:rgba(30,30,50,.5);border-color:rgba(255,255,255,.06)}
+.dark .text-muted{color:#8888a0}
+.dark .bg-subtle{background:rgba(255,255,255,.03)}
+.glass{background:rgba(255,255,255,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,.06);border-bottom:2px solid rgba(0,0,0,.04)}
+.card{background:rgba(255,255,255,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:1.25rem;transition:all .25s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.25rem;border-radius:10px;font-weight:500;font-size:.875rem;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:#2E7D32;transform:translateY(-1px);box-shadow:0 4px 12px rgba(27,94,32,.3)}
+.btn-ghost{background:transparent;color:inherit;border:1px solid rgba(0,0,0,.12)}
+.btn-ghost:hover{background:rgba(0,0,0,.05)}
+.dark .btn-ghost{border-color:rgba(255,255,255,.15)}
+.dark .btn-ghost:hover{background:rgba(255,255,255,.08)}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.badge-green{background:rgba(27,94,32,.12);color:var(--green)}
+.badge-gold{background:rgba(199,149,43,.12);color:#8B6914}
+.badge-red{background:rgba(229,57,53,.12);color:#C62828}
+.badge-blue{background:rgba(21,101,192,.12);color:#1565C0}
+.dark .badge-green{background:rgba(27,94,32,.25);color:#66BB6A}
+.dark .badge-gold{background:rgba(199,149,43,.2);color:#FFD54F}
+.dark .badge-red{background:rgba(229,57,53,.2);color:#EF5350}
+.dark .badge-blue{background:rgba(21,101,192,.2);color:#64B5F6}
+.nav-link{position:relative;padding:.5rem 0;font-size:.875rem;font-weight:500;color:rgba(0,0,0,.55);text-decoration:none;transition:color .2s;cursor:pointer}
+.nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:var(--green);transition:width .3s;border-radius:1px}
+.nav-link:hover{color:rgba(0,0,0,.85)}
+.nav-link.active{color:var(--green)}
+.nav-link.active::after{width:100%}
+.dark .nav-link{color:rgba(255,255,255,.5)}
+.dark .nav-link:hover{color:rgba(255,255,255,.8)}
+.dark .nav-link.active{color:#66BB6A}
+.bottom-nav-link{display:flex;flex-direction:column;align-items:center;gap:2px;padding:.5rem;font-size:.65rem;color:rgba(0,0,0,.4);text-decoration:none;transition:color .2s;cursor:pointer;font-weight:500}
+.bottom-nav-link.active{color:var(--green)}
+.dark .bottom-nav-link{color:rgba(255,255,255,.35)}
+.dark .bottom-nav-link.active{color:#66BB6A}
+.chart-container{position:relative;height:220px;width:100%}
+.chart-container-sm{position:relative;height:180px;width:100%}
+#map{height:400px;border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.08)}
+.dark #map{filter:invert(.9) hue-rotate(180deg)}
+.ani-in{animation:fadeIn .3s ease-out}
+.ani-out{animation:fadeOut .3s ease-in forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+.skeleton{background:linear-gradient(90deg,rgba(0,0,0,.06) 25%,rgba(0,0,0,.02) 50%,rgba(0,0,0,.06) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+.dark .skeleton{background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.06) 75%);background-size:200% 100%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.stat-card{text-align:center;padding:1.5rem 1rem;background:rgba(255,255,255,.8);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(0,0,0,.06);transition:all .3s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.dark .stat-card{background:rgba(30,30,50,.5);border-color:rgba(255,255,255,.06)}
+.stat-value{font-family:var(--font-display);font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--green),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:.8rem;color:rgba(0,0,0,.45);margin-top:.25rem}
+.dark .stat-label{color:rgba(255,255,255,.4)}
+.hero-gradient{background:linear-gradient(135deg,#1B5E20 0%,#00695C 50%,#004D40 100%);padding:3rem 2rem;border-radius:20px;color:#fff;position:relative;overflow:hidden}
+.hero-gradient::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);border-radius:50%}
+.hero-gradient::after{content:'';position:absolute;bottom:-30%;left:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,183,0,.08) 0%,transparent 70%);border-radius:50%}
+.gold-accent{color:var(--gold)}
+.border-gradient{border-image:linear-gradient(135deg,var(--green),var(--teal)) 1}
+input,select,textarea{font-family:var(--font-sans);padding:.65rem 1rem;border-radius:10px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.8);font-size:.875rem;transition:all .2s;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(27,94,32,.12)}
+.dark input,.dark select,.dark textarea{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:#e0e0e0}
+.dark input:focus,.dark select:focus{border-color:#66BB6A;box-shadow:0 0 0 3px rgba(102,187,106,.15)}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+@media(max-width:640px){.grid-cards{grid-template-columns:1fr}}
+.hero-quote{font-family:var(--font-display);font-size:1.1rem;font-weight:500;font-style:italic;line-height:1.5;opacity:.9}
+.fade-section{animation:fadeIn .4s ease-out}
 </style>
 </head>
-<body class="text-gray-900 dark:text-gray-100 antialiased transition-colors duration-200">
+<body>
 
-<div id="toast" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)] pointer-events-none"></div>
-
-<div class="flex h-screen overflow-hidden">
-  <!-- Sidebar -->
-  <aside class="sidebar w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0 overflow-y-auto md:relative md:translate-x-0" id="sidebar">
-    <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
-      <span class="text-2xl">🌾</span>
-      <div><p class="font-bold text-frk-green dark:text-green-400 text-base leading-tight" data-i18n="app_name">Food Roots KE</p><p class="text-xs text-gray-400">Data &amp; Decision Support</p></div>
+<!-- Top Bar -->
+<header class="glass sticky top-0 z-50 border-b border-gray-100/50 dark:border-white/5">
+  <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-xl font-bold font-['Playfair_Display']" style="color:var(--green)">Food Roots <span style="color:var(--gold)">KE</span></span>
     </div>
-    <nav class="flex-1 p-3 space-y-1">
-      <a class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="dashboard"><span>📊</span><span>Dashboard</span></a>
-      <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="traditional-foods"><span>🌿</span><span>Traditional Foods</span></a>
-      <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="corridors"><span>🚛</span><span>Food Corridors</span></a>
-      <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="marketplace"><span>🛒</span><span>Marketplace</span></a>
-      <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-nav="de-risk"><span>🛡️</span><span>De-Risk</span></a>
+    <nav class="hidden md:flex items-center gap-6">
+      <a class="nav-link active" data-nav="dashboard">Dashboard</a>
+      <a class="nav-link" data-nav="traditional-foods">Foods</a>
+      <a class="nav-link" data-nav="corridors">Corridors</a>
+      <a class="nav-link" data-nav="marketplace">Market</a>
+      <a class="nav-link" data-nav="de-risk">De-Risk</a>
     </nav>
-    <div class="p-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
-      <button id="theme-toggle" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">🌙 <span>Dark</span></button>
-      <button id="lang-toggle" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">🌐 <span>Kiswahili</span></button>
+    <div class="flex items-center gap-2">
+      <button id="lang-toggle" class="btn btn-ghost text-xs px-2 py-1">🌐 Kiswahili</button>
+      <button id="theme-toggle" class="btn btn-ghost text-xs px-2 py-1">🌙 Dark</button>
     </div>
-  </aside>
-
-  <div class="flex-1 flex flex-col overflow-hidden">
-    <header class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-4 flex-shrink-0">
-      <button id="menu-btn" class="md:hidden text-xl p-1 -ml-1" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-      <div class="flex-1"></div>
-      <span class="text-xs text-gray-400" id="lang-label">EN</span>
-    </header>
-
-    <main class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-
-      <!-- ===== DASHBOARD ===== -->
-      <section data-page="dashboard" class="space-y-6">
-        <h1 class="text-xl font-bold">Dashboard</h1>
-
-        <div class="bg-gradient-to-r from-frk-green to-frk-teal text-white rounded-xl p-5 space-y-2">
-          <p class="text-sm font-medium opacity-90">Of ~680 foods eaten by Nairobians</p>
-          <p class="text-3xl font-bold">Only ~⅓ are indigenous to Kenya</p>
-          <p class="text-sm opacity-80">Food Roots KE makes the invisible visible and the informal investable.</p>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="card text-center"><p class="stat-value text-frk-green" id="stat-crops">—</p><p class="stat-label">Crops Indexed</p></div>
-          <div class="card text-center"><p class="stat-value text-frk-gold" id="stat-indigenous">—</p><p class="stat-label">Indigenous</p></div>
-          <div class="card text-center"><p class="stat-value text-frk-teal" id="stat-corridors">—</p><p class="stat-label">Food Corridors</p></div>
-          <div class="card text-center"><p class="stat-value text-frk-earth" id="stat-tests">—</p><p class="stat-label">Tests Passing</p></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card"><h2 class="text-sm font-bold mb-3">Resilience Scores (Rs 0 – 1.0)</h2><div class="chart-container"><canvas id="chart-resilience"></canvas></div></div>
-          <div class="card"><h2 class="text-sm font-bold mb-3">Iron Density — Top Indigenous Veg (mg/kg DW)</h2><div class="chart-container"><canvas id="chart-iron"></canvas></div></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div class="card border-l-4 border-frk-green"><p class="text-xs text-gray-400">Intercropping</p><p class="text-lg font-bold"><span class="text-frk-green">12</span> patterns</p><p class="text-xs text-gray-500 mt-1">Row ratios, hydraulic lift, yield boost data</p></div>
-          <div class="card border-l-4 border-frk-gold"><p class="text-xs text-gray-400">Cross-border</p><p class="text-lg font-bold"><span class="text-frk-gold">2</span> corridors</p><p class="text-xs text-gray-500 mt-1">Busia (Uganda) + Namanga (Tanzania) — WICBTs</p></div>
-          <div class="card border-l-4 border-frk-teal"><p class="text-xs text-gray-400">Women Traders</p><p class="text-lg font-bold"><span class="text-frk-teal">77%</span> of AIV sector</p><p class="text-xs text-gray-500 mt-1">57% post-harvest loss · 400 KES premium packs</p></div>
-        </div>
-      </section>
-
-      <!-- ===== TRADITIONAL FOODS ===== -->
-      <section data-page="traditional-foods" class="hidden space-y-4">
-        <h1 class="text-xl font-bold">Traditional Food Plants</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">37 crops indexed — indigenous, naturalised, and exotic — with resilience scores, mineral nutrition, intercropping partners, and market prices.</p>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card">
-            <h2 class="text-sm font-bold mb-3">Classifier</h2>
-            <div class="flex gap-2 mb-3">
-              <input id="tf-input" type="text" placeholder="e.g. amaranth, managu, slenderleaf" class="flex-1 border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" />
-              <button id="tf-classify-btn" class="bg-frk-green text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">Classify</button>
-            </div>
-            <div id="tf-result" class="hidden"></div>
-          </div>
-          <div class="card">
-            <h2 class="text-sm font-bold mb-3">Search by County</h2>
-            <div class="flex gap-2 mb-3">
-              <select id="tf-county" class="flex-1 border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none">
-                <option value="">Select county...</option>
-              </select>
-              <button id="tf-region-btn" class="bg-frk-green text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">Show</button>
-            </div>
-            <div id="tf-region-result" class="hidden"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2 class="text-sm font-bold mb-3">All Crops</h2>
-          <div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-left text-gray-500 border-b dark:border-gray-700"><th class="py-2 pr-2">Crop</th><th class="py-2 pr-2">Swahili</th><th class="py-2 pr-2">Status</th><th class="py-2 pr-2">Rs</th><th class="py-2 pr-2 hidden md:table-cell">Growing</th><th class="py-2">Region</th></tr></thead><tbody id="tf-table-body"></tbody></table></div>
-        </div>
-      </section>
-
-      <!-- ===== CORRIDORS ===== -->
-      <section data-page="corridors" class="hidden space-y-4">
-        <h1 class="text-xl font-bold">Food Demand Corridors</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">9 supply arteries connecting rural production zones to urban markets — domestic and cross-border.</p>
-        <div id="map"></div>
-        <div id="corridor-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-      </section>
-
-      <!-- ===== MARKETPLACE ===== -->
-      <section data-page="marketplace" class="hidden space-y-4">
-        <h1 class="text-xl font-bold">Traditional Foods Marketplace</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Farmers, chama groups, and buyers connecting across Kenya's food corridors.</p>
-
-        <div class="card">
-          <h2 class="text-sm font-bold mb-3">Post a Listing</h2>
-          <form id="mp-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <input name="seller" placeholder="Name / Group" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" required />
-            <input name="food" placeholder="Food (e.g. managu, amaranth)" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" required />
-            <input name="quantity_kg" type="number" placeholder="Qty (kg)" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" />
-            <input name="price_kes_per_kg" type="number" step="0.5" placeholder="KES/kg" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" />
-            <select name="county" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none"><option value="">County</option></select>
-            <input name="contact" placeholder="Phone / WhatsApp" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" />
-            <label class="flex items-center gap-2 text-sm"><input name="is_chama" type="checkbox" /> Chama group</label>
-            <button type="submit" class="bg-frk-green text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 sm:col-span-2">Post Listing</button>
-          </form>
-        </div>
-
-        <div class="flex gap-2 flex-wrap">
-          <input id="mp-search" type="text" placeholder="Search food..." class="flex-1 min-w-[160px] border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none" />
-          <select id="mp-county-filter" class="border border-gray-200 dark:border-gray-600 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-frk-green outline-none"><option value="">All counties</option></select>
-          <button id="mp-filter-btn" class="bg-gray-200 dark:bg-slate-700 text-sm px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600">Filter</button>
-          <button id="mp-chama-btn" class="text-sm px-4 py-2 rounded-lg border border-frk-green text-frk-green hover:bg-green-50 dark:hover:bg-green-900/20">👩‍👩‍👧‍👧 Chama</button>
-          <button id="mp-de-risk-btn" class="text-sm px-4 py-2 rounded-lg border border-frk-teal text-frk-teal hover:bg-teal-50 dark:hover:bg-teal-900/20">🛡️ De-Risk</button>
-        </div>
-
-        <div id="mp-listings" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"><div class="col-span-full text-center text-gray-400 py-8">Loading...</div></div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card"><h2 class="text-sm font-bold mb-3">Reference Prices</h2><div id="mp-prices" class="overflow-x-auto text-sm"></div></div>
-          <div class="card"><h2 class="text-sm font-bold mb-3">Retail Markup vs Post-Harvest Loss</h2><div class="chart-container"><canvas id="chart-markup"></canvas></div></div>
-        </div>
-      </section>
-
-      <!-- ===== DE-RISK ===== -->
-      <section data-page="de-risk" class="hidden space-y-4">
-        <h1 class="text-xl font-bold">De-Risking Framework</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">The convergence of 4 forces makes traditional food systems the only viable path for Kenya's food security in 2026.</p>
-
-        <div id="dr-overview" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card"><h2 class="text-sm font-bold mb-3">Parametric Insurance</h2><div id="dr-parametrics" class="text-sm space-y-2"></div></div>
-          <div class="card"><h2 class="text-sm font-bold mb-3">Green Bond ($772M)</h2><div class="chart-container"><canvas id="chart-greenbond"></canvas></div></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div class="card"><h2 class="text-sm font-bold mb-3">USAID Freeze Impact</h2><div id="dr-usaid" class="text-sm space-y-1"></div></div>
-          <div class="card"><h2 class="text-sm font-bold mb-3">Post-Harvest Loss</h2><div id="dr-phl" class="text-sm space-y-1"></div></div>
-          <div class="card"><h2 class="text-sm font-bold mb-3">Carbon Credits</h2><div id="dr-carbon" class="text-sm space-y-1"></div></div>
-        </div>
-      </section>
-
-    </main>
   </div>
-</div>
+</header>
 
-<nav class="bottom-nav fixed bottom-0 inset-x-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-gray-700 z-30 flex md:hidden">
-  <a class="bottom-nav-link active flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="dashboard"><span class="text-lg">📊</span>Dashboard</a>
-  <a class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="traditional-foods"><span class="text-lg">🌿</span>Foods</a>
-  <a class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="corridors"><span class="text-lg">🚛</span>Routes</a>
-  <a class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="marketplace"><span class="text-lg">🛒</span>Market</a>
-  <a class="bottom-nav-link flex-1 flex flex-col items-center py-2 text-xs text-gray-500 dark:text-gray-400" data-nav="de-risk"><span class="text-lg">🛡️</span>De-Risk</a>
+<!-- Bottom Nav (mobile) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-gray-100/50 dark:border-white/5">
+  <div class="flex justify-around py-1">
+    <a class="bottom-nav-link active" data-nav="dashboard"><span>📊</span>Home</a>
+    <a class="bottom-nav-link" data-nav="traditional-foods"><span>🌿</span>Foods</a>
+    <a class="bottom-nav-link" data-nav="corridors"><span>🗺️</span>Routes</a>
+    <a class="bottom-nav-link" data-nav="marketplace"><span>🏪</span>Market</a>
+    <a class="bottom-nav-link" data-nav="de-risk"><span>🛡️</span>De-Risk</a>
+  </div>
 </nav>
 
-<script type="module" src="app.js"></script>
+<!-- Toast -->
+<div id="toast" class="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-4 pt-6 pb-24 md:pb-12 space-y-6">
+
+<!-- DASHBOARD -->
+<section data-page="dashboard" class="space-y-6 fade-section">
+  <div class="hero-gradient">
+    <p class="hero-quote mb-3">"Only about a third of the ~680 foods eaten in Nairobi are actually from Kenya"</p>
+    <p class="text-sm opacity-80">Making indigenous foods visible and investable — Track 4: Data & Decision Support</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="stat-card"><div class="stat-value" id="stat-crops">—</div><div class="stat-label">Crops Indexed</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-indigenous">—</div><div class="stat-label">Indigenous</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-corridors">—</div><div class="stat-label">Food Corridors</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-tests">—</div><div class="stat-label">Tests Passing</div></div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="card"><h3 class="font-semibold text-sm mb-3">Resilience Scores</h3><div class="chart-container"><canvas id="chart-resilience"></canvas></div></div>
+    <div class="card"><h3 class="font-semibold text-sm mb-3">Iron Content (mg/kg DW)</h3><div class="chart-container"><canvas id="chart-iron"></canvas></div></div>
+  </div>
+</section>
+
+<!-- TRADITIONAL FOODS -->
+<section data-page="traditional-foods" class="space-y-4 fade-section hidden">
+  <div class="flex items-center gap-3 mb-2"><h2 class="text-xl font-bold font-['Playfair_Display']" style="color:var(--green)">🌿 Traditional Foods</h2></div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card space-y-3">
+      <h3 class="font-semibold text-sm">Identify a Crop</h3>
+      <div class="flex gap-2"><input id="tf-input" placeholder="e.g. amaranth, managu, sagaa" class="flex-1"><button id="tf-classify-btn" class="btn btn-primary">Search</button></div>
+      <div id="tf-result" class="hidden"></div>
+    </div>
+    <div class="card space-y-3">
+      <h3 class="font-semibold text-sm">Crops by County</h3>
+      <div class="flex gap-2"><select id="tf-county" class="flex-1"><option value="">Select county...</option></select><button id="tf-region-btn" class="btn btn-primary">Browse</button></div>
+      <div id="tf-region-result" class="hidden"></div>
+    </div>
+  </div>
+  <div class="card !p-0 overflow-hidden">
+    <div class="p-4 pb-2 border-b border-gray-100 dark:border-white/5"><h3 class="font-semibold text-sm">All Crops</h3></div>
+    <div class="overflow-x-auto"><table class="w-full text-xs"><thead><tr class="text-left text-gray-500 border-b border-gray-100 dark:border-white/5">
+      <th class="p-3 pb-2 font-medium">Name</th><th class="p-3 pb-2 font-medium">Swahili</th><th class="p-3 pb-2 font-medium">Status</th><th class="p-3 pb-2 font-medium">Rs</th><th class="p-3 pb-2 font-medium hidden md:table-cell">Season</th><th class="p-3 pb-2 font-medium hidden lg:table-cell">Counties</th>
+    </tr></thead><tbody id="tf-table-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- CORRIDORS -->
+<section data-page="corridors" class="space-y-4 fade-section hidden">
+  <div class="flex items-center gap-3 mb-2"><h2 class="text-xl font-bold font-['Playfair_Display']" style="color:var(--green)">🗺️ Food Corridors</h2></div>
+  <div class="card !p-0 overflow-hidden"><div id="map"></div></div>
+  <div class="grid-cards" id="corridor-cards"></div>
+</section>
+
+<!-- MARKETPLACE -->
+<section data-page="marketplace" class="space-y-4 fade-section hidden">
+  <div class="flex items-center gap-3 mb-2"><h2 class="text-xl font-bold font-['Playfair_Display']" style="color:var(--green)">🏪 Marketplace</h2></div>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="md:col-span-2 space-y-3">
+      <div class="flex flex-wrap gap-2 items-center">
+        <input id="mp-search" placeholder="Search listings..." class="flex-1 min-w-0">
+        <select id="mp-county-filter"><option value="">All counties</option></select>
+        <button id="mp-filter-btn" class="btn btn-ghost text-xs">Filter</button>
+        <button id="mp-chama-btn" class="btn btn-ghost text-xs">👩‍👩‍👧‍👧 Chamas</button>
+        <button id="mp-de-risk-btn" class="btn btn-ghost text-xs">🛡️ De-Risk</button>
+      </div>
+      <div class="grid-cards" id="mp-listings"></div>
+    </div>
+    <div class="space-y-3">
+      <div class="card space-y-3">
+        <h3 class="font-semibold text-sm">Post a Listing</h3>
+        <form id="mp-form" class="space-y-2">
+          <input name="food" placeholder="Crop name" required>
+          <input name="food_sw" placeholder="Swahili name">
+          <div class="flex gap-2"><input name="quantity_kg" type="number" placeholder="Qty (kg)" required class="flex-1"><input name="price_kes_per_kg" type="number" step="0.01" placeholder="KES/kg" required class="flex-1"></div>
+          <select name="county" required><option value="">County...</option></select>
+          <input name="seller" placeholder="Your name" required>
+          <input name="contact" placeholder="Phone / email">
+          <label class="flex items-center gap-2 text-xs"><input type="checkbox" name="is_chama" value="true"> This is a chama listing</label>
+          <button type="submit" class="btn btn-primary w-full justify-center">Post Listing</button>
+        </form>
+      </div>
+      <div class="card"><h3 class="font-semibold text-sm mb-3">Retail Markup vs PHL</h3><div class="chart-container-sm"><canvas id="chart-markup"></canvas></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="font-semibold text-sm mb-3">Reference Prices</h3>
+    <div id="mp-prices" class="overflow-x-auto"></div>
+  </div>
+</section>
+
+<!-- DE-RISK -->
+<section data-page="de-risk" class="space-y-4 fade-section hidden">
+  <div class="flex items-center gap-3 mb-2"><h2 class="text-xl font-bold font-['Playfair_Display']" style="color:var(--green)">🛡️ De-Risking Framework</h2></div>
+  <div class="grid md:grid-cols-2 gap-4" id="dr-overview"></div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="card space-y-3"><h3 class="font-semibold text-sm">📡 Parametric Insurance</h3><div id="dr-parametrics"></div></div>
+    <div><div class="card space-y-3"><h3 class="font-semibold text-sm">💰 Green Bond Allocation</h3><div class="chart-container-sm"><canvas id="chart-greenbond"></canvas></div></div></div>
+  </div>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="card"><h3 class="font-semibold text-sm mb-2">🇺🇸 USAID Freeze Impact</h3><div id="dr-usaid" class="space-y-1 text-xs"></div></div>
+    <div class="card"><h3 class="font-semibold text-sm mb-2">📦 Post-Harvest Loss</h3><div id="dr-phl" class="space-y-1 text-xs"></div></div>
+    <div class="card"><h3 class="font-semibold text-sm mb-2">🌱 Carbon Credits</h3><div id="dr-carbon" class="space-y-1 text-xs"></div></div>
+  </div>
+</section>
+
+</main>
+
+<script type="module" src="./app.js"></script>
 </body>
 </html>
