@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
 
     db_type = type(repo).__name__.replace("Repository", "")
     logger.info(
-        "starting Food Roots KE v1.0.0",
+        "starting Kienyeji v1.0.0",
         extra={
             "database": f"{db_type} (connected: {repo.connected})",
             "api_key": "set" if settings.api_key else "not set (open access)",
@@ -50,13 +50,13 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("shutting down Food Roots KE")
+    logger.info("shutting down Kienyeji")
     repo = get_repository()
     await repo.disconnect()
 
 
 app = FastAPI(
-    title="Food Roots KE API",
+    title="Kienyeji API",
     description="Traditional food plants intelligence system for Kenya",
     version="1.0.0",
     lifespan=lifespan,
@@ -101,7 +101,7 @@ async def serve_frontend(rest: str = ""):
 async def health(repo: Repository = Depends(get_repository)):
     return {
         "status": "ok",
-        "service": "food-roots-ke",
+        "service": "kienyeji",
         "version": "1.0.0",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "database": type(repo).__name__.replace("Repository", ""),

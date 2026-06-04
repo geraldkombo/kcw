@@ -2,7 +2,7 @@ export const LANGUAGES = { en: "English", sw: "Kiswahili" };
 
 const TR = {
   en: {
-    app_name: "Food Roots KE",
+    app_name: "Kienyeji",
     loading: "Loading...",
     nav_dashboard: "Dashboard",
     nav_foods: "Traditional Foods",
@@ -16,7 +16,7 @@ const TR = {
     stats_tests: "Tests Passing",
   },
   sw: {
-    app_name: "Food Roots KE",
+    app_name: "Kienyeji",
     loading: "Inapakia...",
     nav_dashboard: "Dashibodi",
     nav_foods: "Vyakula Asili",

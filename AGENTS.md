@@ -1,4 +1,4 @@
-# Food Roots KE (FRK) — OpenCode Agent Guide
+# Kienyeji — OpenCode Agent Guide
 
 ## Project Overview
 Traditional Food Intelligence System for Kenya — classifies foods eaten in Nairobi by origin (indigenous vs exotic), maps them to counties and intercropping patterns, and provides climate, market, and de-risking data (parametric insurance, green bond, USAID freeze, post-harvest loss, carbon credits). Of ~680 foods eaten by Nairobians, only about a third are actually from Kenya — the rest are exotic. FRK makes the indigenous ones visible and investable.
