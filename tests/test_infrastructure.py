@@ -105,7 +105,7 @@ class TestAPI:
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "ok"
-        assert data["service"] == "food-roots-ke"
+        assert data["service"] == "kienyeji"
 
     def test_ready(self):
         resp = self.client.get("/ready")

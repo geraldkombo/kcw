@@ -18,7 +18,7 @@ FRK classifies foods eaten in Nairobi by origin — of ~680 foods consumed by Na
 4. **Indigenous vegetables market prices** — Current KES/kg for amaranth (terere), black nightshade (managu), spider plant (sagaa/mrenda), cowpea leaves (kunde), jute mallow (murere/mrenda), pumpkin leaves.
 5. **NASA POWER API** — Free, no auth, 179K requests/day. Endpoint: `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=...&community=AG&start=...&end=...&latitude=...&longitude=...&format=JSON`.
 6. **Open-Meteo** — Free weather forecast API, no key needed. 10K calls/day. ERA5 reanalysis from 1940.
-7. **Google Solar API** — Free with Maps Demo Key (AIzaSyBftqrqfogiRPUu_j6KTYsM3UjJ9ySMaZY). No billing required for low usage.
+7. **Google Solar API** — Free with Maps Demo Key (REDACTED-ROTATE-ME). No billing required for low usage.
 
 ## Tech Stack
 
