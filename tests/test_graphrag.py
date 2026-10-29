@@ -11,70 +11,82 @@ pytestmark = pytest.mark.anyio
 @pytest.fixture
 def repo():
     r = InMemoryRepository()
-    r.save_farmer({
-        "farmer_id": "KCW-001",
-        "first_name": "Grace",
-        "last_name": "Wanjiku",
-        "county": "Kiambu",
-        "primary_crop": "maize",
-        "credit_score": 68.5,
-        "probability_default": 0.12,
-        "status": "active",
-        "phone": "+254712345001",
-        "gender": "F",
-        "farm_size_ha": 2.5,
-    })
-    r.save_farmer({
-        "farmer_id": "KCW-002",
-        "first_name": "Peter",
-        "last_name": "Kiprop",
-        "county": "Nakuru",
-        "primary_crop": "maize",
-        "credit_score": 45.0,
-        "probability_default": 0.33,
-        "status": "active",
-        "phone": "+254712345002",
-        "gender": "M",
-        "farm_size_ha": 4.0,
-    })
-    r.save_farmer({
-        "farmer_id": "KCW-003",
-        "first_name": "Achieng",
-        "last_name": "Odhiambo",
-        "county": "Kisumu",
-        "primary_crop": "kale",
-        "credit_score": 72.0,
-        "probability_default": 0.08,
-        "status": "active",
-        "phone": "+254712345003",
-        "gender": "F",
-        "farm_size_ha": 1.2,
-    })
-    r.save_farmer({
-        "farmer_id": "KCW-004",
-        "first_name": "Mwangi",
-        "last_name": "Kimani",
-        "county": "Meru",
-        "primary_crop": "coffee",
-        "credit_score": 81.0,
-        "probability_default": 0.05,
-        "status": "delinquent",
-        "phone": "+254712345004",
-        "gender": "M",
-        "farm_size_ha": 3.0,
-    })
-    r.save_loan({
-        "loan_id": "LN-001",
-        "farmer_id": "KCW-001",
-        "amount_kes": 18000,
-        "status": "repaid",
-    })
-    r.save_loan({
-        "loan_id": "LN-009",
-        "farmer_id": "KCW-004",
-        "amount_kes": 15000,
-        "status": "defaulted",
-    })
+    r.save_farmer(
+        {
+            "farmer_id": "KCW-001",
+            "first_name": "Grace",
+            "last_name": "Wanjiku",
+            "county": "Kiambu",
+            "primary_crop": "maize",
+            "credit_score": 68.5,
+            "probability_default": 0.12,
+            "status": "active",
+            "phone": "+254712345001",
+            "gender": "F",
+            "farm_size_ha": 2.5,
+        }
+    )
+    r.save_farmer(
+        {
+            "farmer_id": "KCW-002",
+            "first_name": "Peter",
+            "last_name": "Kiprop",
+            "county": "Nakuru",
+            "primary_crop": "maize",
+            "credit_score": 45.0,
+            "probability_default": 0.33,
+            "status": "active",
+            "phone": "+254712345002",
+            "gender": "M",
+            "farm_size_ha": 4.0,
+        }
+    )
+    r.save_farmer(
+        {
+            "farmer_id": "KCW-003",
+            "first_name": "Achieng",
+            "last_name": "Odhiambo",
+            "county": "Kisumu",
+            "primary_crop": "kale",
+            "credit_score": 72.0,
+            "probability_default": 0.08,
+            "status": "active",
+            "phone": "+254712345003",
+            "gender": "F",
+            "farm_size_ha": 1.2,
+        }
+    )
+    r.save_farmer(
+        {
+            "farmer_id": "KCW-004",
+            "first_name": "Mwangi",
+            "last_name": "Kimani",
+            "county": "Meru",
+            "primary_crop": "coffee",
+            "credit_score": 81.0,
+            "probability_default": 0.05,
+            "status": "delinquent",
+            "phone": "+254712345004",
+            "gender": "M",
+            "farm_size_ha": 3.0,
+        }
+    )
+    r.save_loan(
+        {
+            "loan_id": "LN-001",
+            "farmer_id": "KCW-001",
+            "amount_kes": 18000,
+            "status": "repaid",
+        }
+    )
+    r.save_loan(
+        {
+            "loan_id": "LN-009",
+            "farmer_id": "KCW-004",
+            "amount_kes": 15000,
+            "status": "defaulted",
+        }
+    )
     return r
 
 

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from api.dependencies import get_repository, get_featherless
+from api.dependencies import get_featherless, get_repository
 from database.repository import Repository
 from graphrag.service import GraphRAGService
 
@@ -21,7 +21,7 @@ def get_graphrag(
 @router.post("/query")
 async def rag_query(
     question: str = Query(..., description="Natural language agricultural question"),
-    status: Optional[str] = Query(None, description="Filter by farmer status"),
+    status: str | None = Query(None, description="Filter by farmer status"),
     graphrag: GraphRAGService = Depends(get_graphrag),
 ):
     filters: dict[str, Any] = {}

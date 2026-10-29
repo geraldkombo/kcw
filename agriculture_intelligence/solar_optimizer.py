@@ -14,11 +14,9 @@ class SolarOptimizer:
     async def get_solar_advantage(self, latitude: float, longitude: float) -> dict:
         """Compute the equatorial solar advantage for this location."""
         solar = await self.power.get_solar_radiation(latitude, longitude)
-        temp = await self.power.get_temperature(latitude, longitude)
 
         # Comparison benchmarks
         europe_avg = 2.5  # kWh/m2/day
-        kenya_avg = 5.5
         advantage_vs_europe = round(min(200, (solar - europe_avg) / europe_avg * 100), 1)
 
         # Solar energy potential
@@ -27,7 +25,6 @@ class SolarOptimizer:
 
         # Crop yield boost from solar (simplified model)
         # More solar = more photosynthesis, up to a point
-        photosynthetically_active = solar * 0.48  # PAR is ~48% of total solar
         yield_boost_vs_europe = min(100, round((solar - 2.5) / 2.5 * 60, 1))
 
         return {
@@ -51,11 +48,26 @@ class SolarOptimizer:
         """Classify crops by solar requirement for equatorial optimization."""
         return [
             {"crop": "Sunflower", "solar_need": "high", "optimal_kwh_m2_day": "5-9", "equatorial_advantage": "maximal"},
-            {"crop": "Drought Resistant Seed", "solar_need": "high", "optimal_kwh_m2_day": "5-10", "equatorial_advantage": "maximal"},
-            {"crop": "Maize", "solar_need": "medium-high", "optimal_kwh_m2_day": "4-8", "equatorial_advantage": "strong"},
+            {
+                "crop": "Drought Resistant Seed",
+                "solar_need": "high",
+                "optimal_kwh_m2_day": "5-10",
+                "equatorial_advantage": "maximal",
+            },
+            {
+                "crop": "Maize",
+                "solar_need": "medium-high",
+                "optimal_kwh_m2_day": "4-8",
+                "equatorial_advantage": "strong",
+            },
             {"crop": "Beans", "solar_need": "medium", "optimal_kwh_m2_day": "3-6", "equatorial_advantage": "moderate"},
             {"crop": "Wheat", "solar_need": "medium", "optimal_kwh_m2_day": "4-7", "equatorial_advantage": "moderate"},
-            {"crop": "Coffee", "solar_need": "medium-low", "optimal_kwh_m2_day": "3-6", "equatorial_advantage": "moderate"},
+            {
+                "crop": "Coffee",
+                "solar_need": "medium-low",
+                "optimal_kwh_m2_day": "3-6",
+                "equatorial_advantage": "moderate",
+            },
             {"crop": "Tea", "solar_need": "low-medium", "optimal_kwh_m2_day": "3-6", "equatorial_advantage": "limited"},
         ]
 

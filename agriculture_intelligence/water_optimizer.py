@@ -18,8 +18,12 @@ class WaterOptimizer:
         self.power = power or PowerClient()
 
     async def compute_water_deficit(
-        self, latitude: float, longitude: float, crop: str = "maize",
-        soil_type: str = "loamy", farm_size_ha: float = 1.0,
+        self,
+        latitude: float,
+        longitude: float,
+        crop: str = "maize",
+        soil_type: str = "loamy",
+        farm_size_ha: float = 1.0,
     ) -> dict:
         """Compute current water deficit and irrigation recommendation."""
         temp = await self.power.get_temperature(latitude, longitude)
@@ -89,29 +93,38 @@ class WaterOptimizer:
 
         strategies = []
         if solar > 6.0:
-            strategies.append({
-                "strategy": "Solar-powered drip irrigation",
-                "savings_pct": 60,
-                "cost_kes_per_ha": 120000,
-                "payback_months": 18,
-                "detail": "Equatorial solar ({} kW-hr/m2/day) makes solar pumping viable. Drip reduces water use 60% vs flood.".format(round(solar, 1)),
-            })
+            strategies.append(
+                {
+                    "strategy": "Solar-powered drip irrigation",
+                    "savings_pct": 60,
+                    "cost_kes_per_ha": 120000,
+                    "payback_months": 18,
+                    "detail": f"Equatorial solar ({round(solar, 1)} kW-hr/m2/day) makes solar pumping viable. Drip "
+                    f"reduces water use 60% vs flood.",
+                }
+            )
         if precip < 3.0:
-            strategies.append({
-                "strategy": "Rainwater harvesting",
-                "savings_pct": 30,
-                "cost_kes_per_ha": 50000,
-                "payback_months": 12,
-                "detail": "At {:.1f}mm/day, capture and store roof/runoff water for dry spells.".format(precip),
-            })
+            strategies.append(
+                {
+                    "strategy": "Rainwater harvesting",
+                    "savings_pct": 30,
+                    "cost_kes_per_ha": 50000,
+                    "payback_months": 12,
+                    "detail": f"At {precip:.1f}mm/day, capture and store roof/runoff water for dry spells.",
+                }
+            )
         if temp.get("mean", 25) > 28:
-            strategies.append({
-                "strategy": "Mulching & shade nets",
-                "savings_pct": 25,
-                "cost_kes_per_ha": 30000,
-                "payback_months": 6,
-                "detail": "Reduces soil evaporation by 25% in high-heat conditions ({:.1f}C).".format(temp.get("mean")),
-            })
+            strategies.append(
+                {
+                    "strategy": "Mulching & shade nets",
+                    "savings_pct": 25,
+                    "cost_kes_per_ha": 30000,
+                    "payback_months": 6,
+                    "detail": "Reduces soil evaporation by 25% in high-heat conditions ({:.1f}C).".format(
+                        temp.get("mean", 25)
+                    ),
+                }
+            )
 
         return {
             "location": {"latitude": latitude, "longitude": longitude},

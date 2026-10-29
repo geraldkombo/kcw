@@ -22,94 +22,87 @@ class X402MCPServer:
         req_id = req.get("id")
 
         if method == "initialize":
-            return self._jsonrpc({
-                "protocolVersion": "2025-03-26",
-                "capabilities": {
-                    "tools": {"listChanged": False},
-                    "resources": {"listChanged": False}
+            return self._jsonrpc(
+                {
+                    "protocolVersion": "2025-03-26",
+                    "capabilities": {"tools": {"listChanged": False}, "resources": {"listChanged": False}},
+                    "serverInfo": {"name": "mcp-x402", "version": "1.0.0"},
                 },
-                "serverInfo": {"name": "mcp-x402", "version": "1.0.0"}
-            }, req_id)
+                req_id,
+            )
 
         if method == "tools/list":
-            return self._jsonrpc({"tools": [
+            return self._jsonrpc(
                 {
-                    "name": "initiate_escrow",
-                    "description": "Initiate an x402 escrow for agentic micropayment",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "amount_lovelace": {"type": "integer", "description": "Amount in lovelace (1 ADA = 1_000_000 lovelace)"}
+                    "tools": [
+                        {
+                            "name": "initiate_escrow",
+                            "description": "Initiate an x402 escrow for agentic micropayment",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {
+                                    "amount_lovelace": {
+                                        "type": "integer",
+                                        "description": "Amount in lovelace (1 ADA = 1_000_000 lovelace)",
+                                    }
+                                },
+                                "required": ["amount_lovelace"],
+                            },
                         },
-                        "required": ["amount_lovelace"]
-                    }
-                },
-                {
-                    "name": "lock_escrow",
-                    "description": "Lock funds in escrow contract",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "escrow_id": {"type": "string"}
+                        {
+                            "name": "lock_escrow",
+                            "description": "Lock funds in escrow contract",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {"escrow_id": {"type": "string"}},
+                                "required": ["escrow_id"],
+                            },
                         },
-                        "required": ["escrow_id"]
-                    }
-                },
-                {
-                    "name": "submit_data_hash",
-                    "description": "Submit data hash to escrow for verification",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "escrow_id": {"type": "string"},
-                            "data_hash": {"type": "string"}
+                        {
+                            "name": "submit_data_hash",
+                            "description": "Submit data hash to escrow for verification",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {"escrow_id": {"type": "string"}, "data_hash": {"type": "string"}},
+                                "required": ["escrow_id", "data_hash"],
+                            },
                         },
-                        "required": ["escrow_id", "data_hash"]
-                    }
-                },
-                {
-                    "name": "complete_escrow",
-                    "description": "Complete escrow and release funds",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "escrow_id": {"type": "string"}
+                        {
+                            "name": "complete_escrow",
+                            "description": "Complete escrow and release funds",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {"escrow_id": {"type": "string"}},
+                                "required": ["escrow_id"],
+                            },
                         },
-                        "required": ["escrow_id"]
-                    }
-                },
-                {
-                    "name": "refund_escrow",
-                    "description": "Authorize refund for an escrow",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "escrow_id": {"type": "string"}
+                        {
+                            "name": "refund_escrow",
+                            "description": "Authorize refund for an escrow",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {"escrow_id": {"type": "string"}},
+                                "required": ["escrow_id"],
+                            },
                         },
-                        "required": ["escrow_id"]
-                    }
-                },
-                {
-                    "name": "get_escrow_status",
-                    "description": "Get current state of an escrow",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "escrow_id": {"type": "string"}
+                        {
+                            "name": "get_escrow_status",
+                            "description": "Get current state of an escrow",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {"escrow_id": {"type": "string"}},
+                                "required": ["escrow_id"],
+                            },
                         },
-                        "required": ["escrow_id"]
-                    }
+                        {
+                            "name": "get_wallet_info",
+                            "description": "Get Masumi wallet address and network info",
+                            "inputSchema": {"type": "object", "properties": {}, "required": []},
+                        },
+                    ]
                 },
-                {
-                    "name": "get_wallet_info",
-                    "description": "Get Masumi wallet address and network info",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {},
-                        "required": []
-                    }
-                }
-            ]}, req_id)
+                req_id,
+            )
 
         if method == "resources/list":
             return self._jsonrpc({"resources": []}, req_id)
@@ -132,14 +125,25 @@ class X402MCPServer:
                 escrow_id = f"escrow-{len(self._escrows) + 1}"
                 escrow = EscrowLifecycle(escrow_id, amount)
                 self._escrows[escrow_id] = escrow
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps({
-                        "escrow_id": escrow_id,
-                        "amount_lovelace": amount,
-                        "state": "initiated",
-                        "wallet_address": settings.masumi_wallet_address or "not configured"
-                    }, indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": json.dumps(
+                                    {
+                                        "escrow_id": escrow_id,
+                                        "amount_lovelace": amount,
+                                        "state": "initiated",
+                                        "wallet_address": settings.masumi_wallet_address or "not configured",
+                                    },
+                                    indent=2,
+                                ),
+                            }
+                        ]
+                    },
+                    req_id,
+                )
 
             elif name == "lock_escrow":
                 eid = args["escrow_id"]
@@ -147,9 +151,9 @@ class X402MCPServer:
                 if not escrow:
                     return self._jsonrpc({"content": [{"type": "text", "text": f"Escrow {eid} not found"}]}, req_id)
                 escrow.transition(EscrowState.LOCKED)
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {"content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]}, req_id
+                )
 
             elif name == "submit_data_hash":
                 eid = args["escrow_id"]
@@ -158,9 +162,9 @@ class X402MCPServer:
                     return self._jsonrpc({"content": [{"type": "text", "text": f"Escrow {eid} not found"}]}, req_id)
                 escrow.data_hash = args["data_hash"]
                 escrow.transition(EscrowState.SUBMITTED)
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {"content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]}, req_id
+                )
 
             elif name == "complete_escrow":
                 eid = args["escrow_id"]
@@ -168,9 +172,9 @@ class X402MCPServer:
                 if not escrow:
                     return self._jsonrpc({"content": [{"type": "text", "text": f"Escrow {eid} not found"}]}, req_id)
                 escrow.transition(EscrowState.COMPLETED)
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {"content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]}, req_id
+                )
 
             elif name == "refund_escrow":
                 eid = args["escrow_id"]
@@ -178,27 +182,38 @@ class X402MCPServer:
                 if not escrow:
                     return self._jsonrpc({"content": [{"type": "text", "text": f"Escrow {eid} not found"}]}, req_id)
                 escrow.transition(EscrowState.REFUND_AUTHORIZED)
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {"content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]}, req_id
+                )
 
             elif name == "get_escrow_status":
                 eid = args["escrow_id"]
                 escrow = self._escrows.get(eid)
                 if not escrow:
                     return self._jsonrpc({"content": [{"type": "text", "text": f"Escrow {eid} not found"}]}, req_id)
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {"content": [{"type": "text", "text": json.dumps(escrow.to_dict(), indent=2)}]}, req_id
+                )
 
             elif name == "get_wallet_info":
-                return self._jsonrpc({
-                    "content": [{"type": "text", "text": json.dumps({
-                        "wallet_address": settings.masumi_wallet_address or "not configured",
-                        "network": "Cardano Preprod (testnet)",
-                        "api_url": settings.masumi_api_url
-                    }, indent=2)}]
-                }, req_id)
+                return self._jsonrpc(
+                    {
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": json.dumps(
+                                    {
+                                        "wallet_address": settings.masumi_wallet_address or "not configured",
+                                        "network": "Cardano Preprod (testnet)",
+                                        "api_url": settings.masumi_api_url,
+                                    },
+                                    indent=2,
+                                ),
+                            }
+                        ]
+                    },
+                    req_id,
+                )
 
             else:
                 return self._jsonrpc({"content": [{"type": "text", "text": f"Unknown tool: {name}"}]}, req_id)

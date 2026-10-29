@@ -12,11 +12,11 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from datetime import datetime, timezone
-
-from neo4j import GraphDatabase, exceptions as neo4j_exc
+from datetime import UTC, datetime
 
 from config.settings import settings
+from neo4j import GraphDatabase
+from neo4j import exceptions as neo4j_exc
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("migrate")
@@ -109,7 +109,7 @@ def seed_data(driver):
                 f.status = $status,
                 f.created_at = $created_at
             """,
-            parameters={**f, "created_at": datetime.now(timezone.utc).isoformat()},
+            parameters={**f, "created_at": datetime.now(UTC).isoformat()},
         )
         logger.info("seeded farmer: %s (%s)", f["name"], f["farmer_id"])
 

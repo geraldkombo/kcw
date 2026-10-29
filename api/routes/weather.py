@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from satellite.openmeteo_client import OpenMeteoClient
+from api.dependencies import get_google_environment, get_openmeteo
 from satellite.google_environment_client import GoogleEnvironmentClient
-from api.dependencies import get_openmeteo, get_google_environment
+from satellite.openmeteo_client import OpenMeteoClient
 
 router = APIRouter(prefix="/weather", tags=["weather"])
 
@@ -16,7 +16,6 @@ async def forecast(
     days: int = 7,
     client: OpenMeteoClient = Depends(get_openmeteo),
 ):
-    data = await client.get_forecast(latitude, longitude, days=days)
     temp = await client.get_temperature_forecast(latitude, longitude)
     precip = await client.get_precipitation_forecast(latitude, longitude)
     humidity = await client.get_humidity_forecast(latitude, longitude)

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-import sys
 from pathlib import Path
 from typing import Literal
 
@@ -22,6 +20,7 @@ class Settings(BaseSettings):
     neo4j_uri: str = Field(default="bolt://localhost:7687")
     neo4j_user: str = Field(default="neo4j")
     neo4j_password: str = Field(default="")
+    neo4j_max_connection_pool_size: int = Field(default=50, ge=1)
 
     # App
     api_host: str = Field(default="0.0.0.0")
@@ -58,7 +57,7 @@ class Settings(BaseSettings):
         return v
 
     @model_validator(mode="after")
-    def parse_cors(self) -> "Settings":
+    def parse_cors(self) -> Settings:
         if isinstance(self.cors_origins, str):
             origins = [o.strip() for o in self.cors_origins.split(",") if o.strip()]
             object.__setattr__(self, "_cors_origins_list", origins)
@@ -84,7 +83,9 @@ def validate_settings() -> list[str]:
         warnings.append("CORS_ORIGINS=* — restrict this to specific origins in production")
     if settings.database_url.startswith("sqlite"):
         db_path = settings.database_url.replace("sqlite:///", "")
-        warnings.append(f"Using SQLite ({db_path}) — data persists to disk but consider PostgreSQL for multi-instance deployment")
+        warnings.append(
+            f"Using SQLite ({db_path}) — data persists to disk but consider PostgreSQL for multi-instance deployment"
+        )
     if settings.featherless_api_key is None:
         warnings.append("FEATHERLESS_API_KEY is not set — LLM augmentation disabled (graceful degradation)")
     return warnings

@@ -3,11 +3,11 @@ from __future__ import annotations
 import logging
 import time
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.types import ASGIApp
 
 from config.log import get_request_id, set_request_id
@@ -17,7 +17,7 @@ logger = logging.getLogger("frk.http")
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         rid = request.headers.get(settings.request_id_header) or set_request_id()
         set_request_id(rid)
         start = time.monotonic()
@@ -35,7 +35,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.max_per_minute = max_per_minute
         self._buckets: dict[str, list[float]] = defaultdict(list)
 
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         if self.max_per_minute <= 0:
             return await call_next(request)
         client_ip = request.client.host if request.client else "unknown"
@@ -51,7 +51,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "error": "rate_limit_exceeded",
                     "message": f"Max {self.max_per_minute} requests per minute",
                     "retry_after_seconds": int(window - (now - bucket[0])),
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 },
                 headers={"Retry-After": str(int(window - (now - bucket[0])))},
             )
@@ -60,7 +60,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         response: Response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
@@ -77,7 +77,7 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
 
     PUBLIC_PATHS = {"/health", "/ready", "/docs", "/openapi.json", "/redoc", "/"}
 
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         if request.url.path in self.PUBLIC_PATHS:
             return await call_next(request)
 
@@ -89,26 +89,28 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
             logger.warning("API authentication is DISABLED - set API_KEY env var in production")
             return await call_next(request)
 
-        logger.warning("unauthorized request to %s from %s", request.url.path, request.client.host if request.client else "unknown")
+        logger.warning(
+            "unauthorized request to %s from %s", request.url.path, request.client.host if request.client else "unknown"
+        )
         return JSONResponse(
             status_code=401,
             content={
                 "error": "unauthorized",
                 "message": "Missing or invalid API key. Provide Authorization: Bearer <key>",
                 "request_id": get_request_id(),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
 
 
 class ErrorHandlingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         try:
             response: Response = await call_next(request)
             if response.status_code >= 500:
                 logger.error("server error %d on %s %s", response.status_code, request.method, request.url.path)
             return response
-        except Exception as exc:
+        except Exception:
             logger.exception("unhandled exception on %s %s", request.method, request.url.path)
             return JSONResponse(
                 status_code=500,
@@ -116,7 +118,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                     "error": "internal_error",
                     "message": "An unexpected error occurred",
                     "request_id": get_request_id(),
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 },
             )
 
@@ -128,15 +130,15 @@ class RequestBodySizeMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.max_size_bytes = max_size_bytes
 
-    async def dispatch(self, request: Request, call_next: ASGIApp) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_size_bytes:
             return JSONResponse(
                 status_code=413,
                 content={
                     "error": "request_too_large",
-                    "message": f"Request body exceeds {self.max_size_bytes // (1024*1024)}MB limit",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "message": f"Request body exceeds {self.max_size_bytes // (1024 * 1024)}MB limit",
+                    "timestamp": datetime.now(UTC).isoformat(),
                 },
             )
         return await call_next(request)

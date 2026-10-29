@@ -33,54 +33,53 @@ class Neo4jCypherMCPServer:
         params = req.get("params", {})
 
         if method == "initialize":
-            return self._jsonrpc({
-                "protocolVersion": "2025-03-26",
-                "capabilities": {
-                    "tools": {
-                        "listChanged": False
-                    },
-                    "resources": {
-                        "listChanged": False
-                    }
+            return self._jsonrpc(
+                {
+                    "protocolVersion": "2025-03-26",
+                    "capabilities": {"tools": {"listChanged": False}, "resources": {"listChanged": False}},
+                    "serverInfo": {"name": "mcp-neo4j-cypher", "version": "1.0.0"},
                 },
-                "serverInfo": {
-                    "name": "mcp-neo4j-cypher",
-                    "version": "1.0.0"
-                }
-            }, req_id)
+                req_id,
+            )
 
         if method == "tools/list":
-            return self._jsonrpc({"tools": [
+            return self._jsonrpc(
                 {
-                    "name": "get_neo4j_schema_and_indexes",
-                    "description": "Read Neo4j schema: node labels, relationship types, indexes, and constraints",
-                    "inputSchema": {"type": "object", "properties": {}, "required": []}
-                },
-                {
-                    "name": "read_neo4j_cypher",
-                    "description": "Execute a read-only Cypher query",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "query": {"type": "string", "description": "Cypher query (READ only)"},
-                            "params": {"type": "object", "description": "Query parameters"}
+                    "tools": [
+                        {
+                            "name": "get_neo4j_schema_and_indexes",
+                            "description": "Read Neo4j schema: node labels, relationship types, indexes, and "
+                            "constraints",
+                            "inputSchema": {"type": "object", "properties": {}, "required": []},
                         },
-                        "required": ["query"]
-                    }
-                },
-                {
-                    "name": "write_neo4j_cypher",
-                    "description": "Execute a write Cypher query (CREATE, MERGE, SET, DELETE)",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "query": {"type": "string", "description": "Cypher query (WRITE)"},
-                            "params": {"type": "object", "description": "Query parameters"}
+                        {
+                            "name": "read_neo4j_cypher",
+                            "description": "Execute a read-only Cypher query",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {"type": "string", "description": "Cypher query (READ only)"},
+                                    "params": {"type": "object", "description": "Query parameters"},
+                                },
+                                "required": ["query"],
+                            },
                         },
-                        "required": ["query"]
-                    }
-                }
-            ]}, req_id)
+                        {
+                            "name": "write_neo4j_cypher",
+                            "description": "Execute a write Cypher query (CREATE, MERGE, SET, DELETE)",
+                            "inputSchema": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {"type": "string", "description": "Cypher query (WRITE)"},
+                                    "params": {"type": "object", "description": "Query parameters"},
+                                },
+                                "required": ["query"],
+                            },
+                        },
+                    ]
+                },
+                req_id,
+            )
 
         if method == "resources/list":
             return self._jsonrpc({"resources": []}, req_id)
@@ -98,7 +97,10 @@ class Neo4jCypherMCPServer:
         args = params.get("arguments", {})
 
         if self.driver is None:
-            return self._jsonrpc({"content": [{"type": "text", "text": "Neo4j not connected — start Neo4j and set NEO4J_PASSWORD"}]}, req_id)
+            return self._jsonrpc(
+                {"content": [{"type": "text", "text": "Neo4j not connected — start Neo4j and set NEO4J_PASSWORD"}]},
+                req_id,
+            )
 
         try:
             if name == "get_neo4j_schema_and_indexes":
@@ -118,28 +120,37 @@ class Neo4jCypherMCPServer:
             rel_types = session.run("CALL db.relationshipTypes()").value()
             indexes = session.run("SHOW INDEXES").data()
             constraints = session.run("SHOW CONSTRAINTS").data()
-        return self._jsonrpc({
-            "content": [{"type": "text", "text": json.dumps({
-                "labels": labels, "relationshipTypes": rel_types,
-                "indexes": indexes, "constraints": constraints
-            }, indent=2)}]
-        }, req_id)
+        return self._jsonrpc(
+            {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(
+                            {
+                                "labels": labels,
+                                "relationshipTypes": rel_types,
+                                "indexes": indexes,
+                                "constraints": constraints,
+                            },
+                            indent=2,
+                        ),
+                    }
+                ]
+            },
+            req_id,
+        )
 
     def _read_query(self, query: str, params: dict[str, Any], req_id: Any) -> dict[str, Any]:
         with self.driver.session() as session:
             result = session.run(query, **params).data()
-        return self._jsonrpc({
-            "content": [{"type": "text", "text": json.dumps(result, indent=2, default=str)}]
-        }, req_id)
+        return self._jsonrpc({"content": [{"type": "text", "text": json.dumps(result, indent=2, default=str)}]}, req_id)
 
     def _write_query(self, query: str, params: dict[str, Any], req_id: Any) -> dict[str, Any]:
         with self.driver.session() as session:
             result = session.run(query, **params)
             summary = result.consume()
             counters = {k: v for k, v in dict(summary.counters).items() if v > 0}
-        return self._jsonrpc({
-            "content": [{"type": "text", "text": json.dumps({"updates": counters})}]
-        }, req_id)
+        return self._jsonrpc({"content": [{"type": "text", "text": json.dumps({"updates": counters})}]}, req_id)
 
     def _jsonrpc(self, result: Any, req_id: Any, is_error: bool = False) -> dict[str, Any]:
         msg: dict[str, Any] = {"jsonrpc": "2.0"}

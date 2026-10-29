@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from database.repository import Neo4jRepository, Repository
 from knowledge.traditional_foods import TraditionalFoodsIndex
@@ -11,43 +11,152 @@ logger = logging.getLogger("frk.graphrag")
 
 # Known counties and crops for keyword-based entity extraction fallback
 KNOWN_COUNTIES = [
-    "kiambu", "nakuru", "kisumu", "meru", "machakos", "uasin gishu",
-    "homa bay", "bungoma", "kilifi", "nyeri", "nairobi", "kajiado",
-    "laikipia", "trans nzoia", "elgeyo marakwet", "nandi", "kakamega",
-    "busi a", "siaya", "migori", "kisii", "nyamira", "muranga",
-    "kirinyaga", "embu", "tharaka nithi", "isiolo", "marsabit",
-    "mandera", "wajir", "garissa", "tana river", "lamu", "tai ta taveta",
-    "kwale", "mombasa", "vihiga", "baringo", "samburu", "turkana",
+    "kiambu",
+    "nakuru",
+    "kisumu",
+    "meru",
+    "machakos",
+    "uasin gishu",
+    "homa bay",
+    "bungoma",
+    "kilifi",
+    "nyeri",
+    "nairobi",
+    "kajiado",
+    "laikipia",
+    "trans nzoia",
+    "elgeyo marakwet",
+    "nandi",
+    "kakamega",
+    "busi a",
+    "siaya",
+    "migori",
+    "kisii",
+    "nyamira",
+    "muranga",
+    "kirinyaga",
+    "embu",
+    "tharaka nithi",
+    "isiolo",
+    "marsabit",
+    "mandera",
+    "wajir",
+    "garissa",
+    "tana river",
+    "lamu",
+    "tai ta taveta",
+    "kwale",
+    "mombasa",
+    "vihiga",
+    "baringo",
+    "samburu",
+    "turkana",
     "west pokot",
 ]
 
 KNOWN_CROPS = [
-    "maize", "beans", "coffee", "tea", "kale", "avocado", "banana",
-    "dairy", "tomato", "sugarcane", "cassava", "sweet potato",
-    "millet", "sorghum", "groundnut", "cowpea", "cabbage", "spinach",
-    "onion", "mango", "passion fruit", "papaya", "rice", "wheat",
-    "pyrethrum", "cotton", "macadamia", "coconut", "cashew",
+    "maize",
+    "beans",
+    "coffee",
+    "tea",
+    "kale",
+    "avocado",
+    "banana",
+    "dairy",
+    "tomato",
+    "sugarcane",
+    "cassava",
+    "sweet potato",
+    "millet",
+    "sorghum",
+    "groundnut",
+    "cowpea",
+    "cabbage",
+    "spinach",
+    "onion",
+    "mango",
+    "passion fruit",
+    "papaya",
+    "rice",
+    "wheat",
+    "pyrethrum",
+    "cotton",
+    "macadamia",
+    "coconut",
+    "cashew",
     # Indigenous / traditional food plants (Maundu, 1999)
-    "amaranth", "terere", "mchicha",
-    "black nightshade", "managu", "osusu", "african nightshade",
-    "spider plant", "sagaa", "mnavu", "mlenda", "cat's whiskers",
-    "cowpea leaves", "kunde", "choroko",
-    "jute mallow", "mrenda", "murere", "apoth",
-    "pumpkin leaves", "majani ya malenge", "murenda",
-    "finger millet", "wimbi", "ugali",
-    "pigeon pea", "mbaazi", "njahi", "gongo pea",
-    "bambara nut", "njugu mawe", "nyimo",
-    "baobab", "mbuyu",
-    "tamarind", "ukwaju",
-    "yam", "kiasi", "mayuni",
+    "amaranth",
+    "terere",
+    "mchicha",
+    "black nightshade",
+    "managu",
+    "osusu",
+    "african nightshade",
+    "spider plant",
+    "sagaa",
+    "mnavu",
+    "mlenda",
+    "cat's whiskers",
+    "cowpea leaves",
+    "kunde",
+    "choroko",
+    "jute mallow",
+    "mrenda",
+    "murere",
+    "apoth",
+    "pumpkin leaves",
+    "majani ya malenge",
+    "murenda",
+    "finger millet",
+    "wimbi",
+    "ugali",
+    "pigeon pea",
+    "mbaazi",
+    "njahi",
+    "gongo pea",
+    "bambara nut",
+    "njugu mawe",
+    "nyimo",
+    "baobab",
+    "mbuyu",
+    "tamarind",
+    "ukwaju",
+    "yam",
+    "kiasi",
+    "mayuni",
     # Ojwang (2020) — Homa Bay traditional foods
-    "dek", "mito", "boo", "atipa", "odielo", "ndemra", "alikra", "osoyi",
-    "ng'or", "ng_or",
-    "mapera", "ochuoga", "akuno", "sangla", "nyatonglo",
-    "slenderleaf", "mitoo", "marejea", "crotalaria",
-    "desert date", "desert_date", "mchunju", "balanites",
-    "bird plum", "bird_plum", "mkuni", "ekalale",
-    "vitex", "black plum", "vitex_black_plum", "mfudu", "jwelu",
+    "dek",
+    "mito",
+    "boo",
+    "atipa",
+    "odielo",
+    "ndemra",
+    "alikra",
+    "osoyi",
+    "ng'or",
+    "ng_or",
+    "mapera",
+    "ochuoga",
+    "akuno",
+    "sangla",
+    "nyatonglo",
+    "slenderleaf",
+    "mitoo",
+    "marejea",
+    "crotalaria",
+    "desert date",
+    "desert_date",
+    "mchunju",
+    "balanites",
+    "bird plum",
+    "bird_plum",
+    "mkuni",
+    "ekalale",
+    "vitex",
+    "black plum",
+    "vitex_black_plum",
+    "mfudu",
+    "jwelu",
 ]
 
 KNOWN_STATUSES = ["active", "repaid", "defaulted", "delinquent", "completed"]
@@ -88,11 +197,14 @@ class GraphRAGService:
                 traditional_foods[county] = {
                     "count": len(crops),
                     "indigenous": [
-                        {"name_sw": c.get("name_sw", "").split("/")[0].strip(),
-                         "name_en": c.get("name_en", ""),
-                         "status": c.get("status"),
-                         "market_price_kes_tonne": c.get("market_price_kes_tonne")}
-                        for c in crops if c.get("status") == "indigenous"
+                        {
+                            "name_sw": c.get("name_sw", "").split("/")[0].strip(),
+                            "name_en": c.get("name_en", ""),
+                            "status": c.get("status"),
+                            "market_price_kes_tonne": c.get("market_price_kes_tonne"),
+                        }
+                        for c in crops
+                        if c.get("status") == "indigenous"
                     ],
                 }
             patterns = self._tfi.get_intercropping_patterns(county)
@@ -126,11 +238,10 @@ class GraphRAGService:
                 "classified_crops": classified_crops,
                 "resilience": resilience,
                 "source": "Traditional food knowledge (2026)",
-            } if traditional_foods or classified_crops else {},
-            "seeds_found": [
-                {k: v for k, v in s.items() if k != "embedding"}
-                for s in seeds[:10]
-            ],
+            }
+            if traditional_foods or classified_crops
+            else {},
+            "seeds_found": [{k: v for k, v in s.items() if k != "embedding"} for s in seeds[:10]],
             "graph_context": {
                 "nodes_visited": len(context),
                 "relationships": context[:20],
@@ -262,12 +373,12 @@ class GraphRAGService:
                 content = result["choices"][0]["message"]["content"]
                 try:
                     llm_entities = json.loads(content)
-                    entities["counties"] = list(set(
-                        entities["counties"] + [c.lower() for c in llm_entities.get("counties", [])]
-                    ))
-                    entities["crops"] = list(set(
-                        entities["crops"] + [c.lower() for c in llm_entities.get("crops", [])]
-                    ))
+                    entities["counties"] = list(
+                        set(entities["counties"] + [c.lower() for c in llm_entities.get("counties", [])])
+                    )
+                    entities["crops"] = list(
+                        set(entities["crops"] + [c.lower() for c in llm_entities.get("crops", [])])
+                    )
                     entities["farmer_ids"] = llm_entities.get("farmer_ids", [])
                     entities["purposes"] = llm_entities.get("loan_purposes", [])
                 except (json.JSONDecodeError, KeyError):
@@ -371,15 +482,17 @@ class GraphRAGService:
                     matched = True
 
                 if matched:
-                    seeds.append({
-                        "farmer_id": data.get("farmer_id"),
-                        "first_name": data.get("first_name"),
-                        "last_name": data.get("last_name"),
-                        "county": data.get("county"),
-                        "crop": data.get("primary_crop"),
-                        "credit_score": data.get("credit_score"),
-                        "status": data.get("status"),
-                    })
+                    seeds.append(
+                        {
+                            "farmer_id": data.get("farmer_id"),
+                            "first_name": data.get("first_name"),
+                            "last_name": data.get("last_name"),
+                            "county": data.get("county"),
+                            "crop": data.get("primary_crop"),
+                            "credit_score": data.get("credit_score"),
+                            "status": data.get("status"),
+                        }
+                    )
 
         return seeds
 
@@ -397,17 +510,19 @@ class GraphRAGService:
                 continue
 
             pole = await self.pole_trace(fid)
-            context.append({
-                "seed": {
-                    "farmer_id": fid,
-                    "person": seed.get("first_name", "") + " " + seed.get("last_name", ""),
-                    "county": seed.get("county"),
-                    "crop": seed.get("crop"),
-                    "credit_score": seed.get("credit_score"),
-                    "status": seed.get("status"),
-                },
-                "pole_trace": pole,
-            })
+            context.append(
+                {
+                    "seed": {
+                        "farmer_id": fid,
+                        "person": seed.get("first_name", "") + " " + seed.get("last_name", ""),
+                        "county": seed.get("county"),
+                        "crop": seed.get("crop"),
+                        "credit_score": seed.get("credit_score"),
+                        "status": seed.get("status"),
+                    },
+                    "pole_trace": pole,
+                }
+            )
 
             if self._is_neo4j:
                 hops = await self.multi_hop_traverse(fid, hops=2)
@@ -415,9 +530,10 @@ class GraphRAGService:
             else:
                 loans = self._repo.list_loans()
                 farmer_loans = [
-                    l for l in loans
-                    if l.get("farmer_id") == fid
-                    or (isinstance(l.get("data"), dict) and l["data"].get("farmer_id") == fid)
+                    loan
+                    for loan in loans
+                    if loan.get("farmer_id") == fid
+                    or (isinstance(loan.get("data"), dict) and loan["data"].get("farmer_id") == fid)
                 ]
                 context[-1]["loans"] = farmer_loans[:5]
 
@@ -432,15 +548,21 @@ class GraphRAGService:
         classified_crops: dict[str, Any] | None = None,
     ) -> str:
         if not context:
-            return ("I couldn't find relevant agricultural data to answer this question. "
-                    "Try specifying a county (e.g., Nakuru, Kiambu), crop (e.g., maize, coffee), "
-                    "or farmer ID.")
+            return (
+                "I couldn't find relevant agricultural data to answer this question. "
+                "Try specifying a county (e.g., Nakuru, Kiambu), crop (e.g., maize, coffee), "
+                "or farmer ID."
+            )
 
         context_summary = json.dumps(context, indent=2, default=str)[:3000]
-        tf_summary = json.dumps({
-            "traditional_foods": traditional_foods or {},
-            "classified_crops": classified_crops or {},
-        }, indent=2, default=str)[:1000]
+        tf_summary = json.dumps(
+            {
+                "traditional_foods": traditional_foods or {},
+                "classified_crops": classified_crops or {},
+            },
+            indent=2,
+            default=str,
+        )[:1000]
 
         if self._llm is not None:
             try:
@@ -457,7 +579,8 @@ class GraphRAGService:
                         },
                         {
                             "role": "user",
-                            "content": f"Question: {question}\n\nGraph context:\n{context_summary}\n\nTraditional food plants context (Maundu, 1999):\n{tf_summary}",
+                            "content": f"Question: {question}\n\nGraph context:\n{context_summary}\n\nTraditional food "
+                            f"plants context (Maundu, 1999):\n{tf_summary}",
                         },
                     ],
                     temperature=0.2,
@@ -471,7 +594,7 @@ class GraphRAGService:
 
     def _fallback_synthesis(
         self,
-        question: str,
+        _question: str,
         context: list[dict[str, Any]],
         entities: dict[str, Any],
         classified_crops: dict[str, Any] | None = None,
@@ -489,17 +612,14 @@ class GraphRAGService:
 
         seed_count = len(context)
         if seed_count > 0:
-            scores = [
-                c["seed"].get("credit_score")
-                for c in context
-                if c["seed"].get("credit_score") is not None
-            ]
+            scores = [c["seed"].get("credit_score") for c in context if c["seed"].get("credit_score") is not None]
             if scores:
                 avg = sum(scores) / len(scores)
                 parts.append(f"Average credit score across {seed_count} farmers: {avg:.1f}.")
 
             high_risk = [
-                c["seed"] for c in context
+                c["seed"]
+                for c in context
                 if c["seed"].get("credit_score") is not None and c["seed"]["credit_score"] < 50
             ]
             if high_risk:
@@ -516,14 +636,10 @@ class GraphRAGService:
             )[:3]
             if top:
                 parts.append(
-                    "Top performers: "
-                    + ", ".join(f"{t['person']} (score: {t['credit_score']})" for t in top)
-                    + "."
+                    "Top performers: " + ", ".join(f"{t['person']} (score: {t['credit_score']})" for t in top) + "."
                 )
 
-            loan_data = [
-                c["loans"] for c in context if c.get("loans")
-            ]
+            loan_data = [c["loans"] for c in context if c.get("loans")]
             if loan_data:
                 total_loans = sum(len(ls) for ls in loan_data)
                 parts.append(f"{total_loans} loan records found across matched farmers.")

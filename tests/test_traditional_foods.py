@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import pytest
-from knowledge.traditional_foods import TraditionalFoodsIndex
-from agriculture_intelligence.precision_farming import CROP_BASE_TEMPS, HARVEST_GDD_THRESHOLDS
 from agriculture_intelligence.land_intelligence import LandIntelligence
 from agriculture_intelligence.market_intelligence import MarketIntelligence
+from agriculture_intelligence.precision_farming import CROP_BASE_TEMPS, HARVEST_GDD_THRESHOLDS
+from knowledge.traditional_foods import TraditionalFoodsIndex
 
 
 class TestTraditionalFoodsIndex:
@@ -127,7 +126,16 @@ class TestTraditionalFoodsIndex:
         assert ctx == {}
 
     def test_new_ojwang_crops_classifiable(self):
-        for crop in ["slenderleaf", "mitoo", "desert_date", "mchunju", "bird_plum", "ekalale", "vitex_black_plum", "jwelu"]:
+        for crop in [
+            "slenderleaf",
+            "mitoo",
+            "desert_date",
+            "mchunju",
+            "bird_plum",
+            "ekalale",
+            "vitex_black_plum",
+            "jwelu",
+        ]:
             result = self.tfi.classify_crop(crop)
             assert result is not None, f"{crop} not found"
             assert result["status"] == "indigenous"

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from config.settings import settings
 
 
@@ -12,8 +10,8 @@ class FeatherlessClient:
         if not settings.featherless_api_key:
             raise ValueError("FEATHERLESS_API_KEY is not configured")
 
-    async def chat(self, messages: list[dict], **kwargs) -> str:
+    async def chat(self, _messages: list[dict], **_kwargs) -> str:
         return ""
 
-    async def geo_audit(self, context: str) -> dict | str:
+    async def geo_audit(self, _context: str) -> dict | str:
         return {}

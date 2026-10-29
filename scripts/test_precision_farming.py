@@ -1,8 +1,13 @@
 """Quick test for precision farming module — equatorial general agriculture intelligence."""
-import asyncio, sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+import asyncio
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from agriculture_intelligence.precision_farming import PrecisionFarming
+
 
 async def test():
     pf = PrecisionFarming()
@@ -38,6 +43,7 @@ async def test():
     print(f"Saves {r['water_saving_vs_uniform_pct']}% vs uniform")
     for z in r["zones"]:
         print(f"  Zone {z['zone']}: {z['area_ha']}ha, moisture={z['moisture_fraction']}, {z['recommendation']}")
+
 
 if __name__ == "__main__":
     asyncio.run(test())

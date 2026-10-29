@@ -5,7 +5,7 @@ import logging
 import time
 from dataclasses import dataclass
 from datetime import date, timedelta
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
@@ -19,14 +19,16 @@ MAX_RETRIES = 3
 RETRY_BACKOFF = 2.0
 
 FORECAST_PARAMS = [
-    "temperature_2m_max", "temperature_2m_min",
+    "temperature_2m_max",
+    "temperature_2m_min",
     "precipitation_sum",
     "wind_speed_10m_max",
     "relative_humidity_2m_max",
 ]
 
 ERA5_PARAMS = [
-    "temperature_2m_max", "temperature_2m_min",
+    "temperature_2m_max",
+    "temperature_2m_min",
     "precipitation_sum",
 ]
 
@@ -53,7 +55,7 @@ class OpenMeteoClient:
         self._circuit_open = False
         self._circuit_reset_at = 0.0
 
-    def _cache_get(self, key: str) -> Optional[dict[str, Any]]:
+    def _cache_get(self, key: str) -> dict[str, Any] | None:
         entry = self._cache.get(key)
         if entry and time.monotonic() < entry.expires_at:
             return entry.data
@@ -128,7 +130,6 @@ class OpenMeteoClient:
         return await self._request(ERA5_URL, params, cache_key)
 
     async def _request(self, url: str, params: dict, cache_key: str) -> dict[str, Any]:
-        last_exc: Optional[Exception] = None
         for attempt in range(MAX_RETRIES):
             try:
                 resp = await self._client.get(url, params=params)
@@ -139,18 +140,15 @@ class OpenMeteoClient:
                 return data
             except httpx.TimeoutException as e:
                 logger.warning("Open-Meteo timeout (attempt %d/%d): %s", attempt + 1, MAX_RETRIES, e)
-                last_exc = e
             except httpx.HTTPStatusError as e:
                 logger.error("Open-Meteo HTTP error (attempt %d/%d): %s", attempt + 1, MAX_RETRIES, e)
-                last_exc = e
                 if e.response.status_code < 500:
                     break
-            except Exception as e:
+            except Exception:
                 logger.exception("Open-Meteo unexpected error (attempt %d/%d)", attempt + 1, MAX_RETRIES)
-                last_exc = e
 
             if attempt < MAX_RETRIES - 1:
-                await asyncio.sleep(RETRY_BACKOFF ** attempt)
+                await asyncio.sleep(RETRY_BACKOFF**attempt)
 
         self._consecutive_failures += 1
         if self._consecutive_failures >= 3:

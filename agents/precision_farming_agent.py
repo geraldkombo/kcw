@@ -13,8 +13,7 @@ class PrecisionFarmingAgent:
     def __init__(self, power: PowerClient | None = None):
         self.pf = PrecisionFarming(power or PowerClient())
 
-    async def analyze(self, latitude: float, longitude: float, crop: str = "maize",
-                      farm_size_ha: float = 1.0) -> dict:
+    async def analyze(self, latitude: float, longitude: float, crop: str = "maize", farm_size_ha: float = 1.0) -> dict:
         """Full precision farming analysis — GDD, ET, pest risk, micro-climate, frost, timing."""
         gdd = await self.pf.compute_gdd(latitude, longitude, crop)
         et = await self.pf.compute_et_penman_monteith(latitude, longitude)
@@ -40,7 +39,7 @@ class PrecisionFarmingAgent:
             "overall_precision_grade": self._grade(gdd, et, pest, frost),
         }
 
-    def _grade(self, gdd: dict, et: dict, pest: dict, frost: dict) -> str:
+    def _grade(self, gdd: dict, _et: dict, pest: dict, frost: dict) -> str:
         if frost.get("frost_risk") in ("severe", "high"):
             return "C — frost risk requires protective measures"
         if pest.get("overall_risk") == "high":

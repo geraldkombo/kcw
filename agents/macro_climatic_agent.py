@@ -1,6 +1,5 @@
-from typing import Optional
-from satellite.power_client import PowerClient
 from knowledge.traditional_foods import TraditionalFoodsIndex
+from satellite.power_client import PowerClient
 
 
 class MacroClimaticAgent:
@@ -16,7 +15,7 @@ class MacroClimaticAgent:
     - Nutritional context for crop recommendations
     """
 
-    def __init__(self, power: Optional[PowerClient] = None):
+    def __init__(self, power: PowerClient | None = None):
         self.power = power or PowerClient()
         self.traditional_foods = TraditionalFoodsIndex()
 
@@ -52,15 +51,25 @@ class MacroClimaticAgent:
             "solar_radiation_kwh_m2_day": solar,
             "data_source": "nasa_power",
             "climate_zone": self._classify_zone(lat, lon, county, precip, temp.get("mean", 25.0)),
-            "advisory": self._generate_advisory(county, drought_risk, precip, temp.get("mean", 25.0), tf_classified, tf_corridors),
+            "advisory": self._generate_advisory(
+                county, drought_risk, precip, temp.get("mean", 25.0), tf_classified, tf_corridors
+            ),
             "traditional_foods": {
                 "crop_origin": (tf_classified.get("status") if tf_classified else None),
-                "crop_classification": (f"{tf_classified.get('status', 'unknown')} — {tf_classified.get('origin', '')}" if tf_classified else None),
+                "crop_classification": (
+                    f"{tf_classified.get('status', 'unknown')} — {tf_classified.get('origin', '')}"
+                    if tf_classified
+                    else None
+                ),
                 "traditional_crops_in_county": len(tf_crops),
-                "indigenous_crops": [c["name_sw"].split("/")[0].strip() for c in tf_crops if c.get("status") == "indigenous"],
+                "indigenous_crops": [
+                    c["name_sw"].split("/")[0].strip() for c in tf_crops if c.get("status") == "indigenous"
+                ],
                 "intercropping_patterns": tf_patterns,
                 "market_demand_corridors": tf_corridors,
-            } if tf_crops else {},
+            }
+            if tf_crops
+            else {},
         }
 
     def _compute_drought_risk(self, precip: float, temp: float, solar: float, county: str) -> float:
@@ -91,7 +100,7 @@ class MacroClimaticAgent:
             base = max(base, 0.5)
         return min(1.0, base)
 
-    def _classify_zone(self, lat: float, lon: float, county: str, precip: float, temp: float) -> str:
+    def _classify_zone(self, _lat: float, _lon: float, county: str, precip: float, temp: float) -> str:
         if county in {"Kisumu", "Homa Bay"}:
             return "lake_basin"
         if county in {"Machakos", "Kilifi"}:
@@ -106,9 +115,15 @@ class MacroClimaticAgent:
             return "humid"
         return "transitional"
 
-    def _generate_advisory(self, county: str, drought_risk: float, precip: float, temp: float,
-                           tf_classified: dict | None = None,
-                           tf_corridors: list | None = None) -> str:
+    def _generate_advisory(
+        self,
+        county: str,
+        drought_risk: float,
+        precip: float,
+        temp: float,
+        tf_classified: dict | None = None,
+        tf_corridors: list | None = None,
+    ) -> str:
         parts = []
         if drought_risk > 0.5:
             parts.append(
@@ -122,9 +137,7 @@ class MacroClimaticAgent:
                 "Monitor soil moisture; supplemental irrigation recommended."
             )
         else:
-            parts.append(
-                f"Standard conditions in {county} ({precip:.1f}mm/day, {temp:.1f}°C). "
-            )
+            parts.append(f"Standard conditions in {county} ({precip:.1f}mm/day, {temp:.1f}°C). ")
 
         # Traditional foods context (Maundu, 1999)
         if tf_classified:
@@ -142,8 +155,7 @@ class MacroClimaticAgent:
                 )
             elif status == "exotic":
                 parts.append(
-                    f"Crop is exotic to East Africa ({origin}). "
-                    "Higher input requirements for water and fertiliser."
+                    f"Crop is exotic to East Africa ({origin}). Higher input requirements for water and fertiliser."
                 )
 
         if tf_corridors:

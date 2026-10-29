@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-from typing import Optional
-
-from featherless.client import FeatherlessClient
-from satellite.power_client import PowerClient
-from satellite.openmeteo_client import OpenMeteoClient
-from satellite.google_environment_client import GoogleEnvironmentClient
 from database.repository import Repository, create_repository
+from featherless.client import FeatherlessClient
+from satellite.google_environment_client import GoogleEnvironmentClient
+from satellite.openmeteo_client import OpenMeteoClient
+from satellite.power_client import PowerClient
 
-_featherless: Optional[FeatherlessClient] = None
-_power: Optional[PowerClient] = None
-_openmeteo: Optional[OpenMeteoClient] = None
-_google_env: Optional[GoogleEnvironmentClient] = None
-_repository: Optional[Repository] = None
+_featherless: FeatherlessClient | None = None
+_power: PowerClient | None = None
+_openmeteo: OpenMeteoClient | None = None
+_google_env: GoogleEnvironmentClient | None = None
+_repository: Repository | None = None
 
 
-def get_featherless() -> Optional[FeatherlessClient]:
+def get_featherless() -> FeatherlessClient | None:
     global _featherless
     if _featherless is None:
         try:

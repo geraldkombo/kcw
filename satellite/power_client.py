@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date, timedelta
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
@@ -14,8 +14,15 @@ logger = logging.getLogger("frk.satellite")
 POWER_BASE_URL = "https://power.larc.nasa.gov/api/temporal/daily/point"
 
 AG_PARAMETERS = [
-    "T2M", "T2M_MAX", "T2M_MIN", "PRECTOTCORR",
-    "ALLSKY_SFC_SW_DWN", "GWETROOT", "GWETTOP", "RH2M", "WS10M",
+    "T2M",
+    "T2M_MAX",
+    "T2M_MIN",
+    "PRECTOTCORR",
+    "ALLSKY_SFC_SW_DWN",
+    "GWETROOT",
+    "GWETTOP",
+    "RH2M",
+    "WS10M",
 ]
 
 NASA_FILL = -999.0
@@ -41,7 +48,7 @@ class PowerClient:
         self._circuit_open = False
         self._circuit_reset_at = 0.0
 
-    def _cache_get(self, key: str) -> Optional[dict[str, Any]]:
+    def _cache_get(self, key: str) -> dict[str, Any] | None:
         entry = self._cache.get(key)
         if entry and time.monotonic() < entry.expires_at:
             return entry.data
@@ -80,7 +87,7 @@ class PowerClient:
         if end is None:
             end = date.today()
 
-        params = {
+        params: dict[str, str | float] = {
             "parameters": ",".join(parameters or AG_PARAMETERS),
             "community": "AG",
             "latitude": latitude,
@@ -90,7 +97,6 @@ class PowerClient:
             "format": "JSON",
         }
 
-        last_exc: Optional[Exception] = None
         for attempt in range(MAX_RETRIES):
             try:
                 resp = await self._client.get(POWER_BASE_URL, params=params)
@@ -102,18 +108,15 @@ class PowerClient:
                 return props
             except httpx.TimeoutException as e:
                 logger.warning("NASA POWER timeout (attempt %d/%d): %s", attempt + 1, MAX_RETRIES, e)
-                last_exc = e
             except httpx.HTTPStatusError as e:
                 logger.error("NASA POWER HTTP error (attempt %d/%d): %s", attempt + 1, MAX_RETRIES, e)
-                last_exc = e
                 if e.response.status_code < 500:
                     break  # Don't retry 4xx errors
-            except Exception as e:
+            except Exception:
                 logger.exception("NASA POWER unexpected error (attempt %d/%d)", attempt + 1, MAX_RETRIES)
-                last_exc = e
 
             if attempt < MAX_RETRIES - 1:
-                await asyncio.sleep(RETRY_BACKOFF ** attempt)
+                await asyncio.sleep(RETRY_BACKOFF**attempt)
 
         # All retries exhausted
         self._consecutive_failures += 1

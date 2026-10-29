@@ -1,6 +1,5 @@
 """Cooperative Agent — solves mismanagement of cooperatives: milk, feeds, governance."""
 
-from typing import Optional
 from agriculture_intelligence.cooperative_manager import CooperativeManager
 from agriculture_intelligence.market_intelligence import MarketIntelligence
 
@@ -30,5 +29,6 @@ class CooperativeAgent:
             "milk_pricing_optimization": milk_opt,
             "feed_procurement_optimization": feed_opt,
             "governance_recommendations": governance,
-            "total_annual_gain_kes": milk_opt.get("estimated_annual_gain_kes", 0) + feed_opt.get("annual_savings_kes", 0),
+            "total_annual_gain_kes": milk_opt.get("estimated_annual_gain_kes", 0)
+            + feed_opt.get("annual_savings_kes", 0),
         }

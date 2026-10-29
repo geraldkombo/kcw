@@ -55,8 +55,16 @@ class ClimateFinanceKnowledge:
             "status": "proposed regulation, 2026",
         },
         "target_crops": [
-            "amaranth", "cowpea_leaves", "sorghum", "finger_millet",
-            "pigeon_pea", "bambara_nut", "dek", "mito", "boo", "ndemra",
+            "amaranth",
+            "cowpea_leaves",
+            "sorghum",
+            "finger_millet",
+            "pigeon_pea",
+            "bambara_nut",
+            "dek",
+            "mito",
+            "boo",
+            "ndemra",
         ],
         "farmer_benefit": (
             "Rapid liquidity allows replanting fast-maturing indigenous crops "
@@ -172,13 +180,15 @@ class ClimateFinanceKnowledge:
             "subsist on energy-dense nutrient-poor staples (ugali) while neglecting local nutrient-rich flora."
         ),
         "food_remittance_nairobi_hh_pct": 50,
-        "food_remittance_context": "Over 50% of Nairobi households receive food remittances directly from rural relatives — a critical unmeasured buffer against urban food poverty.",
+        "food_remittance_context": "Over 50% of Nairobi households receive food remittances directly from rural "
+        "relatives — a critical unmeasured buffer against urban food poverty.",
     }
 
     CROSS_BORDER_TRADE = {
         "women_traders_share_pct": 77,
         "women_traders_context": "Women Small-Scale Cross-Border Traders (WICBTs) dominate traditional food corridors",
-        "regime": "Simplified Trade Regime (STR) — allows tariff-free movement of locally grown produce under monetary threshold",
+        "regime": "Simplified Trade Regime (STR) — allows tariff-free movement of locally grown produce under monetary "
+        "threshold",
         "barriers": [
             "Non-tariff barriers at formal One Stop Border Posts (OSBPs)",
             "Rampant extortion by border officials",
@@ -221,10 +231,10 @@ class ClimateFinanceKnowledge:
     def get_usaid_impact(self) -> dict:
         return self.USAID_FREEZE_IMPACT
 
-    def get_phl_analysis(self, crop: str | None = None) -> dict:
+    def get_phl_analysis(self, _crop: str | None = None) -> dict:
         return self.POST_HARVEST_LOSS_DATA
 
-    def get_carbon_potential(self, system: str | None = None) -> dict:
+    def get_carbon_potential(self, _system: str | None = None) -> dict:
         return self.CARBON_CREDIT_POTENTIAL
 
     def get_de_risk_overview(self) -> dict:

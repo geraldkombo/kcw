@@ -3,20 +3,34 @@ from __future__ import annotations
 import logging
 import os
 import tempfile
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 
-from api.main import app
 from api.dependencies import get_repository
+from api.main import app
 from config.log import configure_logging, get_request_id, set_request_id
 from config.settings import Settings
 from database.repository import InMemoryRepository
 
 
+def make_settings(**overrides: Any) -> Settings:
+    """Build Settings with runtime kwargs the dataclass-transform signature doesn't model (_env_file, bad literals)."""
+    return Settings(**overrides)
+
+
 class TestSettings:
-    def test_default_settings(self):
-        s = Settings(_env_file=None)
+    @staticmethod
+    def _clear_env(monkeypatch):
+        # pydantic-settings reads OS env vars (CI sets e.g. LOG_LEVEL);
+        # isolate these tests so defaults / env-file values are exercised.
+        for name in Settings.model_fields:
+            monkeypatch.delenv(name.upper(), raising=False)
+
+    def test_default_settings(self, monkeypatch):
+        self._clear_env(monkeypatch)
+        s = make_settings(_env_file=None)
         assert s.neo4j_uri == "bolt://localhost:7687"
         assert s.api_port == 8000
         assert s.log_level == "INFO"
@@ -42,20 +56,21 @@ class TestSettings:
 
     def test_log_level_validation(self):
         with pytest.raises(ValueError):
-            Settings(log_level="TRACE")
+            make_settings(log_level="TRACE")
 
     def test_api_port_range(self):
         with pytest.raises(ValueError):
             Settings(api_port=80)
 
-    def test_env_file_loading(self):
+    def test_env_file_loading(self, monkeypatch):
+        self._clear_env(monkeypatch)
         with tempfile.NamedTemporaryFile(mode="w", suffix=".env", delete=False) as f:
             f.write("NEO4J_URI=bolt://test:7687\n")
             f.write("LOG_LEVEL=DEBUG\n")
             f.write("CORS_ORIGINS=https://test.ke\n")
             env_path = f.name
         try:
-            s = Settings(_env_file=env_path)
+            s = make_settings(_env_file=env_path)
             assert s.neo4j_uri == "bolt://test:7687"
             assert s.log_level == "DEBUG"
             assert s.cors_origins_list == ["https://test.ke"]
@@ -71,7 +86,7 @@ class TestLogging:
         assert isinstance(rid, str)
 
     def test_request_id_explicit(self):
-        rid = set_request_id("custom-id-123")
+        set_request_id("custom-id-123")
         assert get_request_id() == "custom-id-123"
 
     def test_configure_logging_json(self, caplog):

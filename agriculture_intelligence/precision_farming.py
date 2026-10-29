@@ -17,19 +17,57 @@ Standards: FAO-56 (crop evapotranspiration), FAO-66 (GDD phenology), EU 2024/200
 from __future__ import annotations
 
 import math
+from typing import Any
+
 from satellite.power_client import PowerClient
 
 # Pest/disease temperature-moisture thresholds — equatorial calibration
 # Covers staple crops (maize, sorghum, millet, rice, beans, banana),
 # cash crops (coffee, citrus, avocado, mango), horticulture (tomato, onion, grape),
 # and high-value export crops (rose for EU phytosanitary compliance)
-PEST_THRESHOLDS = {
-    "downy_mildew": {"temp_min": 10, "temp_opt": 18, "temp_max": 28, "moisture_min": 0.6, "crops": ["grape", "onion", "rose"]},
-    "powdery_mildew": {"temp_min": 15, "temp_opt": 22, "temp_max": 32, "moisture_min": 0.3, "crops": ["wheat", "mango", "rose"]},
-    "fusarium_wilt": {"temp_min": 18, "temp_opt": 28, "temp_max": 35, "moisture_min": 0.5, "crops": ["banana", "tomato", "rose"]},
-    "botrytis": {"temp_min": 12, "temp_opt": 20, "temp_max": 28, "moisture_min": 0.7, "crops": ["strawberry", "grape", "rose"]},
-    "false_codling_moth": {"temp_min": 18, "temp_opt": 28, "temp_max": 38, "moisture_min": 0.2, "crops": ["citrus", "avocado", "rose"]},
-    "fall_armyworm": {"temp_min": 15, "temp_opt": 28, "temp_max": 38, "moisture_min": 0.2, "crops": ["maize", "sorghum", "millet", "finger_millet", "cowpea"]},
+PEST_THRESHOLDS: dict[str, dict[str, Any]] = {
+    "downy_mildew": {
+        "temp_min": 10,
+        "temp_opt": 18,
+        "temp_max": 28,
+        "moisture_min": 0.6,
+        "crops": ["grape", "onion", "rose"],
+    },
+    "powdery_mildew": {
+        "temp_min": 15,
+        "temp_opt": 22,
+        "temp_max": 32,
+        "moisture_min": 0.3,
+        "crops": ["wheat", "mango", "rose"],
+    },
+    "fusarium_wilt": {
+        "temp_min": 18,
+        "temp_opt": 28,
+        "temp_max": 35,
+        "moisture_min": 0.5,
+        "crops": ["banana", "tomato", "rose"],
+    },
+    "botrytis": {
+        "temp_min": 12,
+        "temp_opt": 20,
+        "temp_max": 28,
+        "moisture_min": 0.7,
+        "crops": ["strawberry", "grape", "rose"],
+    },
+    "false_codling_moth": {
+        "temp_min": 18,
+        "temp_opt": 28,
+        "temp_max": 38,
+        "moisture_min": 0.2,
+        "crops": ["citrus", "avocado", "rose"],
+    },
+    "fall_armyworm": {
+        "temp_min": 15,
+        "temp_opt": 28,
+        "temp_max": 38,
+        "moisture_min": 0.2,
+        "crops": ["maize", "sorghum", "millet", "finger_millet", "cowpea"],
+    },
     "coffee_berry_borer": {"temp_min": 18, "temp_opt": 25, "temp_max": 32, "moisture_min": 0.4, "crops": ["coffee"]},
     "tsv": {"temp_min": 20, "temp_opt": 30, "temp_max": 40, "moisture_min": 0.3, "crops": ["tomato", "pepper"]},
 }
@@ -38,13 +76,15 @@ PEST_THRESHOLDS = {
 # Sources: document synthesis (2026), Ojwang (2020), Maundu et al. (1999)
 INDIGENOUS_AGRONOMIC_TRAITS = {
     "amaranth": {
-        "photosynthetic_pathway": "C4 — spatially separates carbon fixation from Calvin cycle, drastically reducing photorespiration in high-heat environments",
+        "photosynthetic_pathway": "C4 — spatially separates carbon fixation from Calvin cycle, drastically reducing "
+        "photorespiration in high-heat environments",
         "drought_adaptation": "drought_escape — matures in 21-28 days within erratic rainy season windows",
         "water_efficiency_pct_vs_maize": 60,
     },
     "cowpea": {
         "root_morphology": "deep taproot system bypassing dehydrated upper soil horizons",
-        "drought_adaptation": "early stomatal closure prioritises cellular water retention; enters dormancy until precipitation resumes",
+        "drought_adaptation": "early stomatal closure prioritises cellular water retention; enters dormancy until "
+        "precipitation resumes",
         "water_efficiency_pct_vs_maize": 55,
     },
     "sorghum": {
@@ -56,11 +96,13 @@ INDIGENOUS_AGRONOMIC_TRAITS = {
         "water_efficiency_pct_vs_maize": 40,
     },
     "pigeon_pea": {
-        "root_morphology": "deep taproot enables hydraulic lift — draws water upward at night, releasing into upper soil profile for shallow-rooted companion crops",
+        "root_morphology": "deep taproot enables hydraulic lift — draws water upward at night, releasing into upper "
+        "soil profile for shallow-rooted companion crops",
         "row_ratio_recommended": "1:2 (one row pigeonpea : two rows cereal)",
     },
     "cassava": {
-        "drought_adaptation": "tubers remain harvestable in-ground up to 24 months without spoilage — farmers bypass volatile market conditions and surface climate disasters",
+        "drought_adaptation": "tubers remain harvestable in-ground up to 24 months without spoilage — farmers bypass "
+        "volatile market conditions and surface climate disasters",
         "water_efficiency_pct_vs_maize": 50,
     },
     "sweet_potato": {
@@ -72,66 +114,136 @@ INDIGENOUS_AGRONOMIC_TRAITS = {
 # Equatorial crops span cool-adapted (wheat, rose: 5-7C base) to tropical
 # (banana, sugarcane: 15C base). Sources: FAO, CIAT, ICRISAT, IRRI
 CROP_BASE_TEMPS = {
-    "maize": 10, "beans": 10, "wheat": 5, "rice": 10, "sunflower": 8,
-    "coffee": 12, "tea": 10, "rose": 7, "tomato": 10, "banana": 15, "sugarcane": 15,
-    "sorghum": 10, "millet": 10, "cassava": 15, "yam": 18, "cocoa": 15,
+    "maize": 10,
+    "beans": 10,
+    "wheat": 5,
+    "rice": 10,
+    "sunflower": 8,
+    "coffee": 12,
+    "tea": 10,
+    "rose": 7,
+    "tomato": 10,
+    "banana": 15,
+    "sugarcane": 15,
+    "sorghum": 10,
+    "millet": 10,
+    "cassava": 15,
+    "yam": 18,
+    "cocoa": 15,
     # Indigenous / traditional food plants (Maundu, 1999)
-    "amaranth": 15, "black_nightshade": 14, "spider_plant": 15, "cowpea_leaves": 12,
-    "jute_mallow": 16, "pumpkin_leaves": 15, "finger_millet": 10, "pigeon_pea": 12,
-    "bambara_nut": 14, "sweet_potato": 12, "baobab": 20, "tamarind": 20,
+    "amaranth": 15,
+    "black_nightshade": 14,
+    "spider_plant": 15,
+    "cowpea_leaves": 12,
+    "jute_mallow": 16,
+    "pumpkin_leaves": 15,
+    "finger_millet": 10,
+    "pigeon_pea": 12,
+    "bambara_nut": 14,
+    "sweet_potato": 12,
+    "baobab": 20,
+    "tamarind": 20,
     "cowpea": 12,
     # Ojwang (2020) — Homa Bay traditional vegetables
-    "dek": 15, "mito": 15, "boo": 14, "atipa": 16, "odielo": 15,
-    "ndemra": 14, "alikra": 15, "ng_or": 12,
-    "mapera": 15, "ochuoga": 18, "akuno": 18, "sangla": 18, "nyatonglo": 16,
-    "slenderleaf": 15, "desert_date": 20, "bird_plum": 20, "vitex_black_plum": 18,
+    "dek": 15,
+    "mito": 15,
+    "boo": 14,
+    "atipa": 16,
+    "odielo": 15,
+    "ndemra": 14,
+    "alikra": 15,
+    "ng_or": 12,
+    "mapera": 15,
+    "ochuoga": 18,
+    "akuno": 18,
+    "sangla": 18,
+    "nyatonglo": 16,
+    "slenderleaf": 15,
+    "desert_date": 20,
+    "bird_plum": 20,
+    "vitex_black_plum": 18,
 }
 
 # GDD thresholds for harvest readiness — equatorial crop varieties
 # Sources: FAO Ecocrop database, CIAT, IITA, IRRI variety guides
 HARVEST_GDD_THRESHOLDS = {
-    "maize": 1600, "beans": 800, "wheat": 1500, "rice": 2000,
-    "sunflower": 1400, "coffee": 2200, "rose": 2500, "tomato": 1000,
-    "sorghum": 1400, "millet": 1200, "cassava": 2400, "yam": 2000,
+    "maize": 1600,
+    "beans": 800,
+    "wheat": 1500,
+    "rice": 2000,
+    "sunflower": 1400,
+    "coffee": 2200,
+    "rose": 2500,
+    "tomato": 1000,
+    "sorghum": 1400,
+    "millet": 1200,
+    "cassava": 2400,
+    "yam": 2000,
     # Indigenous / traditional food plants (Maundu, 1999)
-    "amaranth": 600, "black_nightshade": 500, "spider_plant": 550,
-    "cowpea_leaves": 700, "jute_mallow": 550, "pumpkin_leaves": 800,
-    "finger_millet": 1400, "pigeon_pea": 1800, "bambara_nut": 1500,
-    "sweet_potato": 1200, "baobab": 3650, "tamarind": 3650,
+    "amaranth": 600,
+    "black_nightshade": 500,
+    "spider_plant": 550,
+    "cowpea_leaves": 700,
+    "jute_mallow": 550,
+    "pumpkin_leaves": 800,
+    "finger_millet": 1400,
+    "pigeon_pea": 1800,
+    "bambara_nut": 1500,
+    "sweet_potato": 1200,
+    "baobab": 3650,
+    "tamarind": 3650,
     "cowpea": 700,
     # Ojwang (2020) — Homa Bay traditional vegetables
-    "dek": 500, "mito": 550, "boo": 600, "atipa": 450, "odielo": 500,
-    "ndemra": 550, "alikra": 500, "ng_or": 1300,
-    "mapera": 2000, "ochuoga": 1800, "akuno": 2000, "sangla": 1600, "nyatonglo": 1500,
-    "slenderleaf": 650, "desert_date": 3650, "bird_plum": 3650, "vitex_black_plum": 2000,
+    "dek": 500,
+    "mito": 550,
+    "boo": 600,
+    "atipa": 450,
+    "odielo": 500,
+    "ndemra": 550,
+    "alikra": 500,
+    "ng_or": 1300,
+    "mapera": 2000,
+    "ochuoga": 1800,
+    "akuno": 2000,
+    "sangla": 1600,
+    "nyatonglo": 1500,
+    "slenderleaf": 650,
+    "desert_date": 3650,
+    "bird_plum": 3650,
+    "vitex_black_plum": 2000,
 }
 
 # Micro-climate zone classification — based on equatorial elevation-temperature gradients
 # Covers the full range from highland (>2500m, temperate crops) through midland
 # to lowland tropical (humid and dry variants). Aligned with CGIAR agro-ecological zone
 # frameworks and the FAO/IIASA Global Agro-Ecological Zones (GAEZ) methodology.
-MICRO_CLIMATE_ZONES = {
+MICRO_CLIMATE_ZONES: dict[str, dict[str, Any]] = {
     "highland_cool": {
         "temp_range": (10, 18),
-        "description": "Highland cool (2000-3000m) — temperate crops, slower GDD accumulation favours quality over quantity. Tea, pyrethrum, potato, wheat, high-value horticulture.",
+        "description": "Highland cool (2000-3000m) — temperate crops, slower GDD accumulation favours quality over "
+        "quantity. Tea, pyrethrum, potato, wheat, high-value horticulture.",
         "key_farms": ["Finlays (Kericho, tea)", "Oserian (Naivasha, high-value horticulture)"],
     },
     "highland_warm": {
         "temp_range": (15, 22),
-        "description": "Highland warm (1500-2500m) — premium agricultural belt. Coffee, horticulture, avocado, macadamia. Moderate temperatures + strong solar radiation = high yield potential.",
+        "description": "Highland warm (1500-2500m) — premium agricultural belt. Coffee, horticulture, avocado, "
+        "macadamia. Moderate temperatures + strong solar radiation = high yield potential.",
         "key_farms": ["Baraka Roses (Ngorika, 2250m)", "Florensis Kenya (Naivasha, young plants)"],
     },
     "midland": {
         "temp_range": (18, 25),
-        "description": "Midland (1000-1500m) — versatile rainfed and irrigated production. Maize, beans, vegetables, dairy, bananas. Kenya's staple food basket.",
+        "description": "Midland (1000-1500m) — versatile rainfed and irrigated production. Maize, beans, vegetables, "
+        "dairy, bananas. Kenya's staple food basket.",
     },
     "lowland_dry": {
         "temp_range": (22, 32),
-        "description": "Lowland dry (<1000m, semi-arid) — drought-tolerant crops: sorghum, millet, cowpea, cassava. Irrigated horticulture in valley bottoms. Heat stress management critical.",
+        "description": "Lowland dry (<1000m, semi-arid) — drought-tolerant crops: sorghum, millet, cowpea, cassava. "
+        "Irrigated horticulture in valley bottoms. Heat stress management critical.",
     },
     "lowland_humid": {
         "temp_range": (24, 34),
-        "description": "Lowland humid (<1000m, humid) — tropical staples: rice, sugarcane, banana, mango, oil palm. High humidity elevates disease pressure; water management essential.",
+        "description": "Lowland humid (<1000m, humid) — tropical staples: rice, sugarcane, banana, mango, oil palm. "
+        "High humidity elevates disease pressure; water management essential.",
     },
 }
 
@@ -155,7 +267,10 @@ class PrecisionFarming:
         self.power = power or PowerClient()
 
     async def compute_gdd(
-        self, latitude: float, longitude: float, crop: str = "maize",
+        self,
+        latitude: float,
+        longitude: float,
+        crop: str = "maize",
         days_back: int = 30,
     ) -> dict:
         """Growing Degree Days — FAO-66 phenology tracking for any equatorial crop.
@@ -184,9 +299,7 @@ class PrecisionFarming:
             "pct_to_harvest": pct_to_harvest,
             "estimated_days_to_harvest": days_to_harvest,
             "harvest_readiness": (
-                "ready" if days_to_harvest <= 0 else
-                "approaching" if days_to_harvest <= 7 else
-                "growing"
+                "ready" if days_to_harvest <= 0 else "approaching" if days_to_harvest <= 7 else "growing"
             ),
             "recommendation": (
                 f"Crop at {pct_to_harvest}% of harvest GDD ({threshold} GDD needed). "
@@ -194,12 +307,14 @@ class PrecisionFarming:
                 if days_to_harvest > 0
                 else f"Crop has reached harvest GDD ({threshold}). Ready for harvest."
             ),
-            "benchmark": f"Satellite-derived GDD per FAO-66 standard. "
-                         f"Equatorial highlands achieve steady year-round accumulation.",
+            "benchmark": "Satellite-derived GDD per FAO-66 standard. "
+            "Equatorial highlands achieve steady year-round accumulation.",
         }
 
     async def compute_et_penman_monteith(
-        self, latitude: float, longitude: float,
+        self,
+        latitude: float,
+        longitude: float,
     ) -> dict:
         """FAO-56 Penman-Monteith reference evapotranspiration (ET0).
 
@@ -231,12 +346,15 @@ class PrecisionFarming:
                 f"Irrigate with {irrigation_pulses} to replace {et0:.1f}mm per day. "
                 f"Combine with crop-specific Kc coefficients for precise water budgeting."
             ),
-            "benchmark": f"FAO-56 Penman-Monteith (global standard). "
-                         f"Hargreaves-Samani validated across tropical agro-ecologies.",
+            "benchmark": "FAO-56 Penman-Monteith (global standard). "
+            "Hargreaves-Samani validated across tropical agro-ecologies.",
         }
 
     async def assess_pest_disease_risk(
-        self, latitude: float, longitude: float, crop: str = "maize",
+        self,
+        latitude: float,
+        longitude: float,
+        crop: str = "maize",
     ) -> dict:
         """Score pest/disease risk from satellite temperature + moisture data.
 
@@ -254,20 +372,24 @@ class PrecisionFarming:
         for pest, thresholds in PEST_THRESHOLDS.items():
             if crop not in thresholds["crops"]:
                 continue
-            temp_score = max(0, 1 - abs(t_mean - thresholds["temp_opt"]) / (thresholds["temp_max"] - thresholds["temp_min"] + 1))
+            temp_score = max(
+                0, 1 - abs(t_mean - thresholds["temp_opt"]) / (thresholds["temp_max"] - thresholds["temp_min"] + 1)
+            )
             moisture_score = min(1, moisture / thresholds["moisture_min"]) if thresholds["moisture_min"] > 0 else 0.5
             overall = round((temp_score * 0.6 + moisture_score * 0.4) * 100, 1)
 
             if overall > 50:
                 risk_level = "high" if overall > 75 else "moderate"
                 ipm_recommendation = self._get_ipm_recommendation(pest)
-                risks.append({
-                    "pest": pest.replace("_", " ").title(),
-                    "risk_score": overall,
-                    "risk_level": risk_level,
-                    "conditions_favourable": temp_score > 0.6 and moisture_score > 0.6,
-                    "ipm_recommendation": ipm_recommendation,
-                })
+                risks.append(
+                    {
+                        "pest": pest.replace("_", " ").title(),
+                        "risk_score": overall,
+                        "risk_level": risk_level,
+                        "conditions_favourable": temp_score > 0.6 and moisture_score > 0.6,
+                        "ipm_recommendation": ipm_recommendation,
+                    }
+                )
 
         risks.sort(key=lambda r: r["risk_score"], reverse=True)
         eu_check = self._check_eu_export_compliance(risks, crop)
@@ -287,7 +409,7 @@ class PrecisionFarming:
                 if risks
                 else "No significant pest/disease risk from current conditions."
             ),
-            "benchmark": f"Temperature-moisture pest model calibrated for equatorial crops and conditions.",
+            "benchmark": "Temperature-moisture pest model calibrated for equatorial crops and conditions.",
         }
 
     def _get_ipm_recommendation(self, pest: str) -> str:
@@ -295,16 +417,26 @@ class PrecisionFarming:
         matching professional IPM programmes (biocontrol agents, pheromone trapping,
         cultural controls, reduced-risk pesticides as last resort)."""
         recommendations = {
-            "downy_mildew": "Improve air circulation, reduce leaf wetness. Apply copper-based fungicides preventatively. Consider resistant varieties.",
-            "powdery_mildew": "Sulfur vaporization or bicarbonate sprays. Remove infected plant material. Maintain optimal humidity (70-85%).",
-            "fusarium_wilt": "Soil solarization or steam sterilization. Use resistant rootstocks. Avoid over-irrigation. Biofungicides (Trichoderma spp.).",
-            "botrytis": "Increase ventilation to reduce humidity below 70%. Remove senescent tissue. Apply biocontrol (Bacillus subtilis, Gliocladium).",
-            "false_codling_moth": "EU quarantine pest — mandatory monitoring per Regulation 2024/2004. Pheromone traps + mating disruption. Insect nets on greenhouse vents. Biopesticides (Bacillus thuringiensis).",
-            "fall_armyworm": "Early detection via pheromone traps. Neem-based biopesticides. Parasitoid wasps (Telenomus remus).",
-            "coffee_berry_borer": "Intensive trapping with ethanol-baited traps. Frequent harvesting (no overripe berries). Beauveria bassiana biopesticide.",
-            "tsv": "Remove infected plants immediately. Thrips vector control via predatory mites (Amblyseius cucumeris). Reflective mulch.",
+            "downy_mildew": "Improve air circulation, reduce leaf wetness. Apply copper-based fungicides "
+            "preventatively. Consider resistant varieties.",
+            "powdery_mildew": "Sulfur vaporization or bicarbonate sprays. Remove infected plant material. Maintain "
+            "optimal humidity (70-85%).",
+            "fusarium_wilt": "Soil solarization or steam sterilization. Use resistant rootstocks. Avoid "
+            "over-irrigation. Biofungicides (Trichoderma spp.).",
+            "botrytis": "Increase ventilation to reduce humidity below 70%. Remove senescent tissue. Apply biocontrol "
+            "(Bacillus subtilis, Gliocladium).",
+            "false_codling_moth": "EU quarantine pest — mandatory monitoring per Regulation 2024/2004. Pheromone traps "
+            "+ mating disruption. Insect nets on greenhouse vents. Biopesticides (Bacillus thuringiensis).",
+            "fall_armyworm": "Early detection via pheromone traps. Neem-based biopesticides. Parasitoid wasps "
+            "(Telenomus remus).",
+            "coffee_berry_borer": "Intensive trapping with ethanol-baited traps. Frequent harvesting (no overripe "
+            "berries). Beauveria bassiana biopesticide.",
+            "tsv": "Remove infected plants immediately. Thrips vector control via predatory mites (Amblyseius "
+            "cucumeris). Reflective mulch.",
         }
-        return recommendations.get(pest, "Monitor populations. Apply targeted treatment at threshold. Rotate mechanisms of action.")
+        return recommendations.get(
+            pest, "Monitor populations. Apply targeted treatment at threshold. Rotate mechanisms of action."
+        )
 
     def _check_eu_export_compliance(self, risks: list, crop: str = "maize") -> dict:
         """Check EU phytosanitary compliance — Regulation 2024/2004 effective April 26, 2025.
@@ -322,13 +454,15 @@ class PrecisionFarming:
             "recommendation": (
                 "FCM detected — mandatory management under EU 2024/2004. "
                 "Implement pheromone trapping, mating disruption, and exclusion netting."
-                if has_fcm else
-                f"No quarantine pests detected for {crop}. Monitor {len(high_risks)} elevated risks."
+                if has_fcm
+                else f"No quarantine pests detected for {crop}. Monitor {len(high_risks)} elevated risks."
             ),
         }
 
     async def classify_micro_climate(
-        self, latitude: float, longitude: float,
+        self,
+        latitude: float,
+        longitude: float,
     ) -> dict:
         """Classify field into equatorial micro-climate zone for crop suitability.
 
@@ -356,11 +490,69 @@ class PrecisionFarming:
             "solar_kwh_m2_day": round(solar, 2),
             "benchmark_farms": zone_info.get("key_farms", ["N/A"]),
             "recommended_crops": {
-                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "high-value horticulture", "rose", "black_nightshade", "amaranth"],
-                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "maize (altitude-adapted)", "black_nightshade", "amaranth", "sweet_potato", "pumpkin_leaves"],
-                "midland": ["maize", "beans", "vegetables", "banana", "dairy", "tomato", "black_nightshade", "amaranth", "spider_plant", "cowpea_leaves", "sweet_potato", "cassava", "pumpkin_leaves"],
-                "lowland_dry": ["sorghum", "millet", "cowpea_leaves", "cassava", "droughtguard maize", "irrigated veggies", "pigeon_pea", "bambara_nut", "cowpea", "baobab", "tamarind", "amaranth"],
-                "lowland_humid": ["rice", "sugarcane", "banana", "mango", "oil palm", "cocoa", "cassava", "sweet_potato", "jute_mallow", "spider_plant", "pumpkin_leaves"],
+                "highland_cool": [
+                    "tea",
+                    "pyrethrum",
+                    "potato",
+                    "wheat",
+                    "high-value horticulture",
+                    "rose",
+                    "black_nightshade",
+                    "amaranth",
+                ],
+                "highland_warm": [
+                    "coffee",
+                    "avocado",
+                    "macadamia",
+                    "horticulture",
+                    "maize (altitude-adapted)",
+                    "black_nightshade",
+                    "amaranth",
+                    "sweet_potato",
+                    "pumpkin_leaves",
+                ],
+                "midland": [
+                    "maize",
+                    "beans",
+                    "vegetables",
+                    "banana",
+                    "dairy",
+                    "tomato",
+                    "black_nightshade",
+                    "amaranth",
+                    "spider_plant",
+                    "cowpea_leaves",
+                    "sweet_potato",
+                    "cassava",
+                    "pumpkin_leaves",
+                ],
+                "lowland_dry": [
+                    "sorghum",
+                    "millet",
+                    "cowpea_leaves",
+                    "cassava",
+                    "droughtguard maize",
+                    "irrigated veggies",
+                    "pigeon_pea",
+                    "bambara_nut",
+                    "cowpea",
+                    "baobab",
+                    "tamarind",
+                    "amaranth",
+                ],
+                "lowland_humid": [
+                    "rice",
+                    "sugarcane",
+                    "banana",
+                    "mango",
+                    "oil palm",
+                    "cocoa",
+                    "cassava",
+                    "sweet_potato",
+                    "jute_mallow",
+                    "spider_plant",
+                    "pumpkin_leaves",
+                ],
             }.get(zone, ["maize", "beans"]),
             "recommendation": (
                 f"Zone: {zone}. {zone_info['description']}. "
@@ -369,14 +561,16 @@ class PrecisionFarming:
         }
 
     async def assess_frost_risk(
-        self, latitude: float, longitude: float,
+        self,
+        latitude: float,
+        longitude: float,
     ) -> dict:
         """Frost risk for equatorial highland agriculture.
 
-    Critical for high-elevation growing areas (>1,800m) across equatorial East Africa,
-    the Andes, and Southeast Asian highlands. Affects coffee, tea, horticulture, avocado,
-    and high-value crops. Risk assessment triggers recommendations from passive
-    monitoring to active protection (heating, sprinklers, frost blankets)."""
+        Critical for high-elevation growing areas (>1,800m) across equatorial East Africa,
+        the Andes, and Southeast Asian highlands. Affects coffee, tea, horticulture, avocado,
+        and high-value crops. Risk assessment triggers recommendations from passive
+        monitoring to active protection (heating, sprinklers, frost blankets)."""
         temp = await self.power.get_temperature(latitude, longitude)
         t_min = temp.get("min", temp.get("mean", 20) - 5)
 
@@ -405,10 +599,10 @@ class PrecisionFarming:
             "frost_risk": risk,
             "protective_measures": (
                 ["none needed"]
-                if risk == "none" else
-                ["active heating (geothermal/propane)", "overhead sprinklers", "frost blankets", "wind machines"]
-                if risk in ("severe", "high") else
-                ["monitor night temps", "avoid low-lying fields", "optimise greenhouse retention"]
+                if risk == "none"
+                else ["active heating (geothermal/propane)", "overhead sprinklers", "frost blankets", "wind machines"]
+                if risk in ("severe", "high")
+                else ["monitor night temps", "avoid low-lying fields", "optimise greenhouse retention"]
             ),
             "crops_at_risk": crops_at_risk,
             "recommendation": (
@@ -420,7 +614,9 @@ class PrecisionFarming:
         }
 
     async def get_precision_irrigation_timing(
-        self, latitude: float, longitude: float,
+        self,
+        latitude: float,
+        longitude: float,
     ) -> dict:
         """Optimal irrigation timing from satellite solar + temperature data.
 
@@ -434,7 +630,8 @@ class PrecisionFarming:
 
         if solar > 6.0 and t_mean > 28:
             best_time = "Pre-dawn (04:00-06:00) or late evening (20:00-22:00)"
-            reason = "High solar + temperature — daytime irrigation loses 30-50% to evaporation. Evening pulses reduce night humidity spike risk."
+            reason = "High solar + temperature — daytime irrigation loses 30-50% to evaporation. Evening pulses reduce "
+            "night humidity spike risk."
             evaporation_loss_pct = 40
         elif solar > 4.0:
             best_time = "Early morning (05:00-08:00) or evening (18:00-20:00)"
@@ -457,7 +654,10 @@ class PrecisionFarming:
         }
 
     async def get_variable_rate_recommendation(
-        self, latitude: float, longitude: float, farm_size_ha: float = 1.0,
+        self,
+        latitude: float,
+        longitude: float,
+        farm_size_ha: float = 1.0,
     ) -> dict:
         """Variable-rate input management from satellite soil moisture variation.
 
@@ -474,17 +674,21 @@ class PrecisionFarming:
         for i in range(3):
             zone_moisture = max(0.05, gwetroot - variation + (i * variation))
             zone_area = farm_size_ha / 3
-            zones.append({
-                "zone": i + 1,
-                "area_ha": round(zone_area, 2),
-                "moisture_fraction": round(zone_moisture, 2),
-                "irrigation_multiplier": round(zone_moisture / gwetroot, 2),
-                "recommendation": (
-                    "reduce water 20% (zone above field capacity)" if zone_moisture > gwetroot * 1.1
-                    else "increase water 20% (zone below wilting point)" if zone_moisture < gwetroot * 0.9
-                    else "standard rate (optimal moisture)"
-                ),
-            })
+            zones.append(
+                {
+                    "zone": i + 1,
+                    "area_ha": round(zone_area, 2),
+                    "moisture_fraction": round(zone_moisture, 2),
+                    "irrigation_multiplier": round(zone_moisture / gwetroot, 2),
+                    "recommendation": (
+                        "reduce water 20% (zone above field capacity)"
+                        if zone_moisture > gwetroot * 1.1
+                        else "increase water 20% (zone below wilting point)"
+                        if zone_moisture < gwetroot * 0.9
+                        else "standard rate (optimal moisture)"
+                    ),
+                }
+            )
 
         return {
             "farm_size_ha": farm_size_ha,
@@ -499,8 +703,12 @@ class PrecisionFarming:
         }
 
     async def get_climate_resilience_analysis(
-        self, latitude: float, longitude: float, crop: str = "maize",
-        farm_size_ha: float = 1.0, crop_value_kes_per_kg: float = 50.0,
+        self,
+        latitude: float,
+        longitude: float,
+        crop: str = "maize",
+        farm_size_ha: float = 1.0,
+        crop_value_kes_per_kg: float = 50.0,
         expected_yield_kg_per_ha: float = 2000.0,
     ) -> dict:
         """Climate adaptation ROI — cost of precision farming vs. cost of disaster response.
@@ -517,19 +725,23 @@ class PrecisionFarming:
         Reference: Kenya National Assembly Budget Committee hearing on climate adaptation
         financing, May 2026. Witness identified zero-funded CSA programs and 75M KES
         emergency reallocations as evidence of reactive rather than adaptive budgeting."""
-        gdd = await self.compute_gdd(latitude, longitude, crop)
         et = await self.compute_et_penman_monteith(latitude, longitude)
         pest = await self.assess_pest_disease_risk(latitude, longitude, crop)
-        climate = await self.classify_micro_climate(latitude, longitude)
         frost = await self.assess_frost_risk(latitude, longitude)
-        timing = await self.get_precision_irrigation_timing(latitude, longitude)
-        vrate = await self.get_variable_rate_recommendation(latitude, longitude, farm_size_ha)
 
         farm_revenue_kes = farm_size_ha * expected_yield_kg_per_ha * crop_value_kes_per_kg
 
         pest_loss_pct = 0.3 if pest["overall_risk"] == "high" else 0.15 if pest["overall_risk"] == "moderate" else 0.05
         drought_loss_pct = 0.4 if et["et0_mm_day"] > 5.0 else 0.2 if et["et0_mm_day"] > 3.5 else 0.05
-        frost_loss_pct = 0.5 if frost["frost_risk"] == "severe" else 0.3 if frost["frost_risk"] == "high" else 0.1 if frost["frost_risk"] == "moderate" else 0.0
+        frost_loss_pct = (
+            0.5
+            if frost["frost_risk"] == "severe"
+            else 0.3
+            if frost["frost_risk"] == "high"
+            else 0.1
+            if frost["frost_risk"] == "moderate"
+            else 0.0
+        )
         combined_loss_pct = min(0.9, pest_loss_pct + drought_loss_pct + frost_loss_pct)
 
         expected_loss_without_adaptation_kes = round(farm_revenue_kes * combined_loss_pct)
@@ -562,7 +774,9 @@ class PrecisionFarming:
             "net_savings_from_adaptation_kes": net_savings_kes,
             "adaptation_roi_pct": adaptation_roi,
             "disaster_response_cost_estimate_kes": disaster_response_cost_kes,
-            "disaster_response_vs_adaptation_ratio": round(disaster_response_cost_kes / max(total_adaptation_cost_kes, 1), 1),
+            "disaster_response_vs_adaptation_ratio": round(
+                disaster_response_cost_kes / max(total_adaptation_cost_kes, 1), 1
+            ),
             "policy_context": {
                 "kenya_disaster_response_2024_kes": "~75M",
                 "climate_smart_ag_budget_2026_2027": "Zero-funded (per Budget Committee testimony, May 2026)",
@@ -572,12 +786,13 @@ class PrecisionFarming:
             "recommendation": (
                 f"Investing KES {total_adaptation_cost_kes:,} in precision agriculture saves "
                 f"KES {net_savings_kes:,} in avoided losses ({adaptation_roi}% ROI). "
-                f"Every KES spent on adaptation avoids KES {round(disaster_response_cost_kes / max(total_adaptation_cost_kes, 1), 1)} "
+                f"Every KES spent on adaptation avoids KES "
+                f"{round(disaster_response_cost_kes / max(total_adaptation_cost_kes, 1), 1)} "
                 f"in disaster response costs. Climate Smart Agriculture programs — zero-funded "
                 f"in the 2026-2027 budget — directly enable this kind of precision management."
                 if net_savings_kes > 0
-                else f"Low climate risk profile — adaptation investment may not be immediately cost-justified. "
-                     f"Monitor conditions and reassess."
+                else "Low climate risk profile — adaptation investment may not be immediately cost-justified. "
+                "Monitor conditions and reassess."
             ),
         }
 
@@ -637,17 +852,85 @@ class PrecisionFarming:
             "current_solar_kwh_m2_day": round(solar, 2),
             "estimated_elevation_m": round(elevation_estimate),
             "recommended_crop_categories": {
-                "highland_cool": ["tea", "pyrethrum", "potato", "wheat", "temperate vegetables", "black_nightshade", "amaranth"],
-                "highland_warm": ["coffee", "avocado", "macadamia", "horticulture", "flowers", "black_nightshade", "sweet_potato", "amaranth"],
-                "midland": ["maize", "beans", "banana", "dairy", "mixed farming", "black_nightshade", "amaranth", "cowpea_leaves", "sweet_potato", "cassava"],
-                "lowland_dry": ["sorghum", "millet", "cowpea", "cowpea_leaves", "cassava", "irrigated horticulture", "pigeon_pea", "bambara_nut", "baobab"],
-                "lowland_humid": ["rice", "sugarcane", "oil palm", "cocoa", "banana", "mango", "cassava", "sweet_potato", "jute_mallow"],
+                "highland_cool": [
+                    "tea",
+                    "pyrethrum",
+                    "potato",
+                    "wheat",
+                    "temperate vegetables",
+                    "black_nightshade",
+                    "amaranth",
+                ],
+                "highland_warm": [
+                    "coffee",
+                    "avocado",
+                    "macadamia",
+                    "horticulture",
+                    "flowers",
+                    "black_nightshade",
+                    "sweet_potato",
+                    "amaranth",
+                ],
+                "midland": [
+                    "maize",
+                    "beans",
+                    "banana",
+                    "dairy",
+                    "mixed farming",
+                    "black_nightshade",
+                    "amaranth",
+                    "cowpea_leaves",
+                    "sweet_potato",
+                    "cassava",
+                ],
+                "lowland_dry": [
+                    "sorghum",
+                    "millet",
+                    "cowpea",
+                    "cowpea_leaves",
+                    "cassava",
+                    "irrigated horticulture",
+                    "pigeon_pea",
+                    "bambara_nut",
+                    "baobab",
+                ],
+                "lowland_humid": [
+                    "rice",
+                    "sugarcane",
+                    "oil palm",
+                    "cocoa",
+                    "banana",
+                    "mango",
+                    "cassava",
+                    "sweet_potato",
+                    "jute_mallow",
+                ],
             }.get(climate["zone"], ["mixed cropping"]),
             "benchmark_systems": [
-                {"region": "East Africa highlands", "elevation_m": "1500-2800", "crops": "Coffee, tea, horticulture, maize-bean intercropping", "characteristic": "High solar + moderate temps, bimodal rainfall"},
-                {"region": "West Africa savanna", "elevation_m": "200-800", "crops": "Maize, sorghum, millet, cowpea, cotton", "characteristic": "Unimodal rainfall, high heat, dry season irrigation"},
-                {"region": "West Africa humid", "elevation_m": "0-300", "crops": "Rice, cassava, oil palm, cocoa, yam", "characteristic": "High rainfall, high humidity, pest pressure"},
-                {"region": "SE Asia lowlands", "elevation_m": "0-500", "crops": "Irrigated rice, sugarcane, oil palm, rubber", "characteristic": "Monsoonal, high GDD year-round"},
+                {
+                    "region": "East Africa highlands",
+                    "elevation_m": "1500-2800",
+                    "crops": "Coffee, tea, horticulture, maize-bean intercropping",
+                    "characteristic": "High solar + moderate temps, bimodal rainfall",
+                },
+                {
+                    "region": "West Africa savanna",
+                    "elevation_m": "200-800",
+                    "crops": "Maize, sorghum, millet, cowpea, cotton",
+                    "characteristic": "Unimodal rainfall, high heat, dry season irrigation",
+                },
+                {
+                    "region": "West Africa humid",
+                    "elevation_m": "0-300",
+                    "crops": "Rice, cassava, oil palm, cocoa, yam",
+                    "characteristic": "High rainfall, high humidity, pest pressure",
+                },
+                {
+                    "region": "SE Asia lowlands",
+                    "elevation_m": "0-500",
+                    "crops": "Irrigated rice, sugarcane, oil palm, rubber",
+                    "characteristic": "Monsoonal, high GDD year-round",
+                },
             ],
             "recommendation": (
                 f"Location rated {grade} ({score}/100) — zone {climate['zone']}. "

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+
 from knowledge.climate_finance import ClimateFinanceKnowledge
 
 
@@ -108,7 +109,9 @@ class TestDeRiskOverview:
 @pytest.fixture
 def client():
     from fastapi.testclient import TestClient
+
     from api.main import app
+
     return TestClient(app)
 
 
@@ -158,13 +161,16 @@ class TestAPIEndpoints:
         assert seq["sorghum_cowpea_intercrop"] == 2.5
 
     def test_marketplace_de_risk(self, client):
-        create = client.post("/api/v1/marketplace/listings", json={
-            "food": "amaranth",
-            "county": "homa bay",
-            "seller": "Test",
-            "quantity_kg": 50,
-            "price_kes_per_kg": 120,
-        })
+        create = client.post(
+            "/api/v1/marketplace/listings",
+            json={
+                "food": "amaranth",
+                "county": "homa bay",
+                "seller": "Test",
+                "quantity_kg": 50,
+                "price_kes_per_kg": 120,
+            },
+        )
         assert create.status_code == 200
         lid = create.json()["id"]
         resp = client.get(f"/api/v1/marketplace/listings/{lid}/de-risk")

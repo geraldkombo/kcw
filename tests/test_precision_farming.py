@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from datetime import date
+
 import pytest
+
 from agriculture_intelligence.precision_farming import (
-    PrecisionFarming, PEST_THRESHOLDS, MICRO_CLIMATE_ZONES,
-    CROP_BASE_TEMPS, HARVEST_GDD_THRESHOLDS,
+    CROP_BASE_TEMPS,
+    HARVEST_GDD_THRESHOLDS,
+    MICRO_CLIMATE_ZONES,
+    PEST_THRESHOLDS,
+    PrecisionFarming,
 )
 from satellite.power_client import PowerClient
 
@@ -17,7 +23,14 @@ class FakePowerClient(PowerClient):
     async def get_solar_radiation(self, lat: float, lon: float) -> float:
         return 5.0
 
-    async def get_ag_point(self, lat: float, lon: float) -> dict:
+    async def get_ag_point(
+        self,
+        lat: float,
+        lon: float,
+        start: date | None = None,
+        end: date | None = None,
+        parameters: list[str] | None = None,
+    ) -> dict:
         return {"properties": {"parameter": {"GWETROOT": {"2000-01-01": 0.45}}}}
 
 
@@ -91,6 +104,7 @@ class TestPestDiseaseRisk:
         class ColdPower(FakePowerClient):
             async def get_temperature(self, lat, lon):
                 return {"mean": 5.0, "min": 2.0, "max": 8.0, "unit": "C"}
+
         cold_pf = PrecisionFarming(power=ColdPower())
         r = await cold_pf.assess_pest_disease_risk(-1.0, 36.9, "maize")
         assert r["total_risk_count"] == 0 or r["overall_risk"] == "low"
@@ -171,6 +185,7 @@ class TestEquatorialBenchmark:
         class HotPower(FakePowerClient):
             async def get_temperature(self, lat, lon):
                 return {"mean": 30.0, "min": 25.0, "max": 35.0, "unit": "C"}
+
         hot_pf = PrecisionFarming(power=HotPower())
         r = await hot_pf.get_equatorial_benchmark(-1.0, 36.9)
         assert r["climatic_suitability_score"] < 80
@@ -203,8 +218,10 @@ class TestClimateResilienceAnalysis:
         class CoolDryPower(FakePowerClient):
             async def get_temperature(self, lat, lon):
                 return {"mean": 18.0, "min": 14.0, "max": 22.0, "unit": "C"}
+
             async def get_solar_radiation(self, lat, lon):
                 return 3.0
+
         mild_pf = PrecisionFarming(power=CoolDryPower())
         r = await mild_pf.get_climate_resilience_analysis(-0.7, 36.4, "maize", 1.0)
         assert "Low climate risk" in r["recommendation"] or r["adaptation_roi_pct"] < 50

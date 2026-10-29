@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 
 class EscrowState(str, Enum):
@@ -27,7 +27,7 @@ class EscrowLifecycle:
         self.escrow_id = escrow_id
         self.amount_lovelace = amount_lovelace
         self.state = EscrowState.INITIATED
-        self.data_hash: Optional[str] = None
+        self.data_hash: str | None = None
 
     def transition(self, target: EscrowState) -> None:
         allowed = self.VALID_TRANSITIONS.get(self.state, [])

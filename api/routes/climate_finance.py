@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Query
 
 from knowledge.climate_finance import ClimateFinanceKnowledge
@@ -18,7 +16,7 @@ async def de_risk_overview():
 
 
 @router.get("/parametrics")
-async def parametric_insurance(county: Optional[str] = Query(None, description="Filter risk profile by county")):
+async def parametric_insurance(county: str | None = Query(None, description="Filter risk profile by county")):
     """Satellite-triggered parametric insurance model for indigenous crops."""
     return _cfk.get_parametrics(county)
 

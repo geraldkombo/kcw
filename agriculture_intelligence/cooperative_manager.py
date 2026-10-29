@@ -20,8 +20,11 @@ class CooperativeManager:
         pass
 
     async def assess_cooperative_health(
-        self, member_count: int, avg_milk_price_kes: float,
-        avg_feed_cost_kes: float, default_rate_pct: float,
+        self,
+        member_count: int,
+        avg_milk_price_kes: float,
+        avg_feed_cost_kes: float,
+        default_rate_pct: float,
     ) -> dict:
         """Score a cooperative's financial health and member value."""
         benchmarks = self.COOPERATIVE_BENCHMARKS
@@ -33,7 +36,9 @@ class CooperativeManager:
 
         overall = round((price_score * 0.4 + feed_score * 0.3 + default_score * 0.3), 1)
 
-        leakage = (benchmarks["milk_price_per_litre"]["well_managed"] - avg_milk_price_kes) * member_count * 5 * 365  # 5L/cow/day avg
+        leakage = (
+            (benchmarks["milk_price_per_litre"]["well_managed"] - avg_milk_price_kes) * member_count * 5 * 365
+        )  # 5L/cow/day avg
 
         return {
             "member_count": member_count,
@@ -53,13 +58,10 @@ class CooperativeManager:
         """Optimise milk pricing strategy for maximum member value."""
         market_rate = 52
         premium_rate = 55  # Direct sale / branded
-        bulk_rate = 48  # Processor bulk
 
         if current_price < 45:
             # Poor pricing — likely middlemen exploitation
-            gap = market_rate - current_price
-            additional_revenue_daily = gap * volume_litres_daily
-            strategies = [
+            strategies: list[dict[str, Any]] = [
                 {
                     "strategy": "Bulk chilling & direct processor contract",
                     "expected_price_kes": premium_rate,
@@ -72,13 +74,17 @@ class CooperativeManager:
                     "strategy": "Form milk processing (yoghurt, mala)",
                     "expected_price_kes": premium_rate + 15,
                     "gain_kes_litre": round(premium_rate + 15 - current_price, 1),
-                    "additional_daily_revenue_kes": round((premium_rate + 15 - current_price) * volume_litres_daily * 0.5),
+                    "additional_daily_revenue_kes": round(
+                        (premium_rate + 15 - current_price) * volume_litres_daily * 0.5
+                    ),
                     "investment_needed_kes": 800000,
                     "payback_days": 0,
                 },
             ]
         else:
-            strategies = [{"strategy": "Maintain current pricing", "expected_price_kes": current_price, "gain_kes_litre": 0}]
+            strategies = [
+                {"strategy": "Maintain current pricing", "expected_price_kes": current_price, "gain_kes_litre": 0}
+            ]
 
         return {
             "current_price_kes": current_price,
@@ -87,7 +93,9 @@ class CooperativeManager:
             "annual_milk_revenue_kes": round(current_price * volume_litres_daily * 365),
             "optimization_strategies": strategies,
             "recommended_strategy": strategies[0]["strategy"] if strategies else None,
-            "estimated_annual_gain_kes": round(strategies[0].get("additional_daily_revenue_kes", 0) * 365) if strategies else 0,
+            "estimated_annual_gain_kes": round(strategies[0].get("additional_daily_revenue_kes", 0) * 365)
+            if strategies
+            else 0,
         }
 
     async def optimize_feed_procurement(self, members: int, cows_per_member: float = 2.0) -> dict:
@@ -124,7 +132,7 @@ class CooperativeManager:
             "savings_per_member_annual_kes": round(savings_annual / members),
             "recommendation": (
                 f"With {members} members, collective feed procurement saves KES {savings_annual:,.0f}/year "
-                f"(KES {savings_annual/members:,.0f}/member). Register as a cooperative buying group."
+                f"(KES {savings_annual / members:,.0f}/member). Register as a cooperative buying group."
             ),
         }
 
@@ -133,34 +141,46 @@ class CooperativeManager:
         recs = []
 
         if health_score < 50:
-            recs.append({
-                "area": "Governance structure",
-                "issue": "Cooperative appears distressed",
-                "recommendation": "Elect new management committee with quarterly AGMs. Install transparent digital record-keeping.",
-                "impact": "Can improve member trust and reduce leakage by 30-50%",
-                "cost_kes": 100000,
-            })
+            recs.append(
+                {
+                    "area": "Governance structure",
+                    "issue": "Cooperative appears distressed",
+                    "recommendation": "Elect new management committee with quarterly AGMs. Install transparent digital "
+                    "record-keeping.",
+                    "impact": "Can improve member trust and reduce leakage by 30-50%",
+                    "cost_kes": 100000,
+                }
+            )
         if health_score < 65:
-            recs.append({
-                "area": "Price transparency",
-                "issue": "Milk prices below market rate",
-                "recommendation": "Implement daily SMS price notifications to all members. Negotiate directly with processors.",
-                "impact": "Expected KES 5-10/litre price improvement",
-                "cost_kes": 50000,
-            })
-        recs.append({
-            "area": "Bulk procurement",
-            "issue": f"Individual feed purchasing by {member_count} members",
-            "recommendation": f"Centralise feed procurement for {member_count} members to access bulk discounts of 10-25%.",
-            "impact": f"Saves KES {member_count * 2 * 12 * 365 * 6:,}/year at current prices",
-            "cost_kes": 20000,
-        })
-        recs.append({
-            "area": "Digital ledger",
-            "issue": "Manual record-keeping leads to leakage and disputes",
-            "recommendation": "Deploy blockchain-based cooperative ledger for transparent milk collection, pricing, and payouts.",
-            "impact": "Eliminates 'missing litres', builds member trust, auditable by KCC/KRA",
-            "cost_kes": 150000,
-        })
+            recs.append(
+                {
+                    "area": "Price transparency",
+                    "issue": "Milk prices below market rate",
+                    "recommendation": "Implement daily SMS price notifications to all members. Negotiate directly with "
+                    "processors.",
+                    "impact": "Expected KES 5-10/litre price improvement",
+                    "cost_kes": 50000,
+                }
+            )
+        recs.append(
+            {
+                "area": "Bulk procurement",
+                "issue": f"Individual feed purchasing by {member_count} members",
+                "recommendation": f"Centralise feed procurement for {member_count} members to access bulk discounts of "
+                f"10-25%.",
+                "impact": f"Saves KES {member_count * 2 * 12 * 365 * 6:,}/year at current prices",
+                "cost_kes": 20000,
+            }
+        )
+        recs.append(
+            {
+                "area": "Digital ledger",
+                "issue": "Manual record-keeping leads to leakage and disputes",
+                "recommendation": "Deploy blockchain-based cooperative ledger for transparent milk collection, "
+                "pricing, and payouts.",
+                "impact": "Eliminates 'missing litres', builds member trust, auditable by KCC/KRA",
+                "cost_kes": 150000,
+            }
+        )
 
         return recs

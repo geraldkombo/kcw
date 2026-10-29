@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Query
 
 from knowledge.traditional_foods import TraditionalFoodsIndex
@@ -62,7 +60,7 @@ async def crops_by_region(county: str):
 
 
 @router.get("/intercropping")
-async def intercropping_patterns(county: Optional[str] = Query(None, description="Filter by county")):
+async def intercropping_patterns(county: str | None = Query(None, description="Filter by county")):
     """Get traditional intercropping patterns."""
     patterns = _tfi.get_intercropping_patterns(county)
     return {
@@ -71,8 +69,9 @@ async def intercropping_patterns(county: Optional[str] = Query(None, description
         "source": "Traditional food knowledge — Kenya AI Challenge workshop (2026)",
     }
 
+
 @router.get("/corridors")
-async def food_corridors(county: Optional[str] = Query(None, description="Filter by origin county")):
+async def food_corridors(county: str | None = Query(None, description="Filter by origin county")):
     """Get ethnic food demand corridors connecting counties to Nairobi."""
     corridors = _tfi.get_food_corridors(county)
     return {
@@ -111,12 +110,11 @@ async def nutrition_minerals(crop: str):
 
 
 @router.get("/list")
-async def list_all_crops(status: Optional[str] = Query(None, description="Filter by status: indigenous, naturalised, exotic")):
+async def list_all_crops(
+    status: str | None = Query(None, description="Filter by status: indigenous, naturalised, exotic"),
+):
     """List all traditional food plants, optionally filtered by status."""
-    if status:
-        crops = _tfi.list_by_status(status)
-    else:
-        crops = _tfi.list_all()
+    crops = _tfi.list_by_status(status) if status else _tfi.list_all()
     return {
         "count": len(crops),
         "status_filter": status or "all",

@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import logging
 import sqlite3
-from importlib import resources
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger("frk.db.migrations")
 
@@ -13,9 +11,7 @@ MIGRATIONS_DIR = Path(__file__).parent
 
 
 def _get_applied(conn: sqlite3.Connection) -> set[str]:
-    cursor = conn.execute(
-        f"SELECT name FROM {MIGRATIONS_TABLE} ORDER BY applied_at"
-    )
+    cursor = conn.execute(f"SELECT name FROM {MIGRATIONS_TABLE} ORDER BY applied_at")
     return {row[0] for row in cursor.fetchall()}
 
 
@@ -33,10 +29,7 @@ def run_pending(conn: sqlite3.Connection) -> list[str]:
     _ensure_migrations_table(conn)
     applied = _get_applied(conn)
 
-    migrations = sorted(
-        p for p in MIGRATIONS_DIR.iterdir()
-        if p.suffix == ".sql" and p.stem not in applied
-    )
+    migrations = sorted(p for p in MIGRATIONS_DIR.iterdir() if p.suffix == ".sql" and p.stem not in applied)
 
     if not migrations:
         return []

@@ -1,16 +1,15 @@
 """Market Intelligence Agent — finds best prices, contract farming, and input optimisation."""
 
-from typing import Optional
+from agriculture_intelligence.land_intelligence import LandIntelligence
 from agriculture_intelligence.market_intelligence import MarketIntelligence
 from agriculture_intelligence.water_optimizer import WaterOptimizer
-from agriculture_intelligence.land_intelligence import LandIntelligence
 from satellite.power_client import PowerClient
 
 
 class MarketIntelligenceAgent:
     """Provides real-time market intelligence for agricultural investments."""
 
-    def __init__(self, power: Optional[PowerClient] = None):
+    def __init__(self, power: PowerClient | None = None):
         self.power = power or PowerClient()
         self.market = MarketIntelligence(self.power)
         self.water = WaterOptimizer(self.power)

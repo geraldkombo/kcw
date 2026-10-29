@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, Query
@@ -29,13 +29,17 @@ async def get_listings(
 ):
     results = _listings
     if food:
-        results = [l for l in results if food.lower() in l.get("food", "").lower() or food.lower() in l.get("food_sw", "").lower()]
+        results = [
+            listing
+            for listing in results
+            if food.lower() in listing.get("food", "").lower() or food.lower() in listing.get("food_sw", "").lower()
+        ]
     if county:
-        results = [l for l in results if county.lower() == l.get("county", "").lower()]
+        results = [listing for listing in results if county.lower() == listing.get("county", "").lower()]
     if corridor:
-        results = [l for l in results if corridor.lower() == l.get("corridor", "").lower()]
+        results = [listing for listing in results if corridor.lower() == listing.get("corridor", "").lower()]
     if chama is not None:
-        results = [l for l in results if l.get("is_chama") == chama]
+        results = [listing for listing in results if listing.get("is_chama") == chama]
     return {"listings": results, "count": len(results)}
 
 
@@ -60,7 +64,7 @@ async def create_listing(body: dict):
         "notes": body.get("notes", ""),
         "status": crop.get("status", "unknown") if crop else "unknown",
         "nutrition": crop.get("nutrition", "") if crop else "",
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
     }
     _listings.append(listing)
     logger.info("listing created: %s — %s (%s)", listing["id"], listing["food"], listing["county"])
@@ -69,27 +73,27 @@ async def create_listing(body: dict):
 
 @router.get("/listings/{listing_id}")
 async def get_listing(listing_id: str):
-    for l in _listings:
-        if l["id"] == listing_id:
-            return l
+    for listing in _listings:
+        if listing["id"] == listing_id:
+            return listing
     return {"error": "not found"}
 
 
 @router.delete("/listings/{listing_id}")
 async def delete_listing(listing_id: str):
     global _listings
-    _listings = [l for l in _listings if l["id"] != listing_id]
+    _listings = [listing for listing in _listings if listing["id"] != listing_id]
     return {"deleted": True}
 
 
 @router.get("/listings/{listing_id}/de-risk")
 async def listing_de_risk(listing_id: str):
-    for l in _listings:
-        if l["id"] == listing_id:
-            food = l.get("food", "")
+    for listing in _listings:
+        if listing["id"] == listing_id:
+            food = listing.get("food", "")
             crop = _foods.classify_crop(food)
             rs = crop.get("resilience_score", None) if crop else None
-            county = l.get("county", "")
+            county = listing.get("county", "")
             parametrics = _cfk.get_parametrics(county)
             phl = _cfk.get_phl_analysis(food)
             return {

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from config.settings import settings
-from masumi.escrow_lifecycle import EscrowLifecycle
 
 
 class MasumiX402Client:

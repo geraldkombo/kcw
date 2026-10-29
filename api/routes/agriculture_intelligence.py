@@ -1,11 +1,12 @@
 """Agricultural intelligence API routes — land, water, solar, seed, market,
 cooperative, and investment analysis endpoints."""
 
-from fastapi import APIRouter, Depends, Query
-from agents.land_intelligence_agent import LandIntelligenceAgent
-from agents.market_intelligence_agent import MarketIntelligenceAgent
+from fastapi import APIRouter, Query
+
 from agents.cooperative_agent import CooperativeAgent
 from agents.investment_advisor_agent import InvestmentAdvisorAgent
+from agents.land_intelligence_agent import LandIntelligenceAgent
+from agents.market_intelligence_agent import MarketIntelligenceAgent
 from agents.precision_farming_agent import PrecisionFarmingAgent
 from satellite.power_client import PowerClient
 
@@ -43,6 +44,7 @@ async def get_investment_recommendations(body: dict):
 @router.get("/solar/{lat}/{lon}")
 async def get_solar_data(lat: float, lon: float):
     from agriculture_intelligence.solar_optimizer import SolarOptimizer
+
     opt = SolarOptimizer()
     return await opt.get_solar_advantage(lat, lon)
 
@@ -50,6 +52,7 @@ async def get_solar_data(lat: float, lon: float):
 @router.get("/water/{lat}/{lon}")
 async def get_water_data(lat: float, lon: float, crop: str = "maize", farm_size: float = 1.0):
     from agriculture_intelligence.water_optimizer import WaterOptimizer
+
     opt = WaterOptimizer()
     return await opt.compute_water_deficit(lat, lon, crop, "loamy", farm_size)
 
@@ -57,6 +60,7 @@ async def get_water_data(lat: float, lon: float, crop: str = "maize", farm_size:
 @router.post("/seed/recommend")
 async def recommend_seed(body: dict):
     from agriculture_intelligence.seed_quality import SeedQualityAnalyzer
+
     analyzer = SeedQualityAnalyzer()
     crop = body.get("crop", "maize")
     lat = body.get("latitude", 0.0)
@@ -68,6 +72,7 @@ async def recommend_seed(body: dict):
 @router.post("/cooperative/optimize-milk")
 async def optimize_milk(body: dict):
     from agriculture_intelligence.cooperative_manager import CooperativeManager
+
     mgr = CooperativeManager()
     return await mgr.optimize_milk_pricing(
         body.get("current_price", 45),
@@ -78,6 +83,7 @@ async def optimize_milk(body: dict):
 @router.post("/cooperative/optimize-feed")
 async def optimize_feed(body: dict):
     from agriculture_intelligence.cooperative_manager import CooperativeManager
+
     mgr = CooperativeManager()
     return await mgr.optimize_feed_procurement(
         body.get("members", 10),
@@ -88,6 +94,7 @@ async def optimize_feed(body: dict):
 @router.get("/prices/{crop}")
 async def get_crop_prices(crop: str, quantity: float = 1.0):
     from agriculture_intelligence.market_intelligence import MarketIntelligence
+
     mi = MarketIntelligence()
     return await mi.get_best_price(crop, quantity)
 
@@ -95,6 +102,7 @@ async def get_crop_prices(crop: str, quantity: float = 1.0):
 @router.post("/contract-farming/search")
 async def search_contract_farming(body: dict):
     from agriculture_intelligence.market_intelligence import MarketIntelligence
+
     mi = MarketIntelligence()
     return await mi.find_contract_farming(
         body.get("county", ""),
@@ -109,14 +117,17 @@ async def get_precision_farming(body: dict):
     General equatorial agriculture intelligence for any crop."""
     agent = PrecisionFarmingAgent()
     return await agent.analyze(
-        body.get("latitude", -1.0), body.get("longitude", 36.9),
-        body.get("crop", "maize"), body.get("farm_size_ha", 1.0),
+        body.get("latitude", -1.0),
+        body.get("longitude", 36.9),
+        body.get("crop", "maize"),
+        body.get("farm_size_ha", 1.0),
     )
 
 
 @router.get("/precision-farming/gdd/{lat}/{lon}/{crop}")
 async def get_growing_degree_days(lat: float, lon: float, crop: str = "maize", days: int = Query(30, alias="days")):
     from agriculture_intelligence.precision_farming import PrecisionFarming
+
     pf = PrecisionFarming()
     return await pf.compute_gdd(lat, lon, crop, days)
 
@@ -124,6 +135,7 @@ async def get_growing_degree_days(lat: float, lon: float, crop: str = "maize", d
 @router.get("/precision-farming/et/{lat}/{lon}")
 async def get_evapotranspiration(lat: float, lon: float):
     from agriculture_intelligence.precision_farming import PrecisionFarming
+
     pf = PrecisionFarming()
     return await pf.compute_et_penman_monteith(lat, lon)
 
@@ -155,8 +167,12 @@ async def get_equatorial_benchmark(lat: float, lon: float):
 
 @router.get("/precision-farming/climate-resilience/{lat}/{lon}")
 async def get_climate_resilience(
-    lat: float, lon: float, crop: str = "maize",
-    farm_size: float = 1.0, crop_value: float = 50.0, yield_kg: float = 2000.0,
+    lat: float,
+    lon: float,
+    crop: str = "maize",
+    farm_size: float = 1.0,
+    crop_value: float = 50.0,
+    yield_kg: float = 2000.0,
 ):
     """Climate adaptation ROI analysis — cost of precision farming vs. disaster response.
     References Kenya Budget Committee testimony (May 2026): 75M KES disaster response,
@@ -168,9 +184,11 @@ async def get_climate_resilience(
 @router.get("/idle-land/{lat}/{lon}/{farm_size}")
 async def check_idle_land(lat: float, lon: float, farm_size: float):
     from agriculture_intelligence.land_intelligence import LandIntelligence
+
     land = LandIntelligence()
     idle = await land.detect_idle_land_risk(lat, lon)
     from agriculture_intelligence.market_intelligence import MarketIntelligence
+
     mi = MarketIntelligence()
     opp = await mi.get_idle_land_opportunity(lat, lon, farm_size)
     return {"idle_risk": idle, "opportunity": opp}

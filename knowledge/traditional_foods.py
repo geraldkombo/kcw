@@ -1,4 +1,4 @@
-﻿"""Traditional food plants of Kenya — knowledge layer grounded in traditional food knowledge research.
+"""Traditional food plants of Kenya — knowledge layer grounded in traditional food knowledge research.
 
 Sources:
   - Traditional food knowledge — Kenya AI Challenge workshop (2026)
@@ -19,6 +19,8 @@ Key insight (Kenya AI Challenge workshop, 2026):
 
 from __future__ import annotations
 
+from typing import Any
+
 CropClassification = dict
 
 
@@ -32,16 +34,29 @@ class TraditionalFoodsIndex:
     food system context.
     """
 
-    CROP_INDEX = {
+    CROP_INDEX: dict[str, dict[str, Any]] = {
         "amaranth": {
             "name_sw": "terere/mchicha",
             "name_en": "Amaranth / African spinach",
             "origin": "East Africa (multiple species: A. cruentus, A. hybridus, A. dubius)",
             "status": "indigenous",
             "resilience_score": 0.92,
-            "regions": ["Kisumu", "Homa Bay", "Migori", "Siaya", "Busia", "Vihiga", "Kakamega", "Bungoma", "Machakos", "Kitui", "Makueni"],
+            "regions": [
+                "Kisumu",
+                "Homa Bay",
+                "Migori",
+                "Siaya",
+                "Busia",
+                "Vihiga",
+                "Kakamega",
+                "Bungoma",
+                "Machakos",
+                "Kitui",
+                "Makueni",
+            ],
             "traditional_uses": "Leafy vegetable steamed or boiled, served with ugali. Seeds used as grain porridge.",
-            "nutrition": "High iron (5.2mg/100g), calcium (215mg/100g), vitamin A, protein (4.6g/100g). Superior to exotic spinach.",
+            "nutrition": "High iron (5.2mg/100g), calcium (215mg/100g), vitamin A, protein (4.6g/100g). Superior to "
+            "exotic spinach.",
             "gdd_base_temp": 15,
             "gdd_harvest": 600,
             "temp_range": (18, 32),
@@ -59,9 +74,22 @@ class TraditionalFoodsIndex:
             "origin": "East and Southern Africa (Cleome gynandra)",
             "status": "indigenous",
             "resilience_score": 0.85,
-            "regions": ["Kisumu", "Siaya", "Homa Bay", "Migori", "Busia", "Vihiga", "Kakamega", "Bungoma", "Nandi", "Kericho"],
-            "traditional_uses": "Leafy vegetable with distinctive bitter taste. Usually steamed or boiled in milk/soured milk.",
-            "nutrition": "High beta-carotene, vitamin C, calcium, iron. Bitter compounds (glucosinolates) have antimicrobial properties.",
+            "regions": [
+                "Kisumu",
+                "Siaya",
+                "Homa Bay",
+                "Migori",
+                "Busia",
+                "Vihiga",
+                "Kakamega",
+                "Bungoma",
+                "Nandi",
+                "Kericho",
+            ],
+            "traditional_uses": "Leafy vegetable with distinctive bitter taste. Usually steamed or boiled in "
+            "milk/soured milk.",
+            "nutrition": "High beta-carotene, vitamin C, calcium, iron. Bitter compounds (glucosinolates) have "
+            "antimicrobial properties.",
             "gdd_base_temp": 15,
             "gdd_harvest": 550,
             "temp_range": (18, 30),
@@ -79,8 +107,22 @@ class TraditionalFoodsIndex:
             "origin": "East Africa (Solanum nigrum complex, S. scabrum)",
             "status": "indigenous",
             "resilience_score": 0.88,
-            "regions": ["Kisumu", "Homa Bay", "Siaya", "Migori", "Busia", "Kakamega", "Bungoma", "Vihiga", "Kiambu", "Murang'a", "Nyeri", "Meru"],
-            "traditional_uses": "Most popular traditional leafy vegetable. Leaves steamed/boiled, sometimes with milk or groundnut paste.",
+            "regions": [
+                "Kisumu",
+                "Homa Bay",
+                "Siaya",
+                "Migori",
+                "Busia",
+                "Kakamega",
+                "Bungoma",
+                "Vihiga",
+                "Kiambu",
+                "Murang'a",
+                "Nyeri",
+                "Meru",
+            ],
+            "traditional_uses": "Most popular traditional leafy vegetable. Leaves steamed/boiled, sometimes with milk "
+            "or groundnut paste.",
             "nutrition": "Very high iron (7.8mg/100g), vitamin A, vitamin C, calcium. Anti-inflammatory compounds.",
             "gdd_base_temp": 14,
             "gdd_harvest": 500,
@@ -99,9 +141,22 @@ class TraditionalFoodsIndex:
             "origin": "East and West Africa (Vigna unguiculata)",
             "status": "indigenous",
             "resilience_score": 0.95,
-            "regions": ["Machakos", "Kitui", "Makueni", "Kilifi", "Kwale", "Taita Taveta", "Kajiado", "Narok", "Meru", "Tharaka Nithi"],
-            "traditional_uses": "Leaves picked, chopped, steamed. Often cooked with tomatoes, onions, coconut milk in coastal regions.",
-            "nutrition": "High protein (4.7g/100g leaves, 24g/100g grain), iron, folate. Dual-purpose crop (leaves + grain).",
+            "regions": [
+                "Machakos",
+                "Kitui",
+                "Makueni",
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Kajiado",
+                "Narok",
+                "Meru",
+                "Tharaka Nithi",
+            ],
+            "traditional_uses": "Leaves picked, chopped, steamed. Often cooked with tomatoes, onions, coconut milk in "
+            "coastal regions.",
+            "nutrition": "High protein (4.7g/100g leaves, 24g/100g grain), iron, folate. Dual-purpose crop (leaves + "
+            "grain).",
             "gdd_base_temp": 12,
             "gdd_harvest": 700,
             "temp_range": (18, 35),
@@ -139,7 +194,19 @@ class TraditionalFoodsIndex:
             "origin": "East Africa (Cucurbita moschata — African landraces)",
             "status": "indigenous",
             "resilience_score": 0.80,
-            "regions": ["Kisumu", "Homa Bay", "Siaya", "Vihiga", "Kakamega", "Busia", "Bungoma", "Migori", "Kiambu", "Murang'a", "Machakos"],
+            "regions": [
+                "Kisumu",
+                "Homa Bay",
+                "Siaya",
+                "Vihiga",
+                "Kakamega",
+                "Busia",
+                "Bungoma",
+                "Migori",
+                "Kiambu",
+                "Murang'a",
+                "Machakos",
+            ],
             "traditional_uses": "Young shoots and leaves harvested as vegetable. Fruit also consumed.",
             "nutrition": "High vitamin A, iron, calcium. Seeds rich in zinc and healthy fats.",
             "gdd_base_temp": 15,
@@ -159,7 +226,18 @@ class TraditionalFoodsIndex:
             "origin": "East Africa (Eleusine coracana) — domesticated in Uganda/Ethiopia highlands",
             "status": "indigenous",
             "resilience_score": 0.85,
-            "regions": ["Uasin Gishu", "Nandi", "Kericho", "Elgeyo Marakwet", "West Pokot", "Baringo", "Laikipia", "Meru", "Embu", "Tharaka Nithi"],
+            "regions": [
+                "Uasin Gishu",
+                "Nandi",
+                "Kericho",
+                "Elgeyo Marakwet",
+                "West Pokot",
+                "Baringo",
+                "Laikipia",
+                "Meru",
+                "Embu",
+                "Tharaka Nithi",
+            ],
             "traditional_uses": "Flour for ugali, porridge. Fermented for beverages.",
             "nutrition": "Very high calcium (344mg/100g), iron (3.9mg/100g), fibre. Low glycemic index.",
             "gdd_base_temp": 10,
@@ -179,7 +257,20 @@ class TraditionalFoodsIndex:
             "origin": "East Africa (Sorghum bicolor) — primary domestication centre in Ethiopia/Sudan",
             "status": "indigenous",
             "resilience_score": 0.90,
-            "regions": ["Machakos", "Kitui", "Makueni", "Kilifi", "Kwale", "Taita Taveta", "Kajiado", "Narok", "Baringo", "Laikipia", "Isiolo", "Meru"],
+            "regions": [
+                "Machakos",
+                "Kitui",
+                "Makueni",
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Kajiado",
+                "Narok",
+                "Baringo",
+                "Laikipia",
+                "Isiolo",
+                "Meru",
+            ],
             "traditional_uses": "Ugali, porridge, fermented beverages. Important food security crop in ASALs.",
             "nutrition": "High protein (11g/100g), iron, zinc, fibre. Gluten-free.",
             "gdd_base_temp": 10,
@@ -199,7 +290,18 @@ class TraditionalFoodsIndex:
             "origin": "East Africa (Cajanus cajan) — secondary domestication centre in East Africa",
             "status": "indigenous",
             "resilience_score": 0.88,
-            "regions": ["Machakos", "Kitui", "Makueni", "Kilifi", "Kwale", "Taita Taveta", "Homa Bay", "Migori", "Meru", "Tharaka Nithi"],
+            "regions": [
+                "Machakos",
+                "Kitui",
+                "Makueni",
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Homa Bay",
+                "Migori",
+                "Meru",
+                "Tharaka Nithi",
+            ],
             "traditional_uses": "Green seeds boiled as vegetable. Dried split used in stews.",
             "nutrition": "High protein (21g/100g), fibre, folate, magnesium. Nitrogen-fixing.",
             "gdd_base_temp": 12,
@@ -219,7 +321,17 @@ class TraditionalFoodsIndex:
             "origin": "Naturalised in East Africa over centuries (Vigna subterranea)",
             "status": "naturalised",
             "resilience_score": 0.85,
-            "regions": ["Kilifi", "Kwale", "Taita Taveta", "Machakos", "Kitui", "Makueni", "Homa Bay", "Migori", "Busia"],
+            "regions": [
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Machakos",
+                "Kitui",
+                "Makueni",
+                "Homa Bay",
+                "Migori",
+                "Busia",
+            ],
             "traditional_uses": "Seeds boiled with salt, roasted, or pounded into flour.",
             "nutrition": "High protein (19g/100g), fibre, iron, potassium. Drought-tolerant.",
             "gdd_base_temp": 14,
@@ -239,7 +351,21 @@ class TraditionalFoodsIndex:
             "origin": "Naturalised in East Africa for >300 years (Manihot esculenta)",
             "status": "naturalised",
             "resilience_score": 0.92,
-            "regions": ["Busia", "Kakamega", "Bungoma", "Vihiga", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kilifi", "Kwale", "Taita Taveta", "Machakos", "Kitui"],
+            "regions": [
+                "Busia",
+                "Kakamega",
+                "Bungoma",
+                "Vihiga",
+                "Siaya",
+                "Kisumu",
+                "Homa Bay",
+                "Migori",
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Machakos",
+                "Kitui",
+            ],
             "traditional_uses": "Boiled, fried, dried into flour. Leaves cooked as vegetable.",
             "nutrition": "High energy. Leaves rich in protein, vitamin A, iron.",
             "gdd_base_temp": 15,
@@ -259,7 +385,21 @@ class TraditionalFoodsIndex:
             "origin": "Centuries of cultivation in East Africa (Ipomoea batatas)",
             "status": "naturalised",
             "resilience_score": 0.82,
-            "regions": ["Busia", "Kakamega", "Bungoma", "Vihiga", "Siaya", "Kisumu", "Homa Bay", "Migori", "Meru", "Embu", "Tharaka Nithi", "Machakos", "Kilifi"],
+            "regions": [
+                "Busia",
+                "Kakamega",
+                "Bungoma",
+                "Vihiga",
+                "Siaya",
+                "Kisumu",
+                "Homa Bay",
+                "Migori",
+                "Meru",
+                "Embu",
+                "Tharaka Nithi",
+                "Machakos",
+                "Kilifi",
+            ],
             "traditional_uses": "Roots boiled, roasted, or fried. Leaves consumed as vegetable.",
             "nutrition": "Orange-fleshed: very high beta-carotene. Good source of vitamin C, potassium.",
             "gdd_base_temp": 12,
@@ -279,7 +419,18 @@ class TraditionalFoodsIndex:
             "origin": "Naturalised in East Africa (Dioscorea cayenensis, D. alata)",
             "status": "naturalised",
             "resilience_score": 0.78,
-            "regions": ["Busia", "Kakamega", "Bungoma", "Vihiga", "Siaya", "Kisumu", "Homa Bay", "Meru", "Tharaka Nithi", "Kilifi"],
+            "regions": [
+                "Busia",
+                "Kakamega",
+                "Bungoma",
+                "Vihiga",
+                "Siaya",
+                "Kisumu",
+                "Homa Bay",
+                "Meru",
+                "Tharaka Nithi",
+                "Kilifi",
+            ],
             "traditional_uses": "Roots boiled or roasted. Important ceremonial food.",
             "nutrition": "Good energy source, potassium, vitamin C.",
             "gdd_base_temp": 18,
@@ -299,7 +450,17 @@ class TraditionalFoodsIndex:
             "origin": "East Africa — indigenous to African savanna (Adansonia digitata)",
             "status": "indigenous",
             "resilience_score": 1.00,
-            "regions": ["Kilifi", "Kwale", "Taita Taveta", "Kitui", "Makueni", "Machakos", "Kajiado", "Narok", "Laikipia"],
+            "regions": [
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Kitui",
+                "Makueni",
+                "Machakos",
+                "Kajiado",
+                "Narok",
+                "Laikipia",
+            ],
             "traditional_uses": "Fruit pulp mixed with water/porridge. Leaves as vegetable.",
             "nutrition": "Extremely high vitamin C (6x orange), calcium, potassium, antioxidants.",
             "gdd_base_temp": 20,
@@ -319,7 +480,18 @@ class TraditionalFoodsIndex:
             "origin": "East Africa — indigenous to African savanna (Tamarindus indica)",
             "status": "indigenous",
             "resilience_score": 0.94,
-            "regions": ["Kilifi", "Kwale", "Taita Taveta", "Kitui", "Makueni", "Machakos", "Kajiado", "Narok", "Isiolo", "Garissa"],
+            "regions": [
+                "Kilifi",
+                "Kwale",
+                "Taita Taveta",
+                "Kitui",
+                "Makueni",
+                "Machakos",
+                "Kajiado",
+                "Narok",
+                "Isiolo",
+                "Garissa",
+            ],
             "traditional_uses": "Fruit pulp used in juice, chutney, stews.",
             "nutrition": "High in B vitamins, calcium, potassium, magnesium.",
             "gdd_base_temp": 20,
@@ -341,7 +513,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.82,
             "regions": ["Homa Bay", "Kisumu", "Siaya", "Migori", "Busia", "Vihiga", "Kakamega", "Bungoma"],
-            "traditional_uses": "Leafy vegetable steamed or boiled, served with ugali. Wild-harvested and semi-cultivated.",
+            "traditional_uses": "Leafy vegetable steamed or boiled, served with ugali. Wild-harvested and "
+            "semi-cultivated.",
             "nutrition": "High iron, beta-carotene, calcium. Typical of indigenous dark leafy vegetables.",
             "gdd_base_temp": 15,
             "gdd_harvest": 500,
@@ -381,7 +554,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.80,
             "regions": ["Homa Bay", "Kisumu", "Siaya", "Migori", "Busia"],
-            "traditional_uses": "Leaves steamed or boiled. Valued for its slightly bitter taste and nutritional density.",
+            "traditional_uses": "Leaves steamed or boiled. Valued for its slightly bitter taste and nutritional "
+            "density.",
             "nutrition": "Rich in iron, calcium, and antioxidants. Bitter compounds support digestive health.",
             "gdd_base_temp": 14,
             "gdd_harvest": 600,
@@ -401,7 +575,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.78,
             "regions": ["Homa Bay", "Migori", "Siaya", "Kisumu", "Busia"],
-            "traditional_uses": "Wild-harvested leafy vegetable from lake-side areas. Often cooked with soda to soften.",
+            "traditional_uses": "Wild-harvested leafy vegetable from lake-side areas. Often cooked with soda to "
+            "soften.",
             "nutrition": "Good source of vitamin A, iron, and zinc. Higher mineral content than exotic greens.",
             "gdd_base_temp": 16,
             "gdd_harvest": 450,
@@ -421,7 +596,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.82,
             "regions": ["Homa Bay", "Kisumu", "Siaya", "Migori", "Vihiga"],
-            "traditional_uses": "Slightly mucilaginous leaves, cooked with tomatoes and onions. Used in traditional Luo cuisine.",
+            "traditional_uses": "Slightly mucilaginous leaves, cooked with tomatoes and onions. Used in traditional "
+            "Luo cuisine.",
             "nutrition": "High fibre, beta-carotene, calcium. Similar nutritional profile to jute mallow.",
             "gdd_base_temp": 15,
             "gdd_harvest": 500,
@@ -461,7 +637,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.80,
             "regions": ["Homa Bay", "Migori", "Kisumu", "Siaya", "Kakamega"],
-            "traditional_uses": "Leaves steamed, often mixed with other indigenous vegetables. Valued for flavour and nutrition.",
+            "traditional_uses": "Leaves steamed, often mixed with other indigenous vegetables. Valued for flavour and "
+            "nutrition.",
             "nutrition": "Good source of vitamins A, C, and iron. Comparable to amaranth in nutritional density.",
             "gdd_base_temp": 15,
             "gdd_harvest": 500,
@@ -482,7 +659,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.85,
             "regions": ["Homa Bay", "Siaya", "Kisumu", "Migori", "Busia"],
-            "traditional_uses": "Grain used in traditional porridge and ceremonial foods. Part of the Luo ritual grain triad (bel, kal, ng'or).",
+            "traditional_uses": "Grain used in traditional porridge and ceremonial foods. Part of the Luo ritual grain "
+            "triad (bel, kal, ng'or).",
             "nutrition": "High fibre, protein, iron. Comparable to finger millet in mineral density.",
             "gdd_base_temp": 12,
             "gdd_harvest": 1300,
@@ -603,8 +781,10 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.82,
             "regions": ["Siaya", "Kisumu", "Kakamega", "Bungoma", "Vihiga", "Homa Bay", "Busia"],
-            "traditional_uses": "Intensely bitter leafy vegetable. Boiled, bitter water discarded, then mixed with milk, groundnut paste, or other vegetables. Valued in traditional medicine for gastrointestinal ailments.",
-            "nutrition": "Extraordinary iron concentration (991mg/kg DW), calcium (718mg/kg), phosphorus (2375mg/kg). Highest iron of all indigenous vegetables.",
+            "traditional_uses": "Intensely bitter leafy vegetable. Boiled, bitter water discarded, then mixed with "
+            "milk, groundnut paste, or other vegetables. Valued in traditional medicine for gastrointestinal ailments.",
+            "nutrition": "Extraordinary iron concentration (991mg/kg DW), calcium (718mg/kg), phosphorus (2375mg/kg). "
+            "Highest iron of all indigenous vegetables.",
             "gdd_base_temp": 15,
             "gdd_harvest": 650,
             "temp_range": (16, 30),
@@ -614,7 +794,8 @@ class TraditionalFoodsIndex:
             "water_need_mm": 250,
             "market_price_kes_tonne": 50000,
             "intercropping": ["jute_mallow", "sorghum", "cassava", "maize"],
-            "market_demand": "Moderate but highly valued by Luo and Luhya communities. Premium price for pre-cooked packs in Nairobi.",
+            "market_demand": "Moderate but highly valued by Luo and Luhya communities. Premium price for pre-cooked "
+            "packs in Nairobi.",
         },
         "desert_date": {
             "name_sw": "mchunju/mulului",
@@ -623,7 +804,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.98,
             "regions": ["Turkana", "Marsabit", "Garissa", "Kitui", "Baringo", "West Pokot"],
-            "traditional_uses": "Fruit pulp eaten fresh or dried. Kernel yields high-quality edible oil for cooking and medicinal applications. Leaves are critical fodder during extreme drought.",
+            "traditional_uses": "Fruit pulp eaten fresh or dried. Kernel yields high-quality edible oil for cooking "
+            "and medicinal applications. Leaves are critical fodder during extreme drought.",
             "nutrition": "High energy density, rich in vitamin C, iron, and essential fatty acids.",
             "gdd_base_temp": 20,
             "gdd_harvest": 3650,
@@ -634,7 +816,8 @@ class TraditionalFoodsIndex:
             "water_need_mm": 300,
             "market_price_kes_tonne": 120000,
             "intercropping": [],
-            "market_demand": "Limited commercialisation. Critical famine food in ASALs. Growing superfood export potential.",
+            "market_demand": "Limited commercialisation. Critical famine food in ASALs. Growing superfood export "
+            "potential.",
         },
         "bird_plum": {
             "name_sw": "mkuni/ekalale",
@@ -643,7 +826,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.96,
             "regions": ["Turkana", "West Pokot", "Baringo", "Kitui", "Makueni"],
-            "traditional_uses": "Small sweet yellow-brown fruits consumed fresh or dried for long-term storage. Crucial famine food in pastoralist communities.",
+            "traditional_uses": "Small sweet yellow-brown fruits consumed fresh or dried for long-term storage. "
+            "Crucial famine food in pastoralist communities.",
             "nutrition": "Very high sugar content, vitamin C, calcium.",
             "gdd_base_temp": 20,
             "gdd_harvest": 3650,
@@ -663,7 +847,8 @@ class TraditionalFoodsIndex:
             "status": "indigenous",
             "resilience_score": 0.86,
             "regions": ["Homa Bay", "Kisumu", "Siaya", "Kakamega", "Kilifi", "Kwale", "Bungoma"],
-            "traditional_uses": "Sweet plum-like black fruit consumed fresh or processed into jams and fermented beverages. Young leaves occasionally boiled as vegetable.",
+            "traditional_uses": "Sweet plum-like black fruit consumed fresh or processed into jams and fermented "
+            "beverages. Young leaves occasionally boiled as vegetable.",
             "nutrition": "Rich in simple carbohydrates, vitamin A, vitamin C.",
             "gdd_base_temp": 18,
             "gdd_harvest": 2000,
@@ -718,7 +903,7 @@ class TraditionalFoodsIndex:
         },
     }
 
-    NUTRITION_MINERALS = {
+    NUTRITION_MINERALS: dict[str, dict[str, float]] = {
         "slenderleaf": {"Fe": 991.0, "Ca": 718.0, "P": 2375.0, "K": 3296.0, "Mg": 822.0, "Na": 45.0},
         "black_nightshade": {"Fe": 450.5, "Ca": 3491.0, "P": 1833.0, "K": 4022.0, "Mg": 1140.0, "Na": 52.5},
         "spider_plant": {"Fe": 180.2, "Ca": 3477.0, "P": 3875.0, "K": 4549.0, "Mg": 747.0, "Na": 246.7},
@@ -729,17 +914,40 @@ class TraditionalFoodsIndex:
     }
 
     INTERCROPPING_ROW_RATIOS = {
-        "sorghum_cowpea": {"ratio": "1:1 (alternating rows)", "source": "Empirical trials show sorghum yield increases 41.8% vs pure stand"},
-        "finger_millet_pigeonpea": {"ratio": "2:1 (two rows millet : one row pigeonpea)", "mechanism": "Hydraulic lift — pigeonpea taproots draw water upward at night, releasing into upper soil profile for shallow-rooted millet"},
-        "pigeonpea_cotton": {"ratio": "1:6 (one row pigeonpea : six rows cotton)", "source": "Minimises competition while providing fallback food supply if cotton prices crash"},
-        "sorghum_soybean": {"ratio": "2:1 (two rows sorghum : one row soybean)", "mechanism": "Soybean fixes nitrogen; residual effect boosts subsequent sorghum"},
+        "sorghum_cowpea": {
+            "ratio": "1:1 (alternating rows)",
+            "source": "Empirical trials show sorghum yield increases 41.8% vs pure stand",
+        },
+        "finger_millet_pigeonpea": {
+            "ratio": "2:1 (two rows millet : one row pigeonpea)",
+            "mechanism": "Hydraulic lift — pigeonpea taproots draw water upward at night, releasing into upper soil "
+            "profile for shallow-rooted millet",
+        },
+        "pigeonpea_cotton": {
+            "ratio": "1:6 (one row pigeonpea : six rows cotton)",
+            "source": "Minimises competition while providing fallback food supply if cotton prices crash",
+        },
+        "sorghum_soybean": {
+            "ratio": "2:1 (two rows sorghum : one row soybean)",
+            "mechanism": "Soybean fixes nitrogen; residual effect boosts subsequent sorghum",
+        },
     }
 
-    INTERCROPPING_PATTERNS = {
+    INTERCROPPING_PATTERNS: dict[str, dict[str, Any]] = {
         "traditional_lake_region": {
             "name": "Lake Region polyculture (Luo/Luhya)",
             "counties": ["Kisumu", "Homa Bay", "Siaya", "Migori", "Busia", "Vihiga", "Kakamega", "Bungoma"],
-            "crops": ["maize", "beans", "cassava", "black_nightshade", "spider_plant", "jute_mallow", "cowpea_leaves", "pumpkin_leaves", "sweet_potato"],
+            "crops": [
+                "maize",
+                "beans",
+                "cassava",
+                "black_nightshade",
+                "spider_plant",
+                "jute_mallow",
+                "cowpea_leaves",
+                "pumpkin_leaves",
+                "sweet_potato",
+            ],
             "biodiversity_score": 0.85,
             "resilience_rating": "high",
         },
@@ -749,12 +957,22 @@ class TraditionalFoodsIndex:
             "crops": ["sorghum", "cowpea_leaves", "pigeon_pea", "cassava", "amaranth", "bambara_nut"],
             "biodiversity_score": 0.75,
             "resilience_rating": "very_high",
-            "description": "Sorghum-cowpea intercropping boosts sorghum yield by 41.8% vs pure stand. Pigeonpea's deep taproot performs hydraulic lift, releasing moisture at night for shallow-rooted companions.",
+            "description": "Sorghum-cowpea intercropping boosts sorghum yield by 41.8% vs pure stand. Pigeonpea's deep "
+            "taproot performs hydraulic lift, releasing moisture at night for shallow-rooted companions.",
         },
         "coastal_mixed": {
             "name": "Coast mixed system (Mijikenda)",
             "counties": ["Kilifi", "Kwale", "Taita Taveta", "Mombasa", "Lamu"],
-            "crops": ["cassava", "cowpea_leaves", "sweet_potato", "pigeon_pea", "amaranth", "bambara_nut", "tamarind", "baobab"],
+            "crops": [
+                "cassava",
+                "cowpea_leaves",
+                "sweet_potato",
+                "pigeon_pea",
+                "amaranth",
+                "bambara_nut",
+                "tamarind",
+                "baobab",
+            ],
             "biodiversity_score": 0.9,
             "resilience_rating": "very_high",
         },
@@ -772,8 +990,8 @@ class TraditionalFoodsIndex:
             "biodiversity_score": 0.65,
             "resilience_rating": "very_high",
             "cultural_significance": "The three grains (bel=finger millet, kal=sorghum, ng'or=a traditional grain) "
-                "form a ritual triad used in Luo ceremonies including gwelruok (first fruits). "
-                "Grown together in traditional systems for food security and cultural continuity.",
+            "form a ritual triad used in Luo ceremonies including gwelruok (first fruits). "
+            "Grown together in traditional systems for food security and cultural continuity.",
         },
         "maize_beans_pumpkin_three_sisters": {
             "name": "Maize-Bean-Pumpkin Three Sisters",
@@ -781,7 +999,8 @@ class TraditionalFoodsIndex:
             "crops": ["maize", "beans", "pumpkin_leaves"],
             "biodiversity_score": 0.88,
             "resilience_rating": "high",
-            "description": "Maize provides trellis for climbing beans. Beans fix nitrogen. Pumpkin vines form living mulch suppressing weeds and reducing evaporation.",
+            "description": "Maize provides trellis for climbing beans. Beans fix nitrogen. Pumpkin vines form living "
+            "mulch suppressing weeds and reducing evaporation.",
         },
         "pearl_millet_green_gram": {
             "name": "Pearl Millet + Green Gram (Tharaka/ASAL)",
@@ -789,7 +1008,8 @@ class TraditionalFoodsIndex:
             "crops": ["sorghum", "cowpea_leaves"],
             "biodiversity_score": 0.72,
             "resilience_rating": "very_high",
-            "description": "Both crops possess extreme drought tolerance and rapid cycles. Green gram provides early harvest and nitrogen before millet canopy closes. Recommended row ratio: 1:1 alternating rows.",
+            "description": "Both crops possess extreme drought tolerance and rapid cycles. Green gram provides early "
+            "harvest and nitrogen before millet canopy closes. Recommended row ratio: 1:1 alternating rows.",
         },
         "sorghum_soybean": {
             "name": "Sorghum + Soybean (Nyanza/Rift transition)",
@@ -797,7 +1017,8 @@ class TraditionalFoodsIndex:
             "crops": ["sorghum", "cowpea_leaves"],
             "biodiversity_score": 0.75,
             "resilience_rating": "high",
-            "description": "Soybean provides high-grade protein and nitrogen fixation. Residual nitrogen boosts subsequent sorghum yields. Recommended row ratio: 2:1 (sorghum:soybean).",
+            "description": "Soybean provides high-grade protein and nitrogen fixation. Residual nitrogen boosts "
+            "subsequent sorghum yields. Recommended row ratio: 2:1 (sorghum:soybean).",
         },
         "banana_coffee_agroforestry": {
             "name": "Banana + Coffee + Agroforestry (Central Highlands)",
@@ -805,7 +1026,8 @@ class TraditionalFoodsIndex:
             "crops": ["banana", "black_nightshade", "amaranth", "sweet_potato"],
             "biodiversity_score": 0.9,
             "resilience_rating": "high",
-            "description": "Multi-tiered system. Tall trees provide shade, bananas provide mid-level canopy and mulch, coffee is cash crop understory. Shade-tolerant traditional vegetables on margins.",
+            "description": "Multi-tiered system. Tall trees provide shade, bananas provide mid-level canopy and mulch, "
+            "coffee is cash crop understory. Shade-tolerant traditional vegetables on margins.",
         },
         "maize_groundnut": {
             "name": "Maize + Groundnut (Western Kenya / cross-border Tanzania)",
@@ -813,7 +1035,9 @@ class TraditionalFoodsIndex:
             "crops": ["maize", "cowpea_leaves"],
             "biodiversity_score": 0.78,
             "resilience_rating": "high",
-            "description": "Groundnut provides high-value protein and oil. As a low-lying legume, it fixes nitrogen and provides ground cover without competing with maize canopy height. Increases protein yield per hectare vs maize monoculture.",
+            "description": "Groundnut provides high-value protein and oil. As a low-lying legume, it fixes nitrogen "
+            "and provides ground cover without competing with maize canopy height. Increases protein yield per hectare "
+            "vs maize monoculture.",
         },
         "pigeonpea_cotton_marginal_vertisol": {
             "name": "Pigeon Pea + Cotton (Marginal Vertisols / Lower Eastern)",
@@ -821,7 +1045,9 @@ class TraditionalFoodsIndex:
             "crops": ["pigeon_pea", "sorghum"],
             "biodiversity_score": 0.68,
             "resilience_rating": "high",
-            "description": "Cotton serves as primary cash crop, pigeonpea as insurance food crop. Deep roots break up heavy clay hardpans. Standard row ratio 1:6 (pigeonpea:cotton) minimises competition while providing fallback food supply if cotton prices crash.",
+            "description": "Cotton serves as primary cash crop, pigeonpea as insurance food crop. Deep roots break up "
+            "heavy clay hardpans. Standard row ratio 1:6 (pigeonpea:cotton) minimises competition while providing "
+            "fallback food supply if cotton prices crash.",
         },
         "agroforestry_legume_trees_maize_beans": {
             "name": "Agroforestry Legume Trees + Maize + Beans (Rift Valley)",
@@ -829,18 +1055,20 @@ class TraditionalFoodsIndex:
             "crops": ["maize", "beans", "sorghum"],
             "biodiversity_score": 0.82,
             "resilience_rating": "high",
-            "description": "Nitrogen-fixing trees (Leucaena, Acacia) planted in alleys. Tree prunings used as green manure, increasing soil organic carbon and moisture retention.",
+            "description": "Nitrogen-fixing trees (Leucaena, Acacia) planted in alleys. Tree prunings used as green "
+            "manure, increasing soil organic carbon and moisture retention.",
         },
     }
 
-    FOOD_CORRIDORS = {
+    FOOD_CORRIDORS: dict[str, dict[str, Any]] = {
         "kisumu_nairobi": {
             "name": "Kisumu-Nairobi Corridor (Luo)",
             "origin_cities": ["Kisumu", "Siaya", "Homa Bay", "Migori"],
             "destination": "Nairobi (Kawangware, Kibera, Lang'ata, Eastlands)",
             "key_crops": ["black_nightshade", "spider_plant", "jute_mallow", "amaranth", "cassava", "sweet_potato"],
             "demand_intensity": "very_high",
-            "food_remittance_context": "Over 50% of Nairobi households receive uncounted food remittances along this corridor from rural relatives",
+            "food_remittance_context": "Over 50% of Nairobi households receive uncounted food remittances along this "
+            "corridor from rural relatives",
         },
         "western_nairobi": {
             "name": "Western-Nairobi Corridor (Luhya)",
@@ -862,18 +1090,30 @@ class TraditionalFoodsIndex:
             "destination": "Nairobi (All areas)",
             "key_crops": ["black_nightshade", "amaranth", "sweet_potato", "banana"],
             "demand_intensity": "very_high",
-            "transition_context": "Severe early-2026 droughts caused near-total maize failures in Central Kenya. Farmers pivoting to hardy indigenous crops (amaranth, nightshade) with rapid maturation and lower irrigation requirements.",
+            "transition_context": "Severe early-2026 droughts caused near-total maize failures in Central Kenya. "
+            "Farmers pivoting to hardy indigenous crops (amaranth, nightshade) with rapid maturation and lower "
+            "irrigation requirements.",
         },
         "lake_region_nairobi_otc": {
             "name": "Lake Region-Nairobi OTC Bus Corridor",
             "origin_cities": ["Homa Bay", "Kisumu", "Siaya", "Migori", "Busia"],
             "destination": "Nairobi (Kawangware, Kibera, Lang'ata, Eastlands)",
-            "key_crops": ["dek", "mito", "boo", "atipa", "odielo", "ndemra", "alikra",
-                "black_nightshade", "spider_plant", "jute_mallow"],
+            "key_crops": [
+                "dek",
+                "mito",
+                "boo",
+                "atipa",
+                "odielo",
+                "ndemra",
+                "alikra",
+                "black_nightshade",
+                "spider_plant",
+                "jute_mallow",
+            ],
             "demand_intensity": "high",
             "transport": "OTC buses and matatus carry fresh traditional vegetables overnight "
-                "from Lake Region counties to Nairobi markets (Ojwang, 2020). Women farmers "
-                "travel with produce, selling in Kawangware and Kibera by morning.",
+            "from Lake Region counties to Nairobi markets (Ojwang, 2020). Women farmers "
+            "travel with produce, selling in Kawangware and Kibera by morning.",
         },
         "turkana_regional": {
             "name": "Turkana & ASALs to Regional Towns",
@@ -881,7 +1121,8 @@ class TraditionalFoodsIndex:
             "destination": "Lodwar, Kitale, Nakuru",
             "key_crops": ["desert_date", "bird_plum", "sorghum", "cowpea_leaves"],
             "demand_intensity": "moderate",
-            "transport": "Pastoralist networks and truck routes carry drought-famine foods from deep rural zones into regional trading towns, stabilizing food availability during peak drought.",
+            "transport": "Pastoralist networks and truck routes carry drought-famine foods from deep rural zones into "
+            "regional trading towns, stabilizing food availability during peak drought.",
         },
         "busia_uganda_corridor": {
             "name": "Busia Corridor (Kenya-Uganda cross-border)",
@@ -889,7 +1130,12 @@ class TraditionalFoodsIndex:
             "destination": "Busia, Kisumu, Nairobi",
             "key_crops": ["amaranth", "cassava", "sweet_potato", "beans", "spider_plant"],
             "demand_intensity": "high",
-            "transport": "Women Small-Scale Cross-Border Traders (WICBTs) dominate this route. Pineapples, cereals, legumes and vegetables move from Uganda's eastern regions into Western Kenya and onward to Nairobi. Despite the Simplified Trade Regime (STR), WICBTs face non-tariff barriers, extortion by border officials, and bureaucratic bottlenecks at the One Stop Border Post. Many are forced to use informal ungazetted crossing points (panya routes), expediting transit but exposing them to harassment, violence, and goods confiscation.",
+            "transport": "Women Small-Scale Cross-Border Traders (WICBTs) dominate this route. Pineapples, cereals, "
+            "legumes and vegetables move from Uganda's eastern regions into Western Kenya and onward to Nairobi. "
+            "Despite the Simplified Trade Regime (STR), WICBTs face non-tariff barriers, extortion by border "
+            "officials, and bureaucratic bottlenecks at the One Stop Border Post. Many are forced to use informal "
+            "ungazetted crossing points (panya routes), expediting transit but exposing them to harassment, violence, "
+            "and goods confiscation.",
         },
         "ukambani_mombasa": {
             "name": "Ukambani-Mombasa Corridor (Kamba)",
@@ -897,7 +1143,8 @@ class TraditionalFoodsIndex:
             "destination": "Mombasa (coastal urban and tourism populations)",
             "key_crops": ["cowpea_leaves", "pigeon_pea", "amaranth", "baobab", "tamarind", "sorghum"],
             "demand_intensity": "high",
-            "transport": "Non-perishable drought-tolerant pulses (cowpeas, green grams, pigeonpeas) and dryland fruits (baobab, tamarind) transported by highway to Mombasa. Critical protein supply for coastal communities.",
+            "transport": "Non-perishable drought-tolerant pulses (cowpeas, green grams, pigeonpeas) and dryland fruits "
+            "(baobab, tamarind) transported by highway to Mombasa. Critical protein supply for coastal communities.",
         },
         "namanga_tanzania_corridor": {
             "name": "Namanga Corridor (Kenya-Tanzania cross-border)",
@@ -905,14 +1152,17 @@ class TraditionalFoodsIndex:
             "destination": "Namanga, Nairobi, Mombasa",
             "key_crops": ["sorghum", "cowpea_leaves", "pigeon_pea", "beans", "amaranth"],
             "demand_intensity": "high",
-            "transport": "Women Small-Scale Cross-Border Traders (WICBTs) move grains, legumes and livestock from Tanzania's northern agricultural zones into Kenya. Despite the Simplified Trade Regime designed to facilitate tariff-free movement, women face systemic barriers and are often forced onto panya routes (informal crossings) to avoid rapid spoilage of perishable cargo.",
+            "transport": "Women Small-Scale Cross-Border Traders (WICBTs) move grains, legumes and livestock from "
+            "Tanzania's northern agricultural zones into Kenya. Despite the Simplified Trade Regime designed to "
+            "facilitate tariff-free movement, women face systemic barriers and are often forced onto panya routes "
+            "(informal crossings) to avoid rapid spoilage of perishable cargo.",
         },
     }
 
     def __init__(self):
-        self._by_name = {}
-        self._by_region = {}
-        self._by_status = {}
+        self._by_name: dict[str, dict[str, Any]] = {}
+        self._by_region: dict[str, list[dict[str, Any]]] = {}
+        self._by_status: dict[str, list[dict[str, Any]]] = {}
         for key, info in self.CROP_INDEX.items():
             self._by_name[key] = info
             self._by_name[info["name_sw"].split("/")[0].strip()] = info
@@ -953,15 +1203,13 @@ class TraditionalFoodsIndex:
         if county is None:
             return list(self.INTERCROPPING_PATTERNS.values())
         county = county.upper()
-        return [p for p in self.INTERCROPPING_PATTERNS.values()
-                if any(c.upper() == county for c in p["counties"])]
+        return [p for p in self.INTERCROPPING_PATTERNS.values() if any(c.upper() == county for c in p["counties"])]
 
     def get_food_corridors(self, county: str | None = None) -> list[dict]:
         if county is None:
             return list(self.FOOD_CORRIDORS.values())
         county = county.upper()
-        return [c for c in self.FOOD_CORRIDORS.values()
-                if county in [o.upper() for o in c["origin_cities"]]]
+        return [c for c in self.FOOD_CORRIDORS.values() if county in [o.upper() for o in c["origin_cities"]]]
 
     def get_nutritional_context(self, crop_name: str) -> dict:
         info = self.classify_crop(crop_name)
@@ -1004,11 +1252,18 @@ class TraditionalFoodsIndex:
                 "Pharmaceutical-grade iron density — critical for anemia intervention"
                 if minerals.get("Fe", 0) > 500
                 else "Good mineral source"
-            ) if minerals else "Mineral data not available",
+            )
+            if minerals
+            else "Mineral data not available",
         }
 
     def get_resilience_rating(self, crops: list[str]) -> dict:
-        indigenous_factor = sum(1 for c in crops if self.classify_crop(c) and self.classify_crop(c).get("status") in ("indigenous", "naturalised"))
+        indigenous_factor = sum(
+            1
+            for c in crops
+            if (classified := self.classify_crop(c)) is not None
+            and classified.get("status") in ("indigenous", "naturalised")
+        )
         total = len(crops) or 1
         indigenous_ratio = indigenous_factor / total
         return {

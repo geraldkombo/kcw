@@ -1,7 +1,6 @@
 """Land Intelligence Agent — analyses land suitability, soil health, idle detection,
 yield prediction, and contract-farm matching using NASA POWER satellite data."""
 
-from typing import Optional
 from agriculture_intelligence.land_intelligence import LandIntelligence
 from agriculture_intelligence.market_intelligence import MarketIntelligence
 from satellite.power_client import PowerClient
@@ -10,7 +9,7 @@ from satellite.power_client import PowerClient
 class LandIntelligenceAgent:
     """Analyses agricultural land for investment-grade intelligence."""
 
-    def __init__(self, power: Optional[PowerClient] = None):
+    def __init__(self, power: PowerClient | None = None):
         self.power = power or PowerClient()
         self.land = LandIntelligence(self.power)
         self.market = MarketIntelligence(self.power)

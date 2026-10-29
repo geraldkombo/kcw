@@ -1,7 +1,6 @@
 """Market intelligence — best-price routing, contract farming matching, idle land marketplace,
 and input supplier optimization. Turns agriculture into an investable asset class."""
 
-import math
 from typing import Any
 
 from satellite.power_client import PowerClient
@@ -10,24 +9,52 @@ from satellite.power_client import PowerClient
 class MarketIntelligence:
     """Finds best prices, matches contract farming opportunities, and optimises input sourcing."""
 
-        # Retail markup data from mid-2026 spot market surveys
+    # Retail markup data from mid-2026 spot market surveys
     RETAIL_MARKUPS = {
-        "black_nightshade": {"markup_pct": 127, "highest_retail_kes_kg": 600, "highest_market": "Bondo",
-            "wholesale_kes_kg": 33.47, "retail_kes_kg": 76.25},
-        "amaranth": {"markup_pct": 130, "highest_retail_kes_kg": 150, "highest_market": "Kibuye (Kisumu)",
-            "wholesale_kes_kg": 22.41, "retail_kes_kg": 51.51},
-        "cowpea_leaves": {"markup_pct": 143, "highest_retail_kes_kg": 170, "highest_market": "Kimilili",
-            "wholesale_kes_kg": 22.76, "retail_kes_kg": 55.42},
-        "spider_plant": {"markup_pct": 57, "highest_retail_kes_kg": None, "highest_market": None,
-            "wholesale_kes_kg": 38.00, "retail_kes_kg": 60.00},
-        "pumpkin_leaves": {"markup_pct": 40, "highest_retail_kes_kg": None, "highest_market": None,
-            "wholesale_kes_kg": 50.00, "retail_kes_kg": 70.00},
+        "black_nightshade": {
+            "markup_pct": 127,
+            "highest_retail_kes_kg": 600,
+            "highest_market": "Bondo",
+            "wholesale_kes_kg": 33.47,
+            "retail_kes_kg": 76.25,
+        },
+        "amaranth": {
+            "markup_pct": 130,
+            "highest_retail_kes_kg": 150,
+            "highest_market": "Kibuye (Kisumu)",
+            "wholesale_kes_kg": 22.41,
+            "retail_kes_kg": 51.51,
+        },
+        "cowpea_leaves": {
+            "markup_pct": 143,
+            "highest_retail_kes_kg": 170,
+            "highest_market": "Kimilili",
+            "wholesale_kes_kg": 22.76,
+            "retail_kes_kg": 55.42,
+        },
+        "spider_plant": {
+            "markup_pct": 57,
+            "highest_retail_kes_kg": None,
+            "highest_market": None,
+            "wholesale_kes_kg": 38.00,
+            "retail_kes_kg": 60.00,
+        },
+        "pumpkin_leaves": {
+            "markup_pct": 40,
+            "highest_retail_kes_kg": None,
+            "highest_market": None,
+            "wholesale_kes_kg": 50.00,
+            "retail_kes_kg": 70.00,
+        },
     }
 
     VALUE_ADDED_PRICING = {
-        "precooked_aiv_pack_400g": {"retail_kes": 400, "equivalent_fresh_kes_kg": 55,
+        "precooked_aiv_pack_400g": {
+            "retail_kes": 400,
+            "equivalent_fresh_kes_kg": 55,
             "crop_types": ["black_nightshade", "spider_plant", "cowpea_leaves", "amaranth"],
-            "note": "Cleaned, blanched, fermented, vacuum-packed. Targets urban middle class convenience demand."},
+            "note": "Cleaned, blanched, fermented, vacuum-packed. Targets urban middle class convenience demand.",
+        },
     }
 
     # Women constitute ~77% of traders in the Kenyan AIV sector
@@ -37,7 +64,7 @@ class MarketIntelligence:
     FOOD_REMITTANCE_NBO_HH_PCT = 50
 
     # Reference market prices (KES/tonne) — in production, these come from live APIs
-    MARKET_PRICES = {
+    MARKET_PRICES: dict[str, dict[str, Any]] = {
         "maize": {"current": 45000, "high_30d": 52000, "low_30d": 38000, "trend": "stable"},
         "beans": {"current": 85000, "high_30d": 95000, "low_30d": 72000, "trend": "up"},
         "tea": {"current": 200000, "high_30d": 220000, "low_30d": 180000, "trend": "stable"},
@@ -82,7 +109,7 @@ class MarketIntelligence:
     }
 
     # Contract farming offers (marketplace)
-    CONTRACT_FARMING_OFFERS = [
+    CONTRACT_FARMING_OFFERS: list[dict[str, Any]] = [
         {
             "id": "CF-001",
             "crop": "maize",
@@ -131,11 +158,35 @@ class MarketIntelligence:
     ]
 
     # Animal feed suppliers
-    ANIMAL_FEED_SUPPLIERS = [
-        {"name": "Malinda Feeds", "price_kes_per_kg": 38, "quality_score": 8.5, "location": "Nakuru", "dairy_meal_kes_kg": 42},
-        {"name": "Unga Farm Care", "price_kes_per_kg": 42, "quality_score": 9.0, "location": "Nairobi", "dairy_meal_kes_kg": 46},
-        {"name": "Sigma Feeds", "price_kes_per_kg": 35, "quality_score": 7.5, "location": "Thika", "dairy_meal_kes_kg": 39},
-        {"name": "New KCC Feed", "price_kes_per_kg": 40, "quality_score": 8.0, "location": "Kisumu", "dairy_meal_kes_kg": 44},
+    ANIMAL_FEED_SUPPLIERS: list[dict[str, Any]] = [
+        {
+            "name": "Malinda Feeds",
+            "price_kes_per_kg": 38,
+            "quality_score": 8.5,
+            "location": "Nakuru",
+            "dairy_meal_kes_kg": 42,
+        },
+        {
+            "name": "Unga Farm Care",
+            "price_kes_per_kg": 42,
+            "quality_score": 9.0,
+            "location": "Nairobi",
+            "dairy_meal_kes_kg": 46,
+        },
+        {
+            "name": "Sigma Feeds",
+            "price_kes_per_kg": 35,
+            "quality_score": 7.5,
+            "location": "Thika",
+            "dairy_meal_kes_kg": 39,
+        },
+        {
+            "name": "New KCC Feed",
+            "price_kes_per_kg": 40,
+            "quality_score": 8.0,
+            "location": "Kisumu",
+            "dairy_meal_kes_kg": 44,
+        },
     ]
 
     def __init__(self, power: PowerClient | None = None):
@@ -176,7 +227,8 @@ class MarketIntelligence:
             "contract_farming_premium_pct": round(best_contract_premium, 1) if best_contract else 0,
             "recommendation": (
                 f"Sell now at KES {price_data['current']:,}/tonne for KES {revenue:,.0f}. "
-                f"Consider contract farming ({best_contract['buyer']}) at KES {best_contract['price_kes_per_tonne']:,}/tonne "
+                f"Consider contract farming ({best_contract['buyer']}) at KES "
+                f"{best_contract['price_kes_per_tonne']:,}/tonne "
                 f"({best_contract_premium:.0f}% premium) if available."
                 if best_contract
                 else f"Current spot price KES {price_data['current']:,}/tonne. {price_data['trend'].upper()} trend. "
@@ -184,7 +236,7 @@ class MarketIntelligence:
             ),
         }
 
-    async def find_contract_farming(self, county: str, crop: str, farm_size_ha: float) -> list[dict]:
+    async def find_contract_farming(self, _county: str, crop: str, farm_size_ha: float) -> list[dict]:
         """Find available contract farming opportunities matching farmer profile."""
         estimated_yield = 2.5  # tonnes/ha (conservative)
         total_tonnes = estimated_yield * farm_size_ha
@@ -193,12 +245,14 @@ class MarketIntelligence:
         for offer in self.CONTRACT_FARMING_OFFERS:
             if offer["crop"] == crop and total_tonnes >= offer["min_tonnes"]:
                 match_score = min(100, total_tonnes / offer["min_tonnes"] * 50)
-                matches.append({
-                    **offer,
-                    "estimated_total_value_kes": round(offer["price_kes_per_tonne"] * total_tonnes),
-                    "match_score": round(match_score),
-                    "your_estimated_tonnes": round(total_tonnes, 1),
-                })
+                matches.append(
+                    {
+                        **offer,
+                        "estimated_total_value_kes": round(offer["price_kes_per_tonne"] * total_tonnes),
+                        "match_score": round(match_score),
+                        "your_estimated_tonnes": round(total_tonnes, 1),
+                    }
+                )
 
         matches.sort(key=lambda m: m["match_score"], reverse=True)
         return matches
@@ -219,7 +273,6 @@ class MarketIntelligence:
             return {"error": "Could not determine best crop"}
 
         yield_data = await land.estimate_yield(latitude, longitude, best["crop"], farm_size_ha)
-        price = await self.get_best_price(best["crop"].lower().replace(" ", "_"), yield_data["total_yield_tonnes"])
 
         development_cost_kes = farm_size_ha * 50000  # KES 50k/ha for clearing, planting, first irrigation
 
@@ -232,7 +285,9 @@ class MarketIntelligence:
             "estimated_gross_revenue_kes": yield_data["gross_revenue_kes"],
             "development_cost_kes": round(development_cost_kes),
             "net_first_year_return_kes": round(yield_data["gross_revenue_kes"] - development_cost_kes),
-            "roi_first_year_pct": round((yield_data["gross_revenue_kes"] - development_cost_kes) / development_cost_kes * 100, 1),
+            "roi_first_year_pct": round(
+                (yield_data["gross_revenue_kes"] - development_cost_kes) / development_cost_kes * 100, 1
+            ),
             "contract_farming_available": len(await self.find_contract_farming("", best["crop"], farm_size_ha)) > 0,
         }
 
@@ -245,15 +300,17 @@ class MarketIntelligence:
         results = []
         for supplier in self.ANIMAL_FEED_SUPPLIERS:
             monthly_cost = total_monthly_kg * supplier["dairy_meal_kes_kg"]
-            results.append({
-                "supplier": supplier["name"],
-                "location": supplier["location"],
-                "price_per_kg_kes": supplier["dairy_meal_kes_kg"],
-                "quality_score": supplier["quality_score"],
-                "monthly_cost_kes": round(monthly_cost),
-                "annual_cost_kes": round(monthly_cost * 12),
-                "value_score": round(supplier["quality_score"] / supplier["dairy_meal_kes_kg"] * 100, 1),
-            })
+            results.append(
+                {
+                    "supplier": supplier["name"],
+                    "location": supplier["location"],
+                    "price_per_kg_kes": supplier["dairy_meal_kes_kg"],
+                    "quality_score": supplier["quality_score"],
+                    "monthly_cost_kes": round(monthly_cost),
+                    "annual_cost_kes": round(monthly_cost * 12),
+                    "value_score": round(supplier["quality_score"] / supplier["dairy_meal_kes_kg"] * 100, 1),
+                }
+            )
 
         results.sort(key=lambda r: r["value_score"], reverse=True)
         return {
@@ -262,5 +319,7 @@ class MarketIntelligence:
             "monthly_feed_kg": round(total_monthly_kg),
             "suppliers": results,
             "best_value": results[0],
-            "potential_annual_savings_kes": round((max(r["monthly_cost_kes"] for r in results) - min(r["monthly_cost_kes"] for r in results)) * 12),
+            "potential_annual_savings_kes": round(
+                (max(r["monthly_cost_kes"] for r in results) - min(r["monthly_cost_kes"] for r in results)) * 12
+            ),
         }

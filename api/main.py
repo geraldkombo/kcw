@@ -2,34 +2,33 @@ from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
-
+from datetime import UTC, datetime
 from pathlib import Path
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
 
+from api.dependencies import get_repository
 from api.middleware import register_middleware
 from api.routes.agriculture_intelligence import router as agri_intel_router
-from api.routes.weather import router as weather_router
+from api.routes.climate_finance import router as climate_finance_router
+from api.routes.marketplace import router as marketplace_router
 from api.routes.rag import router as rag_router
 from api.routes.traditional_foods import router as traditional_foods_router
-from api.routes.marketplace import router as marketplace_router
-from api.routes.climate_finance import router as climate_finance_router
-from api.dependencies import get_repository
+from api.routes.weather import router as weather_router
 from config.log import configure_logging
 from config.settings import settings, validate_settings
 from database.repository import Repository
 
 logger = logging.getLogger("frk")
 
-_start_time: datetime = datetime.now(timezone.utc)
+_start_time: datetime = datetime.now(UTC)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     configure_logging(settings.log_level, settings.log_json)
     for w in validate_settings():
         logger.warning("startup warning: %s", w)
@@ -84,36 +83,38 @@ app.include_router(climate_finance_router)
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 FRONTEND_FILES = {"index.html", "app.js", "i18n.js", "netlify.toml"}
 
+
 @app.get("/health")
 async def health(repo: Repository = Depends(get_repository)):
     return {
         "status": "ok",
         "service": "kienyeji",
         "version": "1.0.0",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "database": type(repo).__name__.replace("Repository", ""),
         "database_connected": repo.connected,
-        "uptime_seconds": (datetime.now(timezone.utc) - _start_time).total_seconds(),
+        "uptime_seconds": (datetime.now(UTC) - _start_time).total_seconds(),
     }
 
 
 @app.get("/ready")
 async def ready(repo: Repository = Depends(get_repository)):
     from fastapi.responses import JSONResponse
+
     if not repo.connected:
         return JSONResponse(
             status_code=503,
             content={
                 "status": "not_ready",
                 "database": "disconnected",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
     return {
         "status": "ready",
         "database": "connected",
         "database_type": type(repo).__name__.replace("Repository", ""),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -143,7 +144,15 @@ async def get_config(repo: Repository = Depends(get_repository)):
 # Serve frontend SPA — registered last so it never shadows the API/health routes above
 @app.get("/{rest:path}")
 async def serve_frontend(rest: str = ""):
-    if rest.startswith("api/") or rest.startswith("docs") or rest.startswith("redoc") or rest.startswith("openapi") or rest.startswith("health") or rest.startswith("ready") or rest.startswith("_"):
+    if (
+        rest.startswith("api/")
+        or rest.startswith("docs")
+        or rest.startswith("redoc")
+        or rest.startswith("openapi")
+        or rest.startswith("health")
+        or rest.startswith("ready")
+        or rest.startswith("_")
+    ):
         raise HTTPException(status_code=404)
     if not rest or rest == "index.html":
         return HTMLResponse((FRONTEND_DIR / "index.html").read_text(encoding="utf-8"))

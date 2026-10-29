@@ -1,7 +1,6 @@
 """AI Agriculture Investment Advisor Agent — autonomous investment recommendations.
 This is the system that makes AI-driven agriculture investments, not just an app."""
 
-from typing import Optional
 from agriculture_intelligence.investment_advisor import InvestmentAdvisor
 from satellite.power_client import PowerClient
 
@@ -10,7 +9,7 @@ class InvestmentAdvisorAgent:
     """Autonomous agriculture investment advisor. Combines land, water, solar,
     seed, market, and cooperative intelligence to recommend optimal investments."""
 
-    def __init__(self, power: Optional[PowerClient] = None):
+    def __init__(self, power: PowerClient | None = None):
         self.power = power or PowerClient()
         self.advisor = InvestmentAdvisor(self.power)
 
@@ -25,9 +24,13 @@ class InvestmentAdvisorAgent:
         dairy_cows = farmer_profile.get("dairy_cows", 0)
 
         recommendations = await self.advisor.recommend_investments(
-            latitude=lat, longitude=lon, county=county,
-            farm_size_ha=farm_size, budget_kes=budget,
-            crop=crop, cooperative_members=coop_members,
+            latitude=lat,
+            longitude=lon,
+            county=county,
+            farm_size_ha=farm_size,
+            budget_kes=budget,
+            crop=crop,
+            cooperative_members=coop_members,
             dairy_cows=dairy_cows,
         )
 
@@ -65,7 +68,5 @@ class InvestmentAdvisorAgent:
         return {
             "score": score,
             "level": "high" if score >= 70 else "medium" if score >= 40 else "low",
-            "missing": [] if score >= 70 else (
-                ["farm details"] if score < 40 else []
-            ),
+            "missing": [] if score >= 70 else (["farm details"] if score < 40 else []),
         }
