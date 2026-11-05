@@ -21,3 +21,6 @@ check_untyped_defs = true
 minversion = "9.0"
 testpaths = ["tests"]
 filterwarnings = ["error::DeprecationWarning"]
+# pytest-asyncio >= 1.4 warns (and with filterwarnings=error, crashes) unless the
+# default event-loop scope for async fixtures is set explicitly.
+asyncio_default_fixture_loop_scope = "function"
